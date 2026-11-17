@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isReviewer } from "@/lib/auth";
 import { logout } from "./actions/auth";
 
 export const metadata: Metadata = {
@@ -25,6 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div className="ml-auto flex items-center gap-3">
               {user ? (
                 <>
+                  {isReviewer(user) && <Link href="/review" className="hover:underline">Review</Link>}
                   <Link href="/dashboard" className="hover:underline">Dashboard</Link>
                   <form action={logout}>
                     <button className="muted hover:underline">Log out</button>

@@ -20,8 +20,13 @@ model User {
   // Mirrors Stripe subscription status: active, trialing, past_due, canceled, ...
   subscriptionStatus   String?
   currentPeriodEnd     DateTime?
+  // "user" | "reviewer" | "admin"
+  role                 String    @default("user")
+  // Shown to students next to reviewed problems, e.g. "Passed FE and PE Civil: WRE". Change to "P.E." once licensed.
+  reviewerCredential   String?
   attempts             Attempt[]
   mockExams            MockExam[]
+  reviews              TemplateReview[]
 }
 
 model Attempt {
@@ -49,4 +54,21 @@ model MockExam {
   createdAt  DateTime @default(now())
 
   @@index([userId, exam])
+}
+
+model TemplateReview {
+  id              String    @id @default(cuid())
+  templateId      String
+  templateVersion Int
+  reviewerId      String
+  reviewer        User      @relation(fields: [reviewerId], references: [id])
+  // in_progress | approved | rejected | changes_requested
+  status          String
+  // JSON: [{ seed, given, correct, match }]
+  samples         String
+  notes           String?
+  createdAt       DateTime  @default(now())
+  decidedAt       DateTime?
+
+  @@index([templateId, templateVersion])
 }

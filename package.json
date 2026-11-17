@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "db:push": "prisma db push",
-    "test:content": "tsx scripts/validate-questions.ts"
+    "test:content": "tsx scripts/validate-questions.ts",
+    "test:templates": "tsx scripts/validate-templates.ts",
+    "make-reviewer": "tsx scripts/make-reviewer.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

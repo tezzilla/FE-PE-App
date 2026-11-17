@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
-import { getQuestion } from "@/lib/content";
+import { resolveQuestion } from "@/lib/questions";
+import type { Question } from "@/lib/content/types";
 import { isExamId } from "@/lib/content/exams";
 import { db } from "@/lib/db";
 
@@ -15,7 +16,9 @@ export async function POST(req: Request) {
   if (!hasExamAccess(user, exam)) return NextResponse.json({ error: "Subscription required" }, { status: 403 });
 
   const ids: string[] = Array.isArray(body.questionIds) ? [...new Set<string>(body.questionIds.map(String))] : [];
-  const questions = ids.map(getQuestion).filter((q) => q && q.exam === exam);
+  const questions = (await Promise.all(ids.map(resolveQuestion)))
+    .map((r) => r?.q)
+    .filter((q): q is Question => !!q && q.exam === exam);
   if (!questions.length || questions.length !== ids.length || ids.length > 200) {
     return NextResponse.json({ error: "Bad questions" }, { status: 400 });
   }
@@ -25,13 +28,13 @@ export async function POST(req: Request) {
   const attempts = [];
   let correct = 0;
   for (const q of questions) {
-    const sel = answers[q!.id];
-    const answered = typeof sel === "number" && Number.isInteger(sel) && sel >= 0 && sel < q!.choices.length;
-    const ok = answered && sel === q!.answer;
+    const sel = answers[q.id];
+    const answered = typeof sel === "number" && Number.isInteger(sel) && sel >= 0 && sel < q.choices.length;
+    const ok = answered && sel === q.answer;
     if (ok) correct++;
-    results[q!.id] = { correct: ok, answer: q!.answer, explanation: q!.explanation, reference: q!.reference };
+    results[q.id] = { correct: ok, answer: q.answer, explanation: q.explanation, reference: q.reference };
     if (answered) {
-      attempts.push({ userId: user.id, questionId: q!.id, exam, topic: q!.topic, selected: sel as number, correct: ok });
+      attempts.push({ userId: user.id, questionId: q.id, exam, topic: q.topic, selected: sel as number, correct: ok });
     }
   }
 

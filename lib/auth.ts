@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
 import { db } from "./db";
 
@@ -47,5 +47,16 @@ export async function getCurrentUser() {
 export async function requireUser() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+  return user;
+}
+
+export function isReviewer(user: { role: string } | null) {
+  return !!user && (user.role === "reviewer" || user.role === "admin");
+}
+
+/** Reviewer-only pages 404 for everyone else so the area isn't advertised. */
+export async function requireReviewer() {
+  const user = await requireUser();
+  if (!isReviewer(user)) notFound();
   return user;
 }

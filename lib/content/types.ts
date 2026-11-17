@@ -10,6 +10,7 @@ export interface Question {
   explanation: string;
   reference?: string; // where to look in the NCEES reference handbook / codes
   free?: boolean; // visible on the free tier
+  templateId?: string; // set for generated problems
 }
 
 /** Shape sent to the browser. Never includes the answer or explanation. */

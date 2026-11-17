@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { EXAMS, isExamId, topicName } from "@/lib/content/exams";
 import { questionsFor, shuffle, toPublic } from "@/lib/content";
 import { getCurrentUser } from "@/lib/auth";
-import { canSeeQuestion } from "@/lib/access";
+import { canSeeQuestion, hasExamAccess } from "@/lib/access";
+import { approvedTemplateCount, generatedQuestions } from "@/lib/questions";
 import { Practice } from "@/components/Practice";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,11 @@ export default async function PracticePage({
   const user = await getCurrentUser();
   const all = questionsFor(exam, topic);
   const visible = all.filter((q) => canSeeQuestion(user, q));
-  const locked = all.length - visible.length;
+  const access = hasExamAccess(user, exam);
+  // Subscribers also get fresh problems from every approved template, 3 per template per session.
+  const generated = access ? await generatedQuestions(exam, 3, topic) : [];
+  const generators = await approvedTemplateCount(exam, topic);
+  const locked = all.length - visible.length + (access ? 0 : generators * 3);
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
@@ -39,7 +44,7 @@ export default async function PracticePage({
         </p>
       )}
       <Practice
-        questions={shuffle(visible).map(toPublic)}
+        questions={shuffle([...visible, ...generated]).map(toPublic)}
         topicNames={Object.fromEntries(EXAMS[exam].topics.map((t) => [t.slug, t.name]))}
         lockedCount={locked}
       />

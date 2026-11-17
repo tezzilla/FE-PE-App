@@ -41,6 +41,27 @@ Displayed prices are in code; the charged price lives in Stripe.
 3. **Hosting:** deploy to Vercel (or any Node host). Set `APP_URL` and a strong `AUTH_SECRET`.
 4. **Legal:** Terms of Service, Privacy Policy, refund policy. Keep the "not affiliated with NCEES" notice.
 
+## Problem generators (templates)
+
+A template is code that generates unlimited numeric variants of one problem type. The answer is computed, so every variant is correct if the template is. Wrong choices come from specific common mistakes, documented in a comment next to each one.
+
+- Templates live in `lib/templates/`. Water Resources & Environmental is first (12 templates).
+- `npm run test:templates` generates 2,000 variants per template and checks they are well-formed.
+- **Nothing reaches students until a reviewer approves it.** Unapproved templates can't be served or graded.
+
+### Review workflow
+
+1. Sign up on the site, then make yourself a reviewer:
+   `npm run make-reviewer -- you@example.com "Passed the FE and PE Civil: Water Resources & Environmental"`
+2. Go to **Review** in the nav. Open a template and solve 3 random variants by hand, with the answer choices hidden.
+3. Your answers are compared to the template's (2% tolerance). Approval is only possible if all 3 match.
+4. Check wording, wrong choices, and the solution, then approve, request changes, or reject (notes required).
+5. Approved templates immediately appear in practice and mock exams for subscribers, with "Problem type reviewed by <name>, <credential>".
+
+Bumping a template's `version` after changing its math or wording sends it back to the queue.
+
+Credential wording: until your license is issued, don't use "P.E." Update it at **Review → Edit how your credential appears** once licensed; every reviewed problem picks up the change.
+
 ## Adding questions
 
 Questions live in `lib/content/fe-civil.ts` and `lib/content/pe-civil.ts`. Each has `topic`, `prompt`, `choices`, `answer` (index), `explanation`, optional `reference` and `free`. Run `npm run test:content` after editing.
@@ -49,7 +70,11 @@ Questions live in `lib/content/fe-civil.ts` and `lib/content/pe-civil.ts`. Each 
 
 ## Roadmap
 
-- Content: grow to 500+ FE and 400+ PE questions; this is the real product and the main cost
+- Templates for the other topics (statics, mechanics, geotech, structural, transportation, construction), each reviewed by someone qualified in that area
+- Adaptive engine: target weak, high-weight topics and resurface missed concepts
+- AI tutor grounded in the verified solution
+- Review the 44 hand-written questions through the same workflow
+- Report-an-error button for students
 - Figures/diagrams and LaTeX math rendering in questions
 - Video or written lessons per topic
 - Spaced-repetition review of missed questions

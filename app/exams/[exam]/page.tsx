@@ -5,6 +5,7 @@ import { questionsFor } from "@/lib/content";
 import { getCurrentUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
 import { topicStats } from "@/lib/progress";
+import { approvedTemplateCount } from "@/lib/questions";
 
 export default async function ExamPage({ params }: { params: Promise<{ exam: string }> }) {
   const { exam } = await params;
@@ -34,7 +35,7 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        {def.topics.map((t) => {
+        {(await Promise.all(def.topics.map(async (t) => ({ t, gens: await approvedTemplateCount(exam, t.slug) })))).map(({ t, gens }) => {
           const qs = questionsFor(exam, t.slug);
           const available = access ? qs.length : qs.filter((q) => q.free).length;
           const s = stats[t.slug];
@@ -48,6 +49,11 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
                 {available} of {qs.length} questions available
                 {s ? ` · ${Math.round((100 * s.correct) / s.attempted)}% correct (${s.attempted} done)` : ""}
               </p>
+              {gens > 0 && (
+                <p className="text-sm mt-1" style={{ color: "var(--brand)" }}>
+                  + unlimited problems from {gens} engineer-reviewed generator{gens > 1 ? "s" : ""}{access ? "" : " 🔒"}
+                </p>
+              )}
             </Link>
           );
         })}
