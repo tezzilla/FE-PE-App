@@ -10,6 +10,7 @@
     "db:push": "prisma db push",
     "test:content": "tsx scripts/validate-questions.ts",
     "test:templates": "tsx scripts/validate-templates.ts",
+    "test:adaptive": "tsx scripts/test-adaptive.ts",
     "make-reviewer": "tsx scripts/make-reviewer.ts"
   },
   "dependencies": {

@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
 import { topicStats } from "@/lib/progress";
 import { approvedTemplateCount } from "@/lib/questions";
+import { ReadinessCard } from "@/components/ReadinessCard";
 
 export default async function ExamPage({ params }: { params: Promise<{ exam: string }> }) {
   const { exam } = await params;
@@ -29,8 +30,17 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
         </div>
       )}
 
+      {user ? (
+        <ReadinessCard user={user} exam={exam} back={`/exams/${exam}`} />
+      ) : (
+        <div className="card p-4 flex flex-wrap items-center gap-3">
+          <p className="flex-1">Smart practice learns what you&apos;re weak at and targets it. Free account required.</p>
+          <Link href="/signup" className="btn">Create free account</Link>
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-3">
-        <Link href={`/exams/${exam}/practice`} className="btn">Mixed practice</Link>
+        <Link href={`/exams/${exam}/practice`} className="btn-ghost">Mixed practice</Link>
         <Link href={`/exams/${exam}/mock`} className="btn-ghost">Timed mock exam {access ? "" : "🔒"}</Link>
       </div>
 

@@ -24,6 +24,8 @@ model User {
   role                 String    @default("user")
   // Shown to students next to reviewed problems, e.g. "Passed FE and PE Civil: WRE". Change to "P.E." once licensed.
   reviewerCredential   String?
+  // PE depth module the student is taking (topic slug). Shapes PE readiness weights.
+  peDepth              String?
   attempts             Attempt[]
   mockExams            MockExam[]
   reviews              TemplateReview[]

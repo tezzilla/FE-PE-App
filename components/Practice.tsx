@@ -9,10 +9,15 @@ export function Practice({
   questions,
   topicNames,
   lockedCount,
+  reasons,
+  againLabel = "Practice again",
 }: {
   questions: PublicQuestion[];
   topicNames: Record<string, string>;
   lockedCount: number;
+  /** Why the adaptive engine picked each question, keyed by question id. */
+  reasons?: Record<string, string>;
+  againLabel?: string;
 }) {
   const [i, setI] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -55,7 +60,7 @@ export function Practice({
         )}
         <div className="flex gap-3 justify-center">
           {lockedCount > 0 && <Link href="/pricing" className="btn">Unlock all questions</Link>}
-          <button className="btn-ghost" onClick={() => location.reload()}>Practice again</button>
+          <button className={lockedCount > 0 ? "btn-ghost" : "btn"} onClick={() => location.reload()}>{againLabel}</button>
         </div>
       </div>
     );
@@ -66,6 +71,9 @@ export function Practice({
       <p className="muted text-sm">
         Question {i + 1} of {questions.length} · {topicNames[q.topic]} · Score {score.correct}/{score.done}
       </p>
+      {reasons?.[q.id] && (
+        <p className="text-sm font-medium" style={{ color: "var(--brand)" }}>Why this question: {reasons[q.id]}</p>
+      )}
       <QuestionCard question={q} selected={selected} onSelect={feedback ? undefined : setSelected} feedback={feedback} />
       <div className="flex justify-end">
         {feedback ? (
