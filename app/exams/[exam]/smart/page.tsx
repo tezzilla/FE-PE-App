@@ -17,9 +17,9 @@ export default async function SmartPractice({ params }: { params: Promise<{ exam
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
-      <div className="flex items-baseline justify-between gap-3">
-        <h1 className="text-2xl font-bold">{EXAMS[exam].name}: Smart practice</h1>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline">Exam overview</Link>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h1 className="text-xl sm:text-2xl font-bold">{EXAMS[exam].name}: Smart practice</h1>
+        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">Exam overview</Link>
       </div>
       <p className="muted text-sm">
         10 questions picked for you: problem types you missed, topics where you&apos;re weakest relative to how much

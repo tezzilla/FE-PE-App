@@ -1,5 +1,5 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
 import { db } from "./db";
@@ -13,12 +13,17 @@ function secret() {
   return new TextEncoder().encode(s);
 }
 
-export async function createSession(userId: string) {
-  const token = await new SignJWT({ sub: userId })
+/** Signed session token. Used as the web cookie value and as the mobile app's bearer token. */
+export async function createToken(userId: string) {
+  return new SignJWT({ sub: userId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${MAX_AGE}s`)
     .sign(secret());
+}
+
+export async function createSession(userId: string) {
+  const token = await createToken(userId);
   (await cookies()).set(COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -32,8 +37,21 @@ export async function destroySession() {
   (await cookies()).delete(COOKIE);
 }
 
+async function bearerToken() {
+  return /^Bearer (.+)$/.exec((await headers()).get("authorization") ?? "")?.[1];
+}
+
+/** The signed-in user, from the web session cookie or a mobile `Authorization: Bearer` token. */
 export async function getCurrentUser() {
-  const token = (await cookies()).get(COOKIE)?.value;
+  return userFromToken((await bearerToken()) ?? (await cookies()).get(COOKIE)?.value);
+}
+
+/** Mobile API routes accept only bearer tokens, never cookies, so cross-origin access can't ride a browser session. */
+export async function getBearerUser() {
+  return userFromToken(await bearerToken());
+}
+
+async function userFromToken(token: string | undefined) {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secret());

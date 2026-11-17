@@ -32,11 +32,11 @@ export default async function PracticePage({
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
-      <div className="flex items-baseline justify-between gap-3">
-        <h1 className="text-2xl font-bold">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h1 className="text-xl sm:text-2xl font-bold">
           {EXAMS[exam].name}: {topic ? topicName(exam, topic) : "Mixed practice"}
         </h1>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline">All topics</Link>
+        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">All topics</Link>
       </div>
       {!user && (
         <p className="muted text-sm">

@@ -25,8 +25,8 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
 
       {!access && (
         <div className="card p-4 flex flex-wrap items-center gap-3">
-          <p className="flex-1">You are on the free tier: one sample question per topic. Subscribe for the full bank and mock exams.</p>
-          <Link href="/pricing" className="btn">Unlock {def.name}</Link>
+          <p className="flex-1 min-w-56">You are on the free tier: one sample question per topic. Subscribe for the full bank and mock exams.</p>
+          <Link href="/pricing" className="btn w-full sm:w-auto">Unlock {def.name}</Link>
         </div>
       )}
 

@@ -34,7 +34,7 @@ export async function ReadinessCard({ user, exam, back }: { user: User; exam: Ex
           </p>
           {r.dueReviews > 0 && <p className="text-sm">{r.dueReviews} problem type{r.dueReviews > 1 ? "s" : ""} due for review</p>}
         </div>
-        <Link href={`/exams/${exam}/smart`} className="btn self-center">Smart practice</Link>
+        <Link href={`/exams/${exam}/smart`} className="btn self-center w-full sm:w-auto">Smart practice</Link>
       </div>
 
       {exam === "pe-civil" && (
