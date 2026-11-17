@@ -96,7 +96,13 @@ async function request<T>(path: string, token: string | null, init?: RequestInit
     throw new ApiError(`Can't reach CivilPrep at ${API_URL || 'this site'}. Check your connection.`, 0);
   }
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new ApiError(body.error ?? `Request failed (${res.status})`, res.status);
+  if (!res.ok) {
+    // A 404 with no JSON error means the server isn't a CivilPrep backend (wrong URL or failed deploy).
+    const message = body.error ?? (res.status === 404
+      ? `No CivilPrep API at ${API_URL || 'this site'} (404). Check EXPO_PUBLIC_API_URL and that the site is deployed.`
+      : `Request to ${API_URL || 'this site'} failed (${res.status}).`);
+    throw new ApiError(message, res.status);
+  }
   return body as T;
 }
 
