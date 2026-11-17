@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f8fafc;
+  --fg: #0f172a;
+  --muted: #64748b;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --brand: #ea580c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1120;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #111827;
+    --border: #1f2937;
+    --brand: #fb923c;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+.muted { color: var(--muted); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 0.5rem; padding: 0.6rem 1rem; font-weight: 600;
+  background: var(--brand); color: white;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 0.5rem; padding: 0.6rem 1rem; font-weight: 600;
+  border: 1px solid var(--border);
+}
+.input {
+  width: 100%; border: 1px solid var(--border); border-radius: 0.5rem;
+  padding: 0.6rem 0.75rem; background: var(--card); color: var(--fg);
+}

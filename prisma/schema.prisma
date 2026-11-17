@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  name                 String?
+  passwordHash         String
+  createdAt            DateTime  @default(now())
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  // "fe-civil" | "pe-civil" | "all-access"
+  plan                 String?
+  // Mirrors Stripe subscription status: active, trialing, past_due, canceled, ...
+  subscriptionStatus   String?
+  currentPeriodEnd     DateTime?
+  attempts             Attempt[]
+  mockExams            MockExam[]
+}
+
+model Attempt {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String
+  exam       String
+  topic      String
+  selected   Int
+  correct    Boolean
+  createdAt  DateTime @default(now())
+
+  @@index([userId, exam])
+}
+
+model MockExam {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam       String
+  total      Int
+  correct    Int
+  durationS  Int
+  createdAt  DateTime @default(now())
+
+  @@index([userId, exam])
+}
