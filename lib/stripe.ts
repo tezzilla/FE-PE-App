@@ -16,3 +16,8 @@ export function stripe(): Stripe {
 export function fakeBillingAllowed() {
   return !stripeEnabled() && process.env.NODE_ENV !== "production";
 }
+
+/** True when the Subscribe buttons can work: real Stripe with prices set, or local fake billing. */
+export function billingReady(priceIds: (string | undefined)[]) {
+  return fakeBillingAllowed() || (stripeEnabled() && priceIds.every(Boolean));
+}

@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { PLANS } from "@/lib/plans";
+import { PLANS, stripePriceId } from "@/lib/plans";
+import { billingReady } from "@/lib/stripe";
 import { getCurrentUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/access";
 
 export default async function PricingPage() {
   const user = await getCurrentUser();
   const subscribed = hasActiveSubscription(user);
+  const ready = billingReady(PLANS.map(stripePriceId));
 
   return (
     <div className="space-y-8">
@@ -26,7 +28,9 @@ export default async function PricingPage() {
                 {p.features.map((f) => <li key={f}>✓ {f}</li>)}
               </ul>
               <div className="mt-6">
-                {!user ? (
+                {!ready && !subscribed ? (
+                  <p className="text-center muted text-sm">Subscriptions open soon. Free practice is available now.</p>
+                ) : !user ? (
                   <Link href="/signup" className="btn w-full">Sign up to subscribe</Link>
                 ) : current ? (
                   <p className="text-center font-semibold">Current plan</p>

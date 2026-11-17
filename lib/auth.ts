@@ -68,8 +68,15 @@ export async function requireUser() {
   return user;
 }
 
-export function isReviewer(user: { role: string } | null) {
-  return !!user && (user.role === "reviewer" || user.role === "admin");
+/** Comma-separated emails that are always reviewers. Lets you grant access on a host without running scripts. */
+function reviewerEmails() {
+  return (process.env.REVIEWER_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+}
+
+export function isReviewer(user: { role: string; email?: string } | null) {
+  if (!user) return false;
+  if (user.role === "reviewer" || user.role === "admin") return true;
+  return !!user.email && reviewerEmails().includes(user.email.toLowerCase());
 }
 
 /** Reviewer-only pages 404 for everyone else so the area isn't advertised. */
