@@ -12,6 +12,12 @@ Subscription web app that replaces $1,000+ prep courses with a monthly plan. Sta
 - Stripe Checkout subscriptions, Customer Portal, and webhook sync
 - Answers and explanations never reach the browser until the server grades them, so the paywall can't be bypassed from the client
 
+## Mobile app
+
+`mobile/` is an Expo (React Native) app for iOS and Android that shares this backend through `/api/mobile/*`. Those routes accept only `Authorization: Bearer` tokens (never cookies), so CORS is open on them only. See `mobile/README.md`.
+
+The website also works on phones: bottom tab bar under 640px wide, and a web app manifest for Add to Home Screen.
+
 ## Run locally
 
 ```bash
