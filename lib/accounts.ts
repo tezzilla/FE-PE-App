@@ -2,14 +2,19 @@ import "server-only";
 import bcrypt from "bcryptjs";
 import type { User } from "@prisma/client";
 import { db } from "./db";
+import { LIMITS, blockedFor, clear, clientIp, hit, tooMany } from "./ratelimit";
 
-export type AccountResult = { user: User } | { error: string };
+export type AccountResult = { user: User } | { error: string; rateLimited?: boolean };
 
 export function normalizeEmail(v: unknown) {
   return String(v ?? "").trim().toLowerCase();
 }
 
 export async function createAccount(emailIn: unknown, passwordIn: unknown, nameIn?: unknown): Promise<AccountResult> {
+  const ipKey = `signup:ip:${await clientIp()}`;
+  const wait = await blockedFor(ipKey, LIMITS.signupIp);
+  if (wait) return { error: tooMany(wait), rateLimited: true };
+  await hit(ipKey, LIMITS.signupIp);
   const email = normalizeEmail(emailIn);
   const password = String(passwordIn ?? "");
   const name = String(nameIn ?? "").trim() || null;
@@ -21,9 +26,18 @@ export async function createAccount(emailIn: unknown, passwordIn: unknown, nameI
 }
 
 export async function verifyCredentials(emailIn: unknown, passwordIn: unknown): Promise<AccountResult> {
-  const user = await db.user.findUnique({ where: { email: normalizeEmail(emailIn) } });
+  const email = normalizeEmail(emailIn);
+  const emailKey = `login:email:${email}`;
+  const ipKey = `login:ip:${await clientIp()}`;
+  const wait = Math.max(await blockedFor(emailKey, LIMITS.loginEmail), await blockedFor(ipKey, LIMITS.loginIp));
+  if (wait) return { error: tooMany(wait), rateLimited: true };
+  await hit(ipKey, LIMITS.loginIp);
+
+  const user = await db.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(String(passwordIn ?? ""), user.passwordHash))) {
+    await hit(emailKey, LIMITS.loginEmail);
     return { error: "Incorrect email or password." };
   }
+  await clear(emailKey);
   return { user };
 }

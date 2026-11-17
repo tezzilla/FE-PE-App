@@ -55,7 +55,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-6 sm:py-8 pb-24 sm:pb-8">{children}</main>
         <MobileTabBar signedIn={!!user} />
         <footer className="muted text-sm text-center px-4 pt-2 pb-24 sm:py-6">
-          CivilPrep is not affiliated with or endorsed by NCEES. FE and PE are exams administered by NCEES.
+          <p>CivilPrep is not affiliated with or endorsed by NCEES. FE and PE are exams administered by NCEES.</p>
+          <p className="mt-2">
+            <Link href="/terms" className="hover:underline">Terms</Link>
+            {" · "}
+            <Link href="/privacy" className="hover:underline">Privacy</Link>
+          </p>
         </footer>
       </body>
     </html>

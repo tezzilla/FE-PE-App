@@ -74,3 +74,10 @@ model TemplateReview {
 
   @@index([templateId, templateVersion])
 }
+
+// Fixed-window counters for login/signup rate limiting (shared across serverless instances).
+model RateLimit {
+  key         String   @id
+  count       Int
+  windowStart DateTime
+}

@@ -14,6 +14,9 @@ export default async function PricingPage() {
       <div className="text-center">
         <h1 className="text-3xl font-bold">Simple monthly pricing</h1>
         <p className="muted mt-2">Study for as many months as you need. Cancel anytime from your dashboard.</p>
+        <p className="muted text-sm mt-1">
+          Plans renew monthly until you cancel. See the <Link href="/terms" className="underline">Terms</Link>.
+        </p>
       </div>
       <div className="grid md:grid-cols-3 gap-6">
         {PLANS.map((p) => {

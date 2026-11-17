@@ -1,3 +1,4 @@
+import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +8,11 @@ import { Button, Card } from '@/components/ui';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useSession } from '@/ctx';
 import { useTheme } from '@/hooks/use-theme';
+import { API_URL } from '@/lib/api';
+
+// Legal pages live on the website. On the web build API_URL can be '' (same origin).
+const siteUrl = (path: string) =>
+  `${API_URL || (typeof window !== 'undefined' ? window.location.origin : '')}${path}`;
 
 export default function SignIn() {
   const { signIn } = useSession();
@@ -79,6 +85,19 @@ export default function SignIn() {
               loading={busy}
               disabled={!email || !password}
             />
+            {mode === 'signup' && (
+              <ThemedText type="small" themeColor="textSecondary" testID="consent">
+                By creating an account you agree to the{' '}
+                <ThemedText type="small" style={{ color: theme.brand }} onPress={() => WebBrowser.openBrowserAsync(siteUrl('/terms'))}>
+                  Terms of Service
+                </ThemedText>{' '}
+                and{' '}
+                <ThemedText type="small" style={{ color: theme.brand }} onPress={() => WebBrowser.openBrowserAsync(siteUrl('/privacy'))}>
+                  Privacy Policy
+                </ThemedText>
+                .
+              </ThemedText>
+            )}
           </Card>
           <Button
             variant="ghost"

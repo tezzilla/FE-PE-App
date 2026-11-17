@@ -10,6 +10,9 @@ export async function POST(req: Request) {
   const r = body.mode === "signup"
     ? await createAccount(body.email, body.password, body.name)
     : await verifyCredentials(body.email, body.password);
-  if ("error" in r) return NextResponse.json({ error: r.error }, { status: body.mode === "signup" ? 400 : 401 });
+  if ("error" in r) {
+    const status = r.rateLimited ? 429 : body.mode === "signup" ? 400 : 401;
+    return NextResponse.json({ error: r.error }, { status });
+  }
   return NextResponse.json({ token: await createToken(r.user.id), user: publicUser(r.user) });
 }
