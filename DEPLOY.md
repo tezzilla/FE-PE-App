@@ -44,9 +44,10 @@ npx expo start --clear
 The app then works on any network, not just your home Wi-Fi.
 
 ## Subscriptions
-Until Stripe is configured, the pricing page shows "Subscriptions open soon" and everyone uses the
-free tier. To turn on billing, follow "Going live checklist → Stripe" in README.md, add the
-`STRIPE_*` variables in Vercel, and redeploy.
+Stripe setup is in **docs/STRIPE.md**. In short: run `npm run stripe:setup` with your key to create the
+products, prices, webhook and Customer Portal, then set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`
+in Vercel and redeploy. No price IDs needed. Until Stripe is configured, the pricing page shows
+"Subscriptions open soon".
 
 ## Every later update
 Push to the branch Vercel watches; it redeploys automatically. Schema changes are applied by

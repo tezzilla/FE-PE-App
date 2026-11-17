@@ -1,0 +1,6 @@
+#!/bin/sh
+# Block commits that contain Stripe secret, restricted, or webhook keys.
+if git diff --cached -U0 --diff-filter=ACM | grep -E '^\+' | grep -qE '(sk|rk)_(live|test)_[0-9A-Za-z]{10,}|whsec_[0-9A-Za-z]{10,}'; then
+  echo "pre-commit: a Stripe key (sk_/rk_/whsec_) is in the staged changes. Remove it and use environment variables." >&2
+  exit 1
+fi

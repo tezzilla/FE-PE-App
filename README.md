@@ -45,7 +45,7 @@ Displayed prices are in code; the charged price lives in Stripe.
 Step-by-step hosting instructions (Vercel + Neon Postgres) are in **DEPLOY.md**. Summary:
 
 1. **Hosting and database:** Vercel project with build command `npm run vercel-build`, Neon Postgres attached, and `AUTH_SECRET`, `APP_URL`, `REVIEWER_EMAILS` set. Production uses Postgres automatically; local development stays on SQLite.
-2. **Stripe:** create 3 recurring monthly Prices, put their IDs in `STRIPE_PRICE_*`. Add a webhook endpoint at `https://<domain>/api/stripe/webhook` for `checkout.session.completed` and `customer.subscription.created/updated/deleted`, put the signing secret in `STRIPE_WEBHOOK_SECRET`. Enable the Customer Portal in the Stripe dashboard. Until then the pricing page says "Subscriptions open soon".
+2. **Stripe:** see **docs/STRIPE.md**. `npm run stripe:setup` creates products, prices (found by lookup key), the webhook and the Customer Portal; then set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`. Stripe Tax needs a head office address and registrations before `STRIPE_AUTOMATIC_TAX=true`.
 3. **Legal:** draft Terms of Service and Privacy Policy are at `/terms` and `/privacy` (`app/terms`, `app/privacy`). Have a lawyer review them, set `CONTACT_EMAIL`, and keep the "not affiliated with NCEES" notice.
 4. **Security:** login and signup are rate-limited (`lib/ratelimit.ts`: 8 failed logins per account per 15 min, 100 attempts per IP per 15 min, 20 signups per IP per hour). Plan the Next.js 16 / Prisma 7 upgrades (current `npm audit` findings are in build-time tooling only).
 

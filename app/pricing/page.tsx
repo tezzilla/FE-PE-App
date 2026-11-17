@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { PLANS, stripePriceId } from "@/lib/plans";
+import { PLANS } from "@/lib/plans";
 import { billingReady } from "@/lib/stripe";
 import { getCurrentUser } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/access";
 
-export default async function PricingPage() {
+export default async function PricingPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const { error } = await searchParams;
   const user = await getCurrentUser();
   const subscribed = hasActiveSubscription(user);
-  const ready = billingReady(PLANS.map(stripePriceId));
+  const ready = await billingReady();
 
   return (
     <div className="space-y-8">
@@ -18,6 +19,9 @@ export default async function PricingPage() {
           Plans renew monthly until you cancel. See the <Link href="/terms" className="underline">Terms</Link>.
         </p>
       </div>
+      {error === "unavailable" && (
+        <div className="card p-4 text-center">That plan isn&apos;t available right now. Please try again later.</div>
+      )}
       <div className="grid md:grid-cols-3 gap-6">
         {PLANS.map((p) => {
           const current = subscribed && user?.plan === p.id;

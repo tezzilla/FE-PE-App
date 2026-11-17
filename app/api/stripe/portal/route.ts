@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { fakeBillingAllowed, stripe } from "@/lib/stripe";
+import { fakeBillingAllowed, portalConfigurationId, stripe } from "@/lib/stripe";
 
 const appUrl = () => process.env.APP_URL ?? "http://localhost:3000";
 
@@ -16,9 +16,11 @@ export async function POST(req: Request) {
   }
 
   if (!user.stripeCustomerId) return NextResponse.redirect(new URL("/pricing", req.url), 303);
+  const configuration = await portalConfigurationId();
   const session = await stripe().billingPortal.sessions.create({
     customer: user.stripeCustomerId,
     return_url: `${appUrl()}/dashboard`,
+    ...(configuration ? { configuration } : {}),
   });
   return NextResponse.redirect(session.url, 303);
 }
