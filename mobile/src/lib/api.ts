@@ -1,7 +1,24 @@
 // Typed client for the CivilPrep website's mobile API (/api/mobile/*).
 // Set EXPO_PUBLIC_API_URL to the deployed site, e.g. https://civilprep.example.com.
+import Constants from 'expo-constants';
 
-export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+/**
+ * Where the website's API lives.
+ * 1. EXPO_PUBLIC_API_URL, if set (production builds, or pointing dev at a deployed site).
+ * 2. In development: the same computer the phone loaded the app from (Expo's dev server host),
+ *    port 3000. No need to look up the PC's IP address by hand.
+ * 3. Fallback: localhost:3000 (works for web and simulators on the same machine).
+ */
+function resolveApiUrl(): string {
+  const fromEnv = process.env.EXPO_PUBLIC_API_URL;
+  if (fromEnv !== undefined) return fromEnv.replace(/\/$/, '');
+  const host = Constants.expoConfig?.hostUri?.split(':')[0];
+  // Tunnel hosts (*.exp.direct, *.on.expo.app) forward only the Expo dev server, not the website.
+  if (host && !/\.(exp\.direct|expo\.app)$/.test(host)) return `http://${host}:3000`;
+  return 'http://localhost:3000';
+}
+
+export const API_URL = resolveApiUrl();
 
 export type ExamId = 'fe-civil' | 'pe-civil';
 
@@ -76,7 +93,7 @@ async function request<T>(path: string, token: string | null, init?: RequestInit
       },
     });
   } catch {
-    throw new ApiError("Can't reach CivilPrep. Check your connection.", 0);
+    throw new ApiError(`Can't reach CivilPrep at ${API_URL || 'this site'}. Check your connection.`, 0);
   }
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(body.error ?? `Request failed (${res.status})`, res.status);

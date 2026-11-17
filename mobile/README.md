@@ -14,10 +14,10 @@ iOS and Android app for CivilPrep, built with Expo SDK 58 and Expo Router. It us
 ```bash
 cd mobile
 npm install
-EXPO_PUBLIC_API_URL=http://<your-computer's-LAN-IP>:3000 npx expo start
+npx expo start
 ```
 
-Scan the QR code with **Expo Go** on your phone (same Wi-Fi). Start the website first (`npm run dev` in the repo root). Use your computer's LAN IP, not `localhost`: on a phone, `localhost` is the phone.
+Scan the QR code with **Expo Go** on your phone (same Wi-Fi). Start the website first (`npm run dev` in the repo root). In development the app finds the website automatically: it uses the computer it loaded from, port 3000. Set `EXPO_PUBLIC_API_URL` only to point at a different server, such as the deployed site. If the app can't connect, its error message shows the address it tried.
 
 Checks: `npx tsc --noEmit` and `npx expo lint`.
 
