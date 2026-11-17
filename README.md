@@ -49,6 +49,20 @@ Step-by-step hosting instructions (Vercel + Neon Postgres) are in **DEPLOY.md**.
 3. **Legal:** Terms of Service, Privacy Policy, refund policy. Keep the "not affiliated with NCEES" notice.
 4. **Before real traffic:** add rate limiting to login and signup, and plan the Next.js 16 / Prisma 7 upgrades (current `npm audit` findings are in build-time tooling only).
 
+## Adaptive engine (Smart practice)
+
+`lib/adaptive/model.ts` is pure logic; `lib/adaptive/server.ts` connects it to the database. All state is computed from the answer history, so there is nothing extra to keep in sync.
+
+- **Topic mastery:** recency-weighted accuracy (21-day half-life) with a pessimistic prior (40%), so unpracticed topics count as weak.
+- **Spaced repetition per problem type:** all variants of a template are one skill. A miss comes back in 15 min with new numbers; streaks push reviews out to 1, 3, 7, 21, 60 days. A missed fixed question waits a day, because repeating it sooner tests memory of the answer, not the method.
+- **Session planner (10 questions):** up to 30% due reviews, then topics sampled by exam weight × (1 − mastery), preferring problem types you recently missed, then unseen ones. Topics are interleaved. Each question shows "Why this question".
+- **Readiness:** exam-weighted mastery plus coverage, with the 3 topics where improvement is worth the most. Shown on the dashboard and exam pages. It is not a pass prediction.
+- **PE depth module:** choosing one weights it at 60% of PE readiness (50% depth + its share of breadth), other areas 10% each.
+
+`npm run test:adaptive` runs unit checks and a simulated student who is weak in half the topics. With templates in every topic, the engine gives weak topics about 3.6× the practice of strong ones (per unit of exam weight), brings back about 84% of missed problem types within 2 days, and estimates readiness within about 5 points (slightly conservative).
+
+**Content limits adaptivity.** On today's content (templates only in water resources and fluids), weak topics run out of fresh material and the targeting mostly disappears. Every topic needs templates.
+
 ## Problem generators (templates)
 
 A template is code that generates unlimited numeric variants of one problem type. The answer is computed, so every variant is correct if the template is. Wrong choices come from specific common mistakes, documented in a comment next to each one.
