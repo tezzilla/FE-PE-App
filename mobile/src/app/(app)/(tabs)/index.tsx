@@ -1,15 +1,18 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Card, ErrorView, Loading, ProgressBar, Screen } from '@/components/ui';
+import { Button, Card, ErrorView, Loading, ProgressBar, Screen } from '@/components/ui';
 import { masteryColor, Spacing } from '@/constants/theme';
 import { useExam } from '@/exam-ctx';
 import { useLoad } from '@/hooks/use-load';
 import { useTheme } from '@/hooks/use-theme';
-import { api } from '@/lib/api';
+import { API_URL, api } from '@/lib/api';
 import { nextStep } from '@/lib/next-step';
+
+const shortDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 
 export default function Home() {
   const theme = useTheme();
@@ -37,6 +40,28 @@ export default function Home() {
           {user.active ? (user.summary ?? user.plan?.name) : 'Free plan: sample questions in every topic'}
         </ThemedText>
       </View>
+
+      {exam.extension && (
+        <Card style={{ borderColor: theme.brand }}>
+          <ThemedText type="smallBold" testID="pass-ending">
+            {exam.extension.daysLeft > 0
+              ? `Your ${exam.name} pass ends ${shortDate(exam.extension.until)} (${exam.extension.daysLeft} day${exam.extension.daysLeft === 1 ? '' : 's'} left).`
+              : `Your ${exam.name} pass ended ${shortDate(exam.extension.until)}.`}
+          </ThemedText>
+          {/* Store rules: native builds don't link to web checkout. See mobile/README.md. */}
+          {Platform.OS === 'web' ? (
+            <Button
+              title={`Extend 30 days for $${exam.extension.price}`}
+              testID="extend"
+              onPress={() => WebBrowser.openBrowserAsync(`${API_URL}/dashboard#extend`)}
+            />
+          ) : (
+            <ThemedText type="small" themeColor="textSecondary">
+              Exam later than that? You can extend your access from your account on the CivilPrep website. Your progress stays put.
+            </ThemedText>
+          )}
+        </Card>
+      )}
 
       {/* The one thing to do next */}
       <Pressable testID="next-step" accessibilityRole="button" onPress={start} style={({ pressed }) => [styles.next, { backgroundColor: theme.brand, opacity: pressed ? 0.9 : 1 }]}>

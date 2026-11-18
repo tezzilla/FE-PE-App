@@ -48,7 +48,7 @@ export default function Practice() {
   const [busy, setBusy] = useState(false);
   const [checkError, setCheckError] = useState<string | null>(null);
   // Per-question clock for pacing stats; restarts when a new question (or a new set) appears.
-  const shownAt = useRef(Date.now());
+  const shownAt = useRef(0); // set by the effect below when each question appears
   useEffect(() => {
     shownAt.current = Date.now();
   }, [i, data]);

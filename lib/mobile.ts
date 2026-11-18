@@ -7,6 +7,7 @@ import { getPlan } from "./plans";
 import { examReadiness, learnerState, missedCount, pacing, studyPlanFor } from "./adaptive/server";
 import { EXAM_PACE_S } from "./adaptive/quiz";
 import { dueCardCount } from "./cards";
+import { extensionOffer } from "./extensions";
 import { topicMastery } from "./adaptive/model";
 
 export const unauthorized = () => NextResponse.json({ error: "Sign in required" }, { status: 401 });
@@ -38,6 +39,7 @@ export async function homePayload(user: User) {
         dueCardCount(user, id),
         pacing(user, id),
       ]);
+      const ext = await extensionOffer(user, id);
       return {
         id,
         name: def.name,
@@ -45,6 +47,8 @@ export async function homePayload(user: User) {
         access: hasExamAccess(user, id),
         missed,
         dueCards,
+        // Pass ending soon (or ended): the app shows a notice; buying happens on the website.
+        extension: ext ? { until: ext.until.toISOString(), daysLeft: ext.daysLeft, price: ext.plan.price } : null,
         pacing: pace.total >= 5 ? { averageS: pace.overallS, examPaceS: EXAM_PACE_S[id], answered: pace.total } : null,
         plan: sp
           ? {

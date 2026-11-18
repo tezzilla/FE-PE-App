@@ -2,7 +2,8 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { requireReviewer } from "@/lib/auth";
 import { setupStatus, type CheckState } from "@/lib/setup-status";
-import { sendTestEmail } from "./actions";
+import { templateReviewStatus } from "@/lib/reviews";
+import { approveVerified, sendTestEmail } from "./actions";
 import { SubmitButton } from "./SubmitButton";
 
 export const dynamic = "force-dynamic";
@@ -22,9 +23,11 @@ const TEST_MSG: Record<string, string> = {
   notallowed: "For safety, test emails can only go to your own login email or an address on your sending domain.",
 };
 
-export default async function SetupPage({ searchParams }: { searchParams: Promise<{ test?: string }> }) {
+export default async function SetupPage({ searchParams }: { searchParams: Promise<{ test?: string; approved?: string; failed?: string }> }) {
   const user = await requireReviewer();
-  const { test } = await searchParams;
+  const { test, approved: approvedParam, failed } = await searchParams;
+  const failedIds = (failed ?? "").split(",").filter(Boolean);
+  const waiting = [...(await templateReviewStatus()).values()].filter((s) => s.status === "needs_review").length;
   const checks = await setupStatus((await headers()).get("host"));
   const bad = checks.filter((c) => c.state !== "ok").length;
 
@@ -49,6 +52,26 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
           </div>
         ))}
       </div>
+      <form id="auto-approve" action={approveVerified} className="card p-4 space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex-1 min-w-56 text-sm space-y-1">
+            <p className="font-semibold">Problem types waiting for review: {waiting}</p>
+            <p className="muted">
+              Approve every waiting type that passes the independent answer check (200 versions each, re-solved from the
+              question text). Students will see &ldquo;reviewed by CivilPrep&apos;s independent answer check&rdquo;, not your
+              name. Types you&apos;ve already decided on are left alone.
+            </p>
+          </div>
+          <button className="btn" disabled={waiting === 0}>Approve all verified</button>
+        </div>
+        {approvedParam !== undefined && (
+          <p role="status" className="text-sm p-3 rounded" style={{ background: "var(--bg)", border: `1px solid ${failedIds.length ? "#ca8a04" : "#16a34a"}` }}>
+            Approved {approvedParam} problem type{approvedParam === "1" ? "" : "s"}.
+            {failedIds.length ? ` Not approved (failed the check, review by hand): ${failedIds.join(", ")}.` : " None failed the check."}
+          </p>
+        )}
+      </form>
+
       <form id="test-email" action={sendTestEmail} className="card p-4 space-y-3">
         <div className="flex flex-wrap items-center gap-3">
           <label className="flex-1 min-w-56 text-sm">

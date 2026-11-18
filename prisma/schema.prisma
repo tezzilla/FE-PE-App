@@ -88,6 +88,9 @@ model TemplateReview {
   reviewer        User      @relation(fields: [reviewerId], references: [id])
   // in_progress | approved | rejected | changes_requested
   status          String
+  // manual: a reviewer solved the blind samples by hand. automated: approved because the independent
+  // answer check (lib/templates/verify.ts) passed; students see that, not a person's name.
+  method          String    @default("manual")
   // JSON: [{ seed, given, correct, match }]
   samples         String
   notes           String?

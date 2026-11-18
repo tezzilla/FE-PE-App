@@ -13,7 +13,12 @@ export interface ReviewInfo {
   credential?: string | null;
   decidedAt?: Date | null;
   notes?: string | null;
+  /** manual: solved by hand by the named reviewer. automated: approved by the independent answer check. */
+  method?: "manual" | "automated";
 }
+
+/** What students see for an automatically approved problem type (never a person's name). */
+export const AUTOMATED_REVIEWER = "CivilPrep's independent answer check";
 
 /** Latest decision for each template's current version. A version bump resets it to needs_review. */
 export async function templateReviewStatus(): Promise<Map<string, ReviewInfo>> {
@@ -30,9 +35,11 @@ export async function templateReviewStatus(): Promise<Map<string, ReviewInfo>> {
       r
         ? {
             status: r.status as ReviewStatus,
-            // Never fall back to email: this text is shown to students.
-            reviewerName: r.reviewer.name || "CivilPrep reviewer",
-            credential: r.reviewer.reviewerCredential,
+            // Never fall back to email: this text is shown to students. Automated approvals never
+            // carry a person's name, since no one solved those by hand.
+            reviewerName: r.method === "automated" ? AUTOMATED_REVIEWER : r.reviewer.name || "CivilPrep reviewer",
+            credential: r.method === "automated" ? null : r.reviewer.reviewerCredential,
+            method: r.method === "automated" ? "automated" : "manual",
             decidedAt: r.decidedAt,
             notes: r.notes,
           }

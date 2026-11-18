@@ -3,6 +3,45 @@
 import { redirect } from "next/navigation";
 import { requireReviewer } from "@/lib/auth";
 import { emailEnabled, sendEmailDetailed } from "@/lib/email";
+import { db } from "@/lib/db";
+import { templateReviewStatus } from "@/lib/reviews";
+import { TEMPLATES } from "@/lib/templates";
+import { verifyTemplate } from "@/lib/templates/verify";
+
+/**
+ * Approve every problem type that's still waiting for review and passes the independent answer check
+ * (200 variants re-solved from the prompt text). Recorded as automated, so students see "CivilPrep's
+ * independent answer check", never the reviewer's name. Earlier manual decisions (rejected, changes
+ * requested, or already approved) are left alone.
+ */
+export async function approveVerified() {
+  const user = await requireReviewer();
+  const status = await templateReviewStatus();
+  let approved = 0;
+  const failed: string[] = [];
+  for (const t of TEMPLATES) {
+    if (status.get(t.id)?.status !== "needs_review") continue;
+    const r = verifyTemplate(t, 200);
+    if (!r.ok) {
+      failed.push(t.id);
+      continue;
+    }
+    await db.templateReview.create({
+      data: {
+        templateId: t.id,
+        templateVersion: t.version,
+        reviewerId: user.id,
+        status: "approved",
+        method: "automated",
+        samples: JSON.stringify({ variants: r.variants, worstError: r.worstError, fallbackChoices: r.fallbackChoices }),
+        notes: `Automated: ${r.variants} variants re-solved independently; largest difference ${(r.worstError * 100).toFixed(4)}%.`,
+        decidedAt: new Date(),
+      },
+    });
+    approved++;
+  }
+  redirect(`/review/setup?approved=${approved}&failed=${encodeURIComponent(failed.join(","))}#auto-approve`);
+}
 
 /** The sender's domain, from EMAIL_FROM ("Name <a@b.com>" or "a@b.com"). */
 function senderDomain() {

@@ -42,6 +42,8 @@ export interface ExamSummary {
   missed?: number;
   /** Flashcards due for review now. */
   dueCards?: number;
+  /** Pass ending within 3 weeks (or ended): when, and the price of a 30-day extension on the website. */
+  extension?: { until: string; daysLeft: number; price: number } | null;
   /** Average seconds per question vs. real exam pace (shown after 5+ timed answers). */
   pacing?: { averageS: number; examPaceS: number; answered: number } | null;
   /** Study plan summary, if the student set an exam date on the website. */
@@ -188,6 +190,9 @@ export const api = {
   topic: (token: string, exam: ExamId, topic: string) =>
     request<TopicReview>(`/api/mobile/topic?exam=${exam}&topic=${encodeURIComponent(topic)}`, token),
   resources: (token: string, exam: ExamId) => request<Resources>(`/api/mobile/resources?exam=${exam}`, token),
+  sampleSet: (token: string, exam: ExamId) => request<{ url: string }>(`/api/mobile/sample-set?exam=${exam}`, token),
+  redeem: (token: string, code: string) =>
+    request<{ ok: true; plan: string }>('/api/mobile/redeem', token, { method: 'POST', body: JSON.stringify({ code }) }),
   cards: (token: string, exam: ExamId) => request<CardDeck>(`/api/mobile/cards?exam=${exam}`, token),
   gradeCard: (token: string, cardId: string, grade: 0 | 1 | 2 | 3) =>
     request<{ due: string; interval: number }>('/api/mobile/cards', token, {

@@ -27,7 +27,7 @@ export default function Resources() {
             {data.summary.links} curated links: {data.summary.sections.map((s) => s.replace('Design standards: ', '')).join(', ')}.
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Includes which design standards you can download free and which you'd need to buy. Available with a subscription
+            Includes which design standards you can download free and which you would need to buy. Available with a subscription
             or pass for this exam.
           </ThemedText>
         </Card>
