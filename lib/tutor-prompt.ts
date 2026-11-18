@@ -5,7 +5,7 @@ import type { Question } from "./content/types";
 export const TUTOR_LIMITS = {
   /** Tutor questions per rolling 24 h window. */
   paid: { max: 30, windowMs: 24 * 3600_000 },
-  free: { max: 3, windowMs: 24 * 3600_000 },
+  free: { max: 1, windowMs: 24 * 3600_000 },
 } as const;
 
 export const MAX_TURNS = 12; // 6 exchanges

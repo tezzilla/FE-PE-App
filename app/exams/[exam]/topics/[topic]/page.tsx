@@ -30,7 +30,7 @@ export default async function TopicReview({ params }: { params: Params }) {
   const { exam } = f;
   const user = await getCurrentUser();
   const r = (await topicReview(user, exam, topic))!;
-  const { topic: t, guide, cards, example, mastery } = r;
+  const { topic: t, guide, cards, lockedCards, example, mastery } = r;
   const review = r.reviewedBy ? { reviewerName: r.reviewedBy, credential: null } : undefined;
 
   return (
@@ -47,9 +47,16 @@ export default async function TopicReview({ params }: { params: Params }) {
       <p>{guide.summary}</p>
       <p className="text-sm"><span className="muted">Where to look on exam day:</span> {guide.handbook}</p>
 
-      {cards.length > 0 && (
+      {cards.length + lockedCards > 0 && (
         <section className="space-y-2">
           <h2 className="text-xl font-semibold">Key formulas</h2>
+          {lockedCards > 0 && (
+            <p className="muted text-sm">
+              {cards.length ? "" : "The formula cards for this topic are part of full access. "}
+              {lockedCards} {cards.length ? "more " : ""}formula card{lockedCards > 1 ? "s" : ""} unlock with a plan or pass.{" "}
+              <Link href="/pricing" className="underline">See plans</Link>
+            </p>
+          )}
           <div className="grid sm:grid-cols-2 gap-3">
             {cards.map((c) => (
               <div key={c.id} className="card p-3">

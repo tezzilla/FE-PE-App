@@ -31,7 +31,7 @@ export const FLASHCARDS: Flashcard[] = [
   { id: "fc-math-dist", topic: "math-stats", exams: FE, front: "Distance between points (x₁, y₁) and (x₂, y₂)", back: "d = √[(x₂ − x₁)² + (y₂ − y₁)²]", ref: `${HB}: Mathematics` },
 
   // Ethics
-  { id: "fc-ethics-priority", topic: "ethics", exams: FE, free: true, front: "An engineer's first obligation, above employer and client", back: "Protect the health, safety and welfare of the public.\nIf overruled on a safety issue, notify the employer or client and the appropriate authority.", ref: `${HB}: Ethics` },
+  { id: "fc-ethics-priority", topic: "ethics", exams: FE, front: "An engineer's first obligation, above employer and client", back: "Protect the health, safety and welfare of the public.\nIf overruled on a safety issue, notify the employer or client and the appropriate authority.", ref: `${HB}: Ethics` },
   { id: "fc-ethics-seal", topic: "ethics", exams: FE, front: "When may a licensee seal plans?", back: "Only for work they prepared or that was prepared under their responsible charge (direct supervision), and only within their competence.", ref: `${HB}: Ethics` },
 
   // Economics
@@ -49,12 +49,12 @@ export const FLASHCARDS: Flashcard[] = [
   { id: "fc-statics-rect-i", peTopic: "structural", topic: "statics", exams: BOTH, front: "Moment of inertia of a rectangle about its centroidal axis", back: "I = b·h³ / 12 (h measured perpendicular to the axis)", ref: `${HB}: Statics` },
 
   // Dynamics
-  { id: "fc-dyn-const-acc", topic: "dynamics", exams: FE, free: true, front: "Constant-acceleration kinematics (three equations)", back: "v = v₀ + a·t\ns = v₀·t + ½·a·t²\nv² = v₀² + 2·a·s", ref: `${HB}: Dynamics` },
+  { id: "fc-dyn-const-acc", topic: "dynamics", exams: FE, front: "Constant-acceleration kinematics (three equations)", back: "v = v₀ + a·t\ns = v₀·t + ½·a·t²\nv² = v₀² + 2·a·s", ref: `${HB}: Dynamics` },
   { id: "fc-dyn-work-energy", topic: "dynamics", exams: FE, front: "Work-energy principle", back: "T₁ + U₁→₂ = T₂\nKinetic energy T = ½·m·v²", ref: `${HB}: Dynamics` },
   { id: "fc-dyn-impulse", topic: "dynamics", exams: FE, front: "Impulse-momentum", back: "m·v₁ + ∫F dt = m·v₂", ref: `${HB}: Dynamics` },
 
   // Mechanics of Materials
-  { id: "fc-mom-flexure", peTopic: "structural", topic: "mechanics-materials", exams: BOTH, free: true, front: "Bending (flexural) stress", back: "σ = M·c / I\nc = distance from the neutral axis to the extreme fiber", ref: `${HB}: Mechanics of Materials` },
+  { id: "fc-mom-flexure", peTopic: "structural", topic: "mechanics-materials", exams: BOTH, front: "Bending (flexural) stress", back: "σ = M·c / I\nc = distance from the neutral axis to the extreme fiber", ref: `${HB}: Mechanics of Materials` },
   { id: "fc-mom-axial", topic: "mechanics-materials", exams: FE, front: "Axial deformation of a bar", back: "δ = P·L / (A·E)", ref: `${HB}: Mechanics of Materials` },
   { id: "fc-mom-torsion", topic: "mechanics-materials", exams: FE, front: "Shear stress in a circular shaft under torque", back: "τ = T·r / J\nSolid shaft J = π·d⁴ / 32", ref: `${HB}: Mechanics of Materials` },
   { id: "fc-mom-shear", topic: "mechanics-materials", exams: FE, front: "Maximum shear stress in a rectangular beam", back: "τmax = 1.5 · V / A", ref: `${HB}: Mechanics of Materials` },
@@ -62,7 +62,7 @@ export const FLASHCARDS: Flashcard[] = [
   { id: "fc-mom-ss-udl", peTopic: "structural", topic: "mechanics-materials", exams: BOTH, front: "Simply supported beam, uniform load w: max moment and deflection", back: "Mmax = w·L² / 8 at midspan\nΔmax = 5·w·L⁴ / (384·E·I)", ref: `${HB}: Mechanics of Materials (beam tables)` },
 
   // Materials
-  { id: "fc-mat-wc", topic: "materials", exams: FE, free: true, front: "Effect of a higher water-cement ratio on concrete", back: "Lower strength and durability, higher workability. Strength depends mainly on w/c.", ref: `${HB}: Materials (concrete)` },
+  { id: "fc-mat-wc", topic: "materials", exams: FE, front: "Effect of a higher water-cement ratio on concrete", back: "Lower strength and durability, higher workability. Strength depends mainly on w/c.", ref: `${HB}: Materials (concrete)` },
   { id: "fc-mat-hooke", topic: "materials", exams: FE, front: "Hooke's law and Poisson's ratio", back: "σ = E·ε (elastic range)\nν = −ε_lateral / ε_axial", ref: `${HB}: Materials` },
 
   // Fluids
@@ -73,7 +73,7 @@ export const FLASHCARDS: Flashcard[] = [
   { id: "fc-fluids-hydrostatic", topic: "fluids", exams: FE, front: "Hydrostatic pressure at depth h", back: "p = γ·h (gauge)\nResultant on a submerged plane surface F = γ·h꜀·A, acting below the centroid", ref: `${HB}: Fluid Mechanics` },
 
   // Surveying
-  { id: "fc-survey-hcurve", peTopic: "transportation", topic: "surveying", exams: BOTH, free: true, front: "Horizontal curve: length and tangent", back: "L = π·R·Δ / 180 (Δ in degrees)\nT = R · tan(Δ/2)", ref: `${HB}: Surveying / Transportation (horizontal curves)` },
+  { id: "fc-survey-hcurve", peTopic: "transportation", topic: "surveying", exams: BOTH, front: "Horizontal curve: length and tangent", back: "L = π·R·Δ / 180 (Δ in degrees)\nT = R · tan(Δ/2)", ref: `${HB}: Surveying / Transportation (horizontal curves)` },
   { id: "fc-survey-level", topic: "surveying", exams: FE, front: "Differential leveling: elevation of the next point", back: "HI = known elevation + backsight\nNew elevation = HI − foresight", ref: `${HB}: Surveying` },
   { id: "fc-survey-area", topic: "surveying", exams: FE, front: "Area of a closed traverse from coordinates", back: "A = ½ · | Σ (xᵢ·yᵢ₊₁ − xᵢ₊₁·yᵢ) |  (coordinate / cross-multiplication method)", ref: `${HB}: Surveying` },
 
@@ -89,7 +89,7 @@ export const FLASHCARDS: Flashcard[] = [
   { id: "fc-water-darcy-gw", topic: "water-env", exams: BOTH, front: "Darcy's law for groundwater", back: "Q = K · i · A, i = dh/dL\nSeepage velocity = Darcy velocity / effective porosity", ref: `${HB}: Water Resources (groundwater)` },
 
   // Structural
-  { id: "fc-struct-load-combo", topic: "structural", exams: BOTH, free: true, front: "Two common LRFD load combinations (ASCE 7)", back: "1.4D\n1.2D + 1.6L + 0.5(Lr or S or R)", ref: "ASCE 7, Chapter 2 (load combinations)" },
+  { id: "fc-struct-load-combo", topic: "structural", exams: BOTH, front: "Two common LRFD load combinations (ASCE 7)", back: "1.4D\n1.2D + 1.6L + 0.5(Lr or S or R)", ref: "ASCE 7, Chapter 2 (load combinations)" },
   { id: "fc-struct-cantilever", topic: "structural", exams: BOTH, front: "Cantilever with point load P at the tip: max moment and deflection", back: "Mmax = P·L at the support\nΔmax = P·L³ / (3·E·I)", ref: `${HB}: Mechanics of Materials (beam tables)` },
   { id: "fc-struct-whitney", topic: "structural", exams: BOTH, front: "Reinforced concrete beam: depth of the compression block", back: "a = As·fy / (0.85·f'c·b)\nMn = As·fy·(d − a/2)", ref: "ACI 318 / FE Handbook: Design of Reinforced Concrete" },
 
@@ -106,7 +106,7 @@ export const FLASHCARDS: Flashcard[] = [
   { id: "fc-trans-superelev", topic: "transportation", exams: BOTH, front: "Minimum curve radius from superelevation and side friction", back: "R = V² / [15·(e + f)]\nV in mph, R in ft, e and f as decimals (e.g. 0.06, not 6%)", ref: "AASHTO Green Book / FE Handbook: Transportation" },
 
   // Construction
-  { id: "fc-const-cpm", topic: "construction", exams: BOTH, free: true, front: "CPM total float", back: "TF = LS − ES = LF − EF\nActivities with zero total float are on the critical path.", ref: `${HB}: Construction (scheduling)` },
+  { id: "fc-const-cpm", topic: "construction", exams: BOTH, front: "CPM total float", back: "TF = LS − ES = LF − EF\nActivities with zero total float are on the critical path.", ref: `${HB}: Construction (scheduling)` },
   { id: "fc-const-earned", topic: "construction", exams: BOTH, front: "Earned value: cost and schedule variance", back: "CV = EV − AC (negative = over budget)\nSV = EV − PV (negative = behind schedule)\nCPI = EV/AC, SPI = EV/PV", ref: `${HB}: Construction (project control)` },
   { id: "fc-const-swell", topic: "construction", exams: BOTH, front: "Bank, loose and compacted earthwork volumes", back: "Loose = Bank × (1 + swell)\nCompacted = Bank × (1 − shrinkage)", ref: `${HB}: Construction (earthwork)` },
 ];

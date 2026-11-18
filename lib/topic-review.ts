@@ -10,6 +10,7 @@ import { templatesFor } from "./templates";
 import { templateToQuestion } from "./templates/engine";
 import { learnerState } from "./adaptive/server";
 import { topicMastery } from "./adaptive/model";
+import { hasExamAccess } from "./access";
 
 /** Everything on a topic review page. Null for an unknown exam/topic. Shared by the website and the app. */
 export async function topicReview(user: User | null, exam: ExamId, topic: string) {
@@ -25,7 +26,9 @@ export async function topicReview(user: User | null, exam: ExamId, topic: string
   return {
     topic: t,
     guide,
-    cards: flashcardsFor(exam, topic),
+    // Free visitors see the free formula cards only; the rest are counted so the page can say so.
+    cards: flashcardsFor(exam, topic).filter((c) => c.free || hasExamAccess(user, exam)),
+    lockedCards: flashcardsFor(exam, topic).filter((c) => !(c.free || hasExamAccess(user, exam))).length,
     example,
     reviewedBy: review?.reviewerName ? [review.reviewerName, review.credential].filter(Boolean).join(", ") : null,
     mastery,

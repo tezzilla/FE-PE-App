@@ -19,6 +19,7 @@ export async function GET(req: Request) {
     handbook: r.guide.handbook,
     traps: r.guide.traps,
     formulas: r.cards.map((c) => ({ front: c.front, back: c.back, ref: c.ref })),
+    lockedFormulas: r.lockedCards,
     // The example is a public teaching sample, so its answer and solution are included.
     example: r.example
       ? { prompt: r.example.prompt, choices: r.example.choices, answer: r.example.answer, explanation: r.example.explanation, reference: r.example.reference ?? null }

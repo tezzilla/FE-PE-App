@@ -115,6 +115,7 @@ export interface TopicReview {
   handbook: string;
   traps: string[];
   formulas: { front: string; back: string; ref: string }[];
+  lockedFormulas?: number;
   example: { prompt: string; choices: string[]; answer: number; explanation: string; reference: string | null } | null;
   reviewedBy: string | null;
   mastery: { value: number; answered: number } | null;

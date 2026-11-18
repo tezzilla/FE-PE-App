@@ -46,9 +46,14 @@ export default function Topic() {
         </View>
       </View>
 
-      {data.formulas.length > 0 && (
+      {data.formulas.length + (data.lockedFormulas ?? 0) > 0 && (
         <>
           <ThemedText type="smallBold" style={{ marginTop: Spacing.two }}>Key formulas</ThemedText>
+          {!!data.lockedFormulas && (
+            <ThemedText type="small" themeColor="textSecondary">
+              {data.lockedFormulas} {data.formulas.length ? 'more ' : ''}formula card{data.lockedFormulas > 1 ? 's' : ''} included with full access.
+            </ThemedText>
+          )}
           {data.formulas.map((f) => (
             <Card key={f.front}>
               <ThemedText type="smallBold">{f.front}</ThemedText>
