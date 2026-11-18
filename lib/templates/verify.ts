@@ -339,6 +339,51 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const [b, h, V, y] = nums(p); // τ = (V/2I)(h²/4 − y²)
     return V * 1000 / (2 * (b * h ** 3 / 12)) * (h * h / 4 - y * y);
   },
+
+  // ---- Fifth batch (batch-five.ts)
+  "superelevation-runoff-length": (p) => { const e = at(p, "superelevation of"), n1 = Number(p.match(/, and (\d) 12 ft lane/)![1]), D = at(p, "Δ ="), bw = at(p, "b_w ="); return 12 * n1 * e * bw / D; },
+  "vertical-curve-elevation": (p) => {
+    const [L, g1, g2, E, x] = nums(p);
+    // integrate the grade, which changes linearly from g1 to g2 over L (trapezoid of grades from 0 to x)
+    const gx = g1 + (g2 - g1) * x / L; return E + (g1 + gx) / 2 * x / 100;
+  },
+  "crest-high-point": (p) => { const [L, g1, g2] = nums(p); return L * g1 / (g1 - g2); },
+  "composite-beam-phi-mn": (p) => {
+    const As = at(p, "As ="), d = at(p, "d ="), L = at(p, "spans"), s = at(p, "spaced"), t = at(p, "with a"), fc = at(p, "f'c =");
+    const be = Math.min(L * 3, s * 12), C = As * 50, a = C / (0.85 * fc * be);
+    // couple between the steel centroid (d/2 below the slab) and the concrete block centroid (a/2 below the top)
+    return 0.9 * C * ((t + d / 2) - a / 2) / 12;
+  },
+  "plate-tension-capacity": (p) => {
+    const [b, t, Fy, Fu, nh, db] = nums(p);
+    return Math.min(0.9 * Fy * b * t, 0.75 * Fu * t * (b - nh * (db + 1 / 8)));
+  },
+  "thiem-unconfined-flow": (p) => { const [K, r1, r2, h1, h2] = nums(p); return Math.PI * K * (h2 - h1) * (h2 + h1) / Math.log(r2 / r1); },
+  "two-well-superposition": (p) => {
+    const T = at(p, "transmissivity"), R = at(p, "influence of"), Q1 = at(p, "Well 1 pumps"), d1 = at(p, "m³/d and is"), rest = p.slice(p.indexOf("well 2"));
+    const Q2 = at(rest, "pumps"), d2 = at(rest, "and is");
+    return (Q1 * Math.log(R / d1) + Q2 * Math.log(R / d2)) / (2 * Math.PI * T);
+  },
+  "clarifier-solids-loading": (p) => { const [D, Q, Rr, X] = nums(p); return Q * (1 + Rr) * X / 1000 / (Math.PI * (D / 2) ** 2); },
+  "aeration-oxygen-demand": (p) => {
+    const Q = at(p, "treats"), S0 = at(p, "from"), S = at(p, "mg/L to"), Y = at(p, "Y ="), kd = at(p, "kd ="), th = at(p, "SRT ="), fr = at(p, "BOD₅ is");
+    const removed = Q * (S0 - S) / 1000; return removed / fr - 1.42 * Y * removed / (1 + kd * th);
+  },
+  "wall-thrust-surcharge-water": (p) => {
+    const H = at(p, "A"), phi = at(p, "φ ="), q = at(p, "surcharge of"), dw = at(p, "wall is"), gm = at(p, "soil weighs"), gs = at(p, "above the water table and");
+    const Ka = (1 - Math.sin(rad(phi))) / (1 + Math.sin(rad(phi)));
+    // integrate the pressure diagram numerically (Simpson's rule on each segment)
+    const press = (z: number) => { const sv = q + (z <= dw ? gm * z : gm * dw + (gs - gw) * (z - dw)); return Ka * sv + (z > dw ? gw * (z - dw) : 0); };
+    const simpson = (a: number, b: number) => { const N = 200, h = (b - a) / N; let sum = press(a) + press(b); for (let i = 1; i < N; i++) sum += press(a + i * h) * (i % 2 ? 4 : 2); return sum * h / 3; };
+    return simpson(0, dw) + simpson(dw, H);
+  },
+  "oc-clay-settlement": (p) => {
+    const H = at(p, "A"), e0 = at(p, "e₀ ="), Cc = at(p, "Cc ="), Cr = at(p, "Cr ="), s0 = at(p, "effective stress is"), sp = at(p, "preconsolidation stress is"), ds = at(p, "adds");
+    // change in void ratio, then strain
+    const de = Cr * Math.log10(sp / s0) + Cc * Math.log10((s0 + ds) / sp); return de / (1 + e0) * H * 1000;
+  },
+  "stress-21-method": (p) => { const [B, L, P] = nums(p), z = at(p, "increase"); return P / ((B + z) * (L + z)); },
+  "linear-schedule-lag": (p) => { const [a, Lt, b] = nums(p); return Lt * (b - a) / (a * b); },
 };
 
 

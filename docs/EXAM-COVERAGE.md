@@ -143,11 +143,18 @@ reshoring, crane load charts, Shelby tubes, CPT, liquefaction susceptibility, se
 infiltration vs. inflow, fire flow pressure, reverse osmosis, bioretention, braced frames,
 post-tensioning.
 
+## Fifth batch (November 2026)
+
+Problem types (13): superelevation runoff length, vertical curve elevation, crest high point,
+composite beam φMn, bolted plate tension (yield vs. rupture), unconfined Thiem yield, two-well
+superposition, clarifier solids loading, aeration oxygen demand, wall thrust with surcharge and water,
+overconsolidated clay settlement, 2:1 stress distribution, linear schedule crew lag.
+
 ## Next batch
 
-1. Masonry (TMS 402) and composite steel-concrete beams (Structural 4E, 5C).
-2. Superelevation runoff length and vertical clearance (Transportation 4C, 5A).
-3. Activated sludge oxygen demand and secondary clarifier solids loading (WRE 11E).
-4. Drawdown from multiple wells (superposition) and unconfined Thiem (WRE 8).
-5. Lateral earth pressure with surcharge and water (Geotechnical 8A).
-6. Resource leveling and linear scheduling (Construction 5).
+1. Masonry (TMS 402) allowable stresses and CMU wall axial capacity (Structural 4E).
+2. Rigid pavement thickness and flexible pavement layer design checks (Transportation 9D).
+3. Culvert inlet and outlet control headwater (WRE 6C, Transportation 10B).
+4. Reservoir and channel routing (Muskingum, storage-indication) (WRE 7C).
+5. Drilled shaft side resistance in sand (β method) (Geotechnical 10A).
+6. Concrete mix design proportioning by absolute volume (Construction 3B, FE 7A).
