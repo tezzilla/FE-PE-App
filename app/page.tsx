@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { EXAMS } from "@/lib/content/exams";
-import { PLANS } from "@/lib/plans";
+import { SOLD_PLANS } from "@/lib/plans";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
   const { deleted } = await searchParams;
-  const cheapest = Math.min(...PLANS.map((p) => p.priceMonthly));
+  const cheapest = Math.min(...SOLD_PLANS.filter((p) => p.kind === "subscription").map((p) => p.price));
   return (
     <div className="space-y-16">
       {deleted && <div className="card p-4 text-center">Your account has been deleted.</div>}

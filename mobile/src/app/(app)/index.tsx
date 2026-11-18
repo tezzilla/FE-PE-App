@@ -26,7 +26,7 @@ export default function Home() {
           Welcome{user.name ? `, ${user.name}` : ''}
         </ThemedText>
         <ThemedText themeColor="textSecondary">
-          {user.active && user.plan ? `${user.plan.name} plan` : 'Free plan: sample questions in every topic'}
+          {user.active ? (user.summary ?? user.plan?.name) : 'Free plan: sample questions in every topic'}
         </ThemedText>
       </View>
 

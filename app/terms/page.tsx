@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LEGAL_UPDATED } from "@/lib/legal";
 import { ContactLine } from "@/components/ContactLine";
-import { PLANS } from "@/lib/plans";
+import { SOLD_PLANS } from "@/lib/plans";
 
 export const metadata: Metadata = { title: "Terms of Service · CivilPrep" };
 
@@ -43,8 +43,17 @@ export default function Terms() {
       <h2>Subscriptions and billing</h2>
       <ul>
         <li>
-          Paid plans ({PLANS.map((p) => `${p.name}, $${p.priceMonthly}/month`).join("; ")}) are billed monthly in
-          advance and <strong>renew automatically</strong> each month until you cancel.
+          Monthly plans ({SOLD_PLANS.filter((p) => p.kind === "subscription").map((p) => `${p.name}, $${p.price}/month`).join("; ")})
+          are billed monthly in advance and <strong>renew automatically</strong> each month until you cancel.
+        </li>
+        <li>
+          Passes ({SOLD_PLANS.filter((p) => p.kind === "pass").map((p) => `${p.name}, $${p.price} for ${p.days} days`).join("; ")})
+          are a single payment for a fixed period and <strong>do not renew</strong>. A pass bought while another is
+          active adds its days after the current one ends. PE Civil plans include FE Civil content.
+        </li>
+        <li>
+          Promotional prices, such as founding-member pricing, last as long as the subscription they were applied
+          to stays active, unless the offer says otherwise.
         </li>
         <li>Payments are processed by Stripe. We never see or store your full card number.</li>
         <li>
@@ -52,7 +61,7 @@ export default function Terms() {
           charges; you keep access until the end of the period you already paid for.
         </li>
         <li>
-          Except where the law requires otherwise, payments are not refundable for partial months. If you think
+          Except where the law requires otherwise, payments are not refundable for partial months or unused pass time. If you think
           you were charged in error, contact us and we&apos;ll look into it.
         </li>
         <li>We may change prices. We&apos;ll tell you before a change applies to your subscription, and you can cancel before it does.</li>

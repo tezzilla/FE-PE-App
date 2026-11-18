@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/plans";
+import { grantPass } from "@/lib/passes";
 import { automaticTaxEnabled, fakeBillingAllowed, planPriceIds, stripe } from "@/lib/stripe";
 
 const appUrl = () => process.env.APP_URL ?? "http://localhost:3000";
@@ -16,15 +17,16 @@ export async function POST(req: Request) {
 
   const form = await req.formData();
   const plan = getPlan(String(form.get("plan")));
-  if (!plan) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
+  if (!plan || plan.legacy) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
 
   if (fakeBillingAllowed()) {
     // Local dev only: activate instantly so paid features can be tested without Stripe.
-    const end = new Date(Date.now() + 30 * 24 * 3600 * 1000);
-    await db.user.update({
-      where: { id: user.id },
-      data: { plan: plan.id, subscriptionStatus: "active", currentPeriodEnd: end },
-    });
+    if (plan.kind === "pass") {
+      await grantPass({ userId: user.id, planId: plan.id, checkoutSessionId: `fake_${Date.now()}`, paymentIntentId: null, amountTotal: plan.price * 100 });
+    } else {
+      const end = new Date(Date.now() + 30 * 24 * 3600 * 1000);
+      await db.user.update({ where: { id: user.id }, data: { plan: plan.id, subscriptionStatus: "active", currentPeriodEnd: end } });
+    }
     return NextResponse.redirect(new URL("/dashboard?subscribed=1", req.url), 303);
   }
 
@@ -45,14 +47,13 @@ export async function POST(req: Request) {
   }
 
   const tax = automaticTaxEnabled();
-  const params: Stripe.Checkout.SessionCreateParams = {
-    mode: "subscription",
+  const common = {
     customer: customerId,
     // No payment_method_types: Stripe picks eligible methods from Dashboard settings.
     line_items: [{ price, quantity: 1 }],
     client_reference_id: user.id,
     metadata: { userId: user.id, plan: plan.id },
-    subscription_data: { metadata: { userId: user.id } },
+    // Founding-member codes (and any other promotion codes) are entered on the Checkout page.
     allow_promotion_codes: true,
     // Lets firms paying for an employee add their business name and tax ID to the invoice.
     tax_id_collection: { enabled: true },
@@ -63,7 +64,19 @@ export async function POST(req: Request) {
     integration_identifier: INTEGRATION_ID,
     success_url: `${appUrl()}/dashboard?subscribed=1`,
     cancel_url: `${appUrl()}/pricing`,
-  };
+  } satisfies Partial<Stripe.Checkout.SessionCreateParams>;
+
+  const params: Stripe.Checkout.SessionCreateParams =
+    plan.kind === "pass"
+      ? {
+          ...common,
+          mode: "payment",
+          // A real invoice (PDF, in the invoice history) for one-time passes, e.g. for reimbursement.
+          invoice_creation: { enabled: true, invoice_data: { description: `${plan.name}: ${plan.days} days of access` } },
+          payment_intent_data: { metadata: { userId: user.id, plan: plan.id } },
+        }
+      : { ...common, mode: "subscription", subscription_data: { metadata: { userId: user.id } } };
+
   const session = await stripe().checkout.sessions.create(params);
   return NextResponse.redirect(session.url!, 303);
 }

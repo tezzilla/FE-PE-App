@@ -22,6 +22,9 @@ model User {
   // Mirrors Stripe subscription status: active, trialing, past_due, canceled, ...
   subscriptionStatus   String?
   currentPeriodEnd     DateTime?
+  // Access granted by one-time passes (stacked), per exam. Derived from Pass rows; see lib/passes.ts.
+  feAccessUntil        DateTime?
+  peAccessUntil        DateTime?
   // "user" | "reviewer" | "admin"
   role                 String    @default("user")
   // Shown to students next to reviewed problems, e.g. "Passed FE and PE Civil: WRE". Change to "P.E." once licensed.
@@ -32,6 +35,7 @@ model User {
   mockExams            MockExam[]
   reviews              TemplateReview[]
   reports              ProblemReport[]
+  passes               Pass[]
 }
 
 model Attempt {
@@ -103,4 +107,21 @@ model ProblemReport {
   resolvedAt  DateTime?
 
   @@index([status, createdAt])
+}
+
+// One-time purchase of fixed-length access (e.g. FE 3-month pass). One row per paid Checkout Session.
+model Pass {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan              String
+  checkoutSessionId String    @unique
+  paymentIntentId   String?   @unique
+  amountTotal       Int
+  startsAt          DateTime
+  expiresAt         DateTime
+  revokedAt         DateTime?
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
 }

@@ -27,6 +27,8 @@ export interface User {
   name: string | null;
   active: boolean;
   plan: { id: string; name: string } | null;
+  /** e.g. "FE Civil monthly, renews 1/5/2027" or "PE Civil pass until 5/1/2027". */
+  summary?: string;
   renews: string | null;
   peDepth: string | null;
 }

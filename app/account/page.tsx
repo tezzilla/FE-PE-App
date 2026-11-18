@@ -1,15 +1,12 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
-import { hasActiveSubscription } from "@/lib/access";
-import { getPlan } from "@/lib/plans";
+import { accessSummary } from "@/lib/access";
 import { DeleteForm, NameForm, PasswordForm } from "@/components/AccountForms";
 
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
   const user = await requireUser();
-  const active = hasActiveSubscription(user);
-  const plan = getPlan(user.plan);
   const billable = !!user.stripeSubscriptionId && !["canceled", "incomplete_expired"].includes(user.subscriptionStatus ?? "");
 
   return (
@@ -27,8 +24,7 @@ export default async function AccountPage() {
       <section className="card p-5 space-y-3">
         <h2 className="font-semibold">Plan</h2>
         <p className="text-sm">
-          {active && plan ? `${plan.name}, ${user.subscriptionStatus}` : "Free tier"}
-          {user.currentPeriodEnd && active ? ` · renews ${user.currentPeriodEnd.toLocaleDateString()}` : ""}
+          {accessSummary(user)}
         </p>
         {user.stripeCustomerId ? (
           <form action="/api/stripe/portal" method="POST">

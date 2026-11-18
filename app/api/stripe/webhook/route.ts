@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { planFromPrice, stripe } from "@/lib/stripe";
+import { getPlan } from "@/lib/plans";
+import { grantPass, revokePassByPaymentIntent } from "@/lib/passes";
 
 // Handles the events listed in lib/stripe-events.ts.
 
@@ -71,6 +73,36 @@ async function flagRisk(kind: string, objectId: string, paymentIntentId: string 
   for (const s of subs) await syncSubscription(s); // e.g. a refund may come with a cancellation
 }
 
+/**
+ * Grant a one-time pass once its Checkout Session is paid. The plan comes from the Price that was
+ * actually paid (not from metadata), and the user from the Stripe Customer (fallback: our user id).
+ */
+async function fulfillPass(sessionId: string) {
+  const s = await stripe().checkout.sessions.retrieve(sessionId, { expand: ["line_items"] });
+  if (s.mode !== "payment" || s.payment_status !== "paid") return; // async methods: wait for async_payment_succeeded
+  const planId = await planFromPrice(s.line_items?.data[0]?.price ?? undefined);
+  const plan = getPlan(planId);
+  if (!plan || plan.kind !== "pass") {
+    console.error(`Paid session ${s.id} isn't for a pass plan (price maps to ${planId})`);
+    return;
+  }
+  const customerId = idOf(s.customer);
+  const user =
+    (customerId && (await db.user.findUnique({ where: { stripeCustomerId: customerId } }))) ||
+    (s.client_reference_id && (await db.user.findUnique({ where: { id: s.client_reference_id } })));
+  if (!user) {
+    console.error(`No user for paid pass session ${s.id} (customer ${customerId})`);
+    return;
+  }
+  await grantPass({
+    userId: user.id,
+    planId: plan.id,
+    checkoutSessionId: s.id,
+    paymentIntentId: idOf(s.payment_intent),
+    amountTotal: s.amount_total ?? 0,
+  });
+}
+
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const sig = req.headers.get("stripe-signature");
@@ -85,9 +117,11 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const s = event.data.object;
         if (s.mode === "subscription" && s.subscription) await syncSubscription(idOf(s.subscription)!);
+        if (s.mode === "payment") await fulfillPass(s.id);
         break;
       }
       case "customer.subscription.created":
@@ -107,6 +141,11 @@ export async function POST(req: Request) {
       }
       case "charge.refunded": {
         const c = event.data.object;
+        // A fully refunded pass stops granting access. (Partial refunds keep the pass.)
+        if (c.refunded && idOf(c.payment_intent)) {
+          const revoked = await revokePassByPaymentIntent(idOf(c.payment_intent)!);
+          if (revoked) console.warn(JSON.stringify({ stripeEvent: "pass.revoked", pass: revoked.id, user: revoked.userId }));
+        }
         await flagRisk(event.type, c.id, idOf(c.payment_intent));
         break;
       }

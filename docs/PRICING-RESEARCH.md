@@ -64,5 +64,5 @@ Also:
 - **Revisit prices** once the bank is large (e.g. 500+ FE problems with every topic covered), when a
   move toward $35 to $39/mo FE becomes defensible.
 
-These are recommendations, not the current site configuration. Prices live in `lib/plans.ts`
+**Status:** implemented on 2026-11-18 (passes, $59 PE, founding codes, All Access retired). Prices live in `lib/plans.ts`
 (display) and Stripe (charged).

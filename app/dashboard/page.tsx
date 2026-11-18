@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
-import { hasActiveSubscription, hasExamAccess } from "@/lib/access";
+import { accessSummary, hasExamAccess, hasPaidAccess } from "@/lib/access";
 import { EXAMS } from "@/lib/content/exams";
-import { getPlan } from "@/lib/plans";
 import { topicStats } from "@/lib/progress";
 import { db } from "@/lib/db";
 import { ReadinessCard } from "@/components/ReadinessCard";
@@ -12,26 +11,20 @@ export const dynamic = "force-dynamic";
 export default async function Dashboard({ searchParams }: { searchParams: Promise<{ subscribed?: string }> }) {
   const user = await requireUser();
   const { subscribed } = await searchParams;
-  const active = hasActiveSubscription(user);
-  const plan = getPlan(user.plan);
   const mocks = await db.mockExam.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 5 });
 
   return (
     <div className="space-y-8">
-      {subscribed && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Subscription active. Full question bank unlocked.</div>}
+      {subscribed && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Payment received. Full question bank unlocked. (If it still says Free tier, refresh in a few seconds.)</div>}
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Welcome{user.name ? `, ${user.name}` : ""}</h1>
           <p className="muted">
-            {active && plan
-              ? `${plan.name} plan · ${user.subscriptionStatus}${user.currentPeriodEnd ? ` · renews ${user.currentPeriodEnd.toLocaleDateString()}` : ""}`
-              : user.subscriptionStatus === "past_due"
-                ? "Payment past due. Update your card to keep access."
-                : "Free tier"}
+            {accessSummary(user)}
           </p>
         </div>
-        {user.stripeCustomerId || active ? (
+        {user.stripeCustomerId || hasPaidAccess(user) ? (
           <form action="/api/stripe/portal" method="POST"><button className="btn-ghost">Manage billing</button></form>
         ) : (
           <Link href="/pricing" className="btn">Upgrade</Link>

@@ -2,7 +2,7 @@ import "server-only";
 import { NextResponse } from "next/server";
 import type { User } from "@prisma/client";
 import { EXAMS, EXAM_IDS, topicName } from "./content/exams";
-import { hasActiveSubscription, hasExamAccess } from "./access";
+import { accessSummary, hasActiveSubscription, hasExamAccess, hasPaidAccess } from "./access";
 import { getPlan } from "./plans";
 import { examReadiness, learnerState } from "./adaptive/server";
 import { topicMastery } from "./adaptive/model";
@@ -14,8 +14,10 @@ export function publicUser(u: User) {
   return {
     email: u.email,
     name: u.name,
-    active: hasActiveSubscription(u),
-    plan: plan ? { id: plan.id, name: plan.name } : null,
+    active: hasPaidAccess(u),
+    plan: plan && hasActiveSubscription(u) ? { id: plan.id, name: plan.name } : null,
+    // Plain-language plan line (subscription and/or pass with end date) for the app's home screen.
+    summary: accessSummary(u),
     renews: u.currentPeriodEnd?.toISOString() ?? null,
     peDepth: u.peDepth,
   };

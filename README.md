@@ -34,11 +34,14 @@ With `STRIPE_SECRET_KEY` empty and in dev mode, the Subscribe button activates a
 
 | Plan | Price | Includes |
 |---|---|---|
-| FE Civil | $29/mo | FE Civil bank + mocks |
-| PE Civil | $49/mo | PE Civil bank, all 5 depth modules + mocks |
-| All Access | $59/mo | Both, plus future disciplines |
+| FE Civil monthly | $29/mo | FE Civil bank, generators, smart practice, mocks |
+| FE Civil 3-month pass | $69 once | Same, 90 days, no renewal |
+| PE Civil monthly | $59/mo | PE Civil (all depth modules) plus FE Civil content |
+| PE Civil 6-month pass | $249 once | Same, 180 days, no renewal |
 
-Displayed prices are in code; the charged price lives in Stripe.
+Founding-member codes `FOUNDINGFE` ($19/mo) and `FOUNDINGPE` ($39/mo) are limited to 100 redemptions each and apply to the monthly plans only; the pricing page hides them when they run out. All Access is retired: existing subscribers keep it. Passes stack and are revoked by a full refund (`lib/passes.ts`). Rationale: `docs/PRICING-RESEARCH.md`.
+
+Display prices are in code; charged prices live in Stripe (`npm run stripe:setup` creates them, keeping existing subscribers on their old price).
 
 ## Going live checklist
 

@@ -8,7 +8,7 @@ best-practices guidance in `.agents/skills/stripe-best-practices` (installed fro
 
 | Piece | Where | Notes |
 |---|---|---|
-| Plans | `lib/plans.ts` | Each plan has a Price **lookup key**. The code finds prices by key, so no price IDs need copying. |
+| Plans | `lib/plans.ts` | Monthly subscriptions and one-time passes, each with a Price **lookup key**. Products are tagged `civilprep_plan`, so subscribers on an old price keep their plan after a price change. |
 | Stripe client | `lib/stripe.ts` | API version pinned. fetch-based HTTP client. Price lookups and portal config cached 5 min. |
 | Subscribe | `app/api/stripe/checkout/route.ts` | Checkout Session, `mode: subscription`. Stripe picks payment methods (none hard-coded). Tax ID collection on (for firms paying for staff). Automatic tax behind `STRIPE_AUTOMATIC_TAX`. Tagged with `integration_identifier`. |
 | Manage billing | `app/api/stripe/portal/route.ts` | Customer Portal: cancel at period end, switch plans (prorated), update card, address and tax ID, invoice history. |
@@ -17,7 +17,10 @@ best-practices guidance in `.agents/skills/stripe-best-practices` (installed fro
 
 ### Webhook events handled
 - `checkout.session.completed`, `customer.subscription.created/updated/deleted`: sync plan, status, renewal date.
+- `checkout.session.completed` / `checkout.session.async_payment_succeeded` for passes: grant the pass once
+  `payment_status` is `paid` (plan taken from the Price actually paid; idempotent per session).
 - `invoice.paid`, `invoice.payment_failed`: renewals and failed payments (`active` / `past_due` decides access).
+- `charge.refunded`: a full refund of a pass revokes it.
 - `charge.refunded`, `charge.dispute.created`, `radar.early_fraud_warning.created`: resolved to the
   subscription and user through invoice payments and logged as `stripeRisk` JSON lines (see Vercel logs).
   Respond to disputes in the Stripe Dashboard. For early fraud warnings, consider refunding and canceling.

@@ -1,6 +1,6 @@
 import "server-only";
 import Stripe from "stripe";
-import { PLANS, stripePriceOverride, type PlanId } from "./plans";
+import { PLANS, SOLD_PLANS, stripePriceOverride, type PlanId } from "./plans";
 import { PORTAL_CONFIG_APP } from "./stripe-portal";
 
 /** Pinned API version. Upgrade deliberately (see .agents/skills/upgrade-stripe). */
@@ -49,7 +49,7 @@ export async function planPriceIds(): Promise<Map<PlanId, string>> {
     return !override;
   });
   if (needLookup.length) {
-    const prices = await stripe().prices.list({ lookup_keys: needLookup.map((p) => p.lookupKey), active: true, limit: 10 });
+    const prices = await stripe().prices.list({ lookup_keys: needLookup.map((p) => p.lookupKey), active: true, limit: 100 });
     for (const plan of needLookup) {
       const price = prices.data.find((pr) => pr.lookup_key === plan.lookupKey);
       if (price) ids.set(plan.id, price.id);
@@ -59,8 +59,12 @@ export async function planPriceIds(): Promise<Map<PlanId, string>> {
   return ids;
 }
 
+const productPlanCache = new Map<string, PlanId | null>();
+
 /**
- * Which plan a subscription grants, from its Price (lookup key or known ID).
+ * Which plan a subscription grants, from its Price: lookup key, known price ID, or finally the
+ * Product's civilprep_plan tag. The Product fallback keeps grandfathered subscribers working after a
+ * price change (the new price takes the lookup key; old subscriptions stay on the old price).
  * Price, not subscription metadata: the Customer Portal changes the price on a plan switch
  * but leaves metadata as it was at checkout.
  */
@@ -69,7 +73,14 @@ export async function planFromPrice(price: Stripe.Price | undefined): Promise<Pl
   const byKey = PLANS.find((p) => p.lookupKey === price.lookup_key);
   if (byKey) return byKey.id;
   for (const [planId, id] of await planPriceIds()) if (id === price.id) return planId;
-  return null;
+  const productId = typeof price.product === "string" ? price.product : price.product?.id;
+  if (!productId) return null;
+  if (!productPlanCache.has(productId)) {
+    const product = await stripe().products.retrieve(productId);
+    const tag = "deleted" in product ? undefined : product.metadata?.civilprep_plan;
+    productPlanCache.set(productId, PLANS.find((p) => p.id === tag)?.id ?? null);
+  }
+  return productPlanCache.get(productId) ?? null;
 }
 
 /** True when Subscribe can work: local fake billing, or Stripe with a price found for every plan. */
@@ -117,7 +128,7 @@ export async function billingStatus(): Promise<BillingStatus> {
   if (mode === "unrecognized") problems.unshift("STRIPE_SECRET_KEY doesn't look like a Stripe key (expected sk_test_, sk_live_, rk_test_ or rk_live_).");
   try {
     const ids = await planPriceIds();
-    const missing = PLANS.filter((p) => !ids.has(p.id)).map((p) => p.lookupKey);
+    const missing = SOLD_PLANS.filter((p) => !ids.has(p.id)).map((p) => p.lookupKey);
     if (missing.length) {
       problems.unshift(
         `This Stripe account (${mode} mode) has no active price with lookup key ${missing.join(", ")}. Run "npm run stripe:setup" with this same key, or the key belongs to a different Stripe account or sandbox than the one set up.`,
@@ -142,4 +153,28 @@ export async function portalConfigurationId(): Promise<string | null> {
   const id = configs.data.find((c) => c.metadata?.app === PORTAL_CONFIG_APP)?.id ?? null;
   portalConfig = { at: Date.now(), id };
   return id;
+}
+
+let foundingCache: { at: number; remaining: Map<string, number> } | null = null;
+
+/**
+ * Founding-member promotion codes that can still be redeemed, with spots left.
+ * Empty when Stripe isn't configured or the codes are used up, so the offer simply disappears.
+ */
+export async function foundingSpots(): Promise<Map<string, number>> {
+  if (!stripeEnabled()) return new Map();
+  if (foundingCache && Date.now() - foundingCache.at < PRICE_CACHE_MS) return foundingCache.remaining;
+  const remaining = new Map<string, number>();
+  try {
+    for (const plan of PLANS.filter((p) => p.founding && !p.legacy)) {
+      const code = (await stripe().promotionCodes.list({ code: plan.founding!.code, active: true, limit: 1 })).data[0];
+      if (!code) continue;
+      const left = code.max_redemptions == null ? Infinity : code.max_redemptions - code.times_redeemed;
+      if (left > 0) remaining.set(plan.founding!.code, left);
+    }
+  } catch (e) {
+    console.error("Founding code lookup failed", e);
+  }
+  foundingCache = { at: Date.now(), remaining };
+  return remaining;
 }
