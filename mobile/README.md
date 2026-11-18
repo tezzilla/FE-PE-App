@@ -5,8 +5,11 @@ iOS and Android app for CivilPrep, built with Expo SDK 58 and Expo Router. It us
 ## Screens
 
 - **Sign in / sign up** (token saved in iOS Keychain / Android Keystore via `expo-secure-store`; localStorage on web)
-- **Home**: readiness, exam coverage, reviews due and "focus next" for FE and PE, Smart practice buttons
-- **Exam**: topic list with mastery bars
+- **Home**: the one "Next up" step, shortcut tiles (practice, flashcards, topics, formula guides), readiness for the selected exam, and the study plan
+- **Practice tab**: smart practice, misses, quizzes, diagnostic and practice by topic; flashcards, Handbook hunt and formula guides; full exam (website), exam documents and study plan
+- **Topics tab**: FE topics or PE modules with mastery bars; PE modules list every NCEES knowledge area with area practice and review notes
+- **Study plan**: pick the exam date on a calendar and set weekly hours, in the app
+- **Formula guides** and **Handbook hunt** (timed "which chapter?" drill), the same content as the website
 - **Practice**: smart sessions (with "Why this question") or topic practice, worked solutions, reviewer credit
 
 ## Run it

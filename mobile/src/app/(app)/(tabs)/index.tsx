@@ -30,6 +30,17 @@ export default function Home() {
       ? router.push({ pathname: '/flashcards', params: { exam: exam.id } })
       : router.push({ pathname: '/practice', params: step.action.params });
 
+  const isPe = exam.id === 'pe-civil';
+  const due = exam.dueCards ?? 0;
+  const shortcuts: { title: string; icon: React.ComponentProps<typeof Ionicons>['name']; badge?: string; testID: string; onPress: () => void }[] = [
+    step.title === 'Smart practice'
+      ? { title: 'Quick quiz', icon: 'timer-outline', testID: 'tile-quiz', onPress: () => router.push({ pathname: '/practice', params: { exam: exam.id, mode: 'quiz', count: '10' } }) }
+      : { title: 'Smart practice', icon: 'flash-outline', testID: 'tile-smart', onPress: () => router.push({ pathname: '/practice', params: { exam: exam.id, mode: 'smart' } }) },
+    { title: 'Flashcards', icon: 'albums-outline', badge: due ? `${due} due` : undefined, testID: 'tile-cards', onPress: () => router.push({ pathname: '/flashcards', params: { exam: exam.id } }) },
+    { title: isPe ? 'PE modules' : 'Topics', icon: 'library-outline', testID: 'tile-topics', onPress: () => router.navigate('/topics') },
+    { title: 'Formula guides', icon: 'calculator-outline', testID: 'tile-learn', onPress: () => router.push('/learn') },
+  ];
+
   return (
     <Screen refreshing={refreshing} onRefresh={reload}>
       <View>
@@ -77,7 +88,30 @@ export default function Home() {
         </View>
       </Pressable>
 
+      <View style={styles.tiles} accessibilityLabel="Shortcuts">
+        {shortcuts.map((t) => (
+          <Pressable
+            key={t.title}
+            testID={t.testID}
+            accessibilityRole="button"
+            accessibilityLabel={t.badge ? `${t.title}, ${t.badge}` : t.title}
+            onPress={t.onPress}
+            style={({ pressed }) => [styles.tile, { backgroundColor: pressed ? theme.backgroundSelected : theme.backgroundElement, borderColor: theme.border }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Ionicons name={t.icon} size={22} color={theme.brand} />
+              {t.badge ? (
+                <View style={[styles.badge, { backgroundColor: theme.brand }]}>
+                  <ThemedText type="smallBold" style={{ color: theme.onBrand, fontSize: 12 }}>{t.badge}</ThemedText>
+                </View>
+              ) : null}
+            </View>
+            <ThemedText type="smallBold">{t.title}</ThemedText>
+          </Pressable>
+        ))}
+      </View>
+
       <Card>
+        <ThemedText type="smallBold" testID="readiness-title">{exam.name} readiness</ThemedText>
         <View style={{ flexDirection: 'row', gap: Spacing.three, alignItems: 'center' }}>
           <View style={{ minWidth: 84 }}>
             <ThemedText type="small" themeColor="textSecondary">Readiness</ThemedText>
@@ -103,7 +137,11 @@ export default function Home() {
               {r.weakest.map((w) => (
                 <Pressable
                   key={w.slug}
-                  onPress={() => router.push({ pathname: '/topic', params: { exam: exam.id, topic: w.slug } })}
+                  onPress={() =>
+                    exam.id === 'pe-civil'
+                      ? router.push({ pathname: '/module', params: { module: w.slug } })
+                      : router.push({ pathname: '/topic', params: { exam: exam.id, topic: w.slug } })
+                  }
                   style={[styles.chip, { borderColor: theme.border, backgroundColor: theme.backgroundSelected }]}>
                   <ThemedText type="small">{w.name}</ThemedText>
                 </Pressable>
@@ -111,9 +149,13 @@ export default function Home() {
             </View>
           </View>
         )}
+        <ThemedText type="small" style={{ color: theme.brand }} accessibilityRole="link" onPress={() => router.navigate('/topics')} testID="all-topics">
+          {exam.id === 'pe-civil' ? 'See all modules ›' : 'See all topics ›'}
+        </ThemedText>
       </Card>
 
       {exam.plan && exam.plan.daysLeft >= 0 ? (
+        <Pressable accessibilityRole="button" accessibilityLabel="Study plan" onPress={() => router.push('/plan')} testID="plan-card">
         <Card>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <ThemedText type="smallBold" testID={`plan-${exam.id}`}>Exam in {exam.plan.daysLeft} days</ThemedText>
@@ -123,13 +165,16 @@ export default function Home() {
           </View>
           <ProgressBar value={Math.min(1, exam.plan.answeredLast7Days / Math.max(1, exam.plan.weeklyTarget))} color={exam.plan.status === 'behind' ? theme.warn : theme.good} />
           <ThemedText type="small" themeColor="textSecondary">
-            {exam.plan.answeredLast7Days} of {exam.plan.weeklyTarget} questions this week
+            {exam.plan.answeredLast7Days} of {exam.plan.weeklyTarget} questions this week · Edit plan ›
           </ThemedText>
         </Card>
+        </Pressable>
       ) : (
-        <ThemedText type="small" themeColor="textSecondary" style={{ textAlign: 'center' }}>
-          Set your exam date on the website to get a weekly study plan here.
-        </ThemedText>
+        <Card>
+          <ThemedText type="smallBold">When is your {exam.name} exam?</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">Set the date and your weekly hours to get a weekly target and focus topics.</ThemedText>
+          <Button variant="ghost" title="Set my exam date" onPress={() => router.push('/plan')} testID="set-plan" />
+        </Card>
       )}
 
       {!exam.access && (
@@ -148,4 +193,7 @@ const styles = StyleSheet.create({
   next: { borderRadius: 16, padding: Spacing.three, gap: Spacing.two },
   go: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, marginTop: Spacing.one },
   chip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+  tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
+  tile: { flexBasis: '47%', flexGrow: 1, borderWidth: 1, borderRadius: 14, padding: Spacing.three, gap: Spacing.two },
+  badge: { borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
 });

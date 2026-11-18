@@ -42,6 +42,11 @@ export default function Account() {
         <ThemedText type="small">{user.active ? (user.summary ?? user.plan?.name) : 'Free plan'}</ThemedText>
       </Card>
 
+      <ListGroup title="Study">
+        <ListRow icon="calendar-outline" title="Study plan" subtitle={`Exam date and weekly hours for the ${exam === 'pe-civil' ? 'PE' : 'FE'}`} testID="account-plan" onPress={() => router.push('/plan')} />
+        <ListRow icon="calculator-outline" title="Formula guides" subtitle="The most-tested formulas, explained" testID="account-learn" onPress={() => router.push('/learn')} />
+      </ListGroup>
+
       <ListGroup title="Free resources">
         <ListRow icon="print-outline" title="FE Civil problem set" subtitle="Printable practice problems with solutions (PDF)" external testID="sample-fe" onPress={() => openSampleSet('fe-civil')} />
         <ListRow icon="print-outline" title="PE Civil problem set" subtitle="Printable practice problems with solutions (PDF)" external testID="sample-pe" onPress={() => openSampleSet('pe-civil')} />
@@ -68,7 +73,6 @@ export default function Account() {
         {Platform.OS === 'web' ? (
           <ListRow icon="git-compare-outline" title="How CivilPrep compares" subtitle="vs PPI2Pass, School of PE and PrepFE" external testID="compare" onPress={() => open('/compare')} />
         ) : null}
-        <ListRow icon="calendar-outline" title="Study plan" subtitle="Set your exam date and weekly hours" external onPress={() => open(`/exams/${exam}`)} />
         <ListRow icon="document-lock-outline" title="Terms" external onPress={() => open('/terms')} />
         <ListRow icon="shield-checkmark-outline" title="Privacy" external onPress={() => open('/privacy')} />
       </ListGroup>

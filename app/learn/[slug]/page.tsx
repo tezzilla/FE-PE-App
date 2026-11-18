@@ -4,9 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EXPLAINERS, getExplainer } from "@/lib/content/explainers";
 import { EXAMS, topicName } from "@/lib/content/exams";
-import { getTemplate } from "@/lib/templates";
-import { templateToQuestion } from "@/lib/templates/engine";
-import { approvedTemplates } from "@/lib/reviews";
+import { explainerExample } from "@/lib/explainer-example";
 
 // Public explainer page for one formula: what it is, variables, when to use it, mistakes, where it is
 // in the handbook, and a worked example. Statically generated and revalidated hourly.
@@ -32,10 +30,7 @@ const letter = (i: number) => String.fromCharCode(65 + i);
 export default async function ExplainerPage({ params }: { params: Promise<{ slug: string }> }) {
   const e = getExplainer((await params).slug);
   if (!e) notFound();
-  const approved = await approvedTemplates();
-  const t = getTemplate(e.templateId);
-  // A fixed seed keeps the example stable for readers and search engines.
-  const example = t && approved.has(t.id) ? templateToQuestion(t, e.exam, 4242) : null;
+  const example = await explainerExample(e);
   const related = EXPLAINERS.filter((x) => x.slug !== e.slug && x.topic === e.topic).slice(0, 4);
 
   return (

@@ -42,9 +42,16 @@ export default function Study() {
         <ListRow icon="timer-outline" title="Quick quiz" subtitle="10 questions, all topics" testID="quiz-10" onPress={() => go({ mode: 'quiz', count: '10' })} />
         <ListRow icon="list-outline" title="Long quiz" subtitle="20 questions, all topics" testID="quiz" onPress={() => go({ mode: 'quiz', count: '20' })} />
         <ListRow icon="compass-outline" title="Diagnostic" subtitle="About 2 questions per topic" testID="diagnostic" onPress={() => go({ mode: 'diagnostic' })} />
+        <ListRow
+          icon="library-outline"
+          title={exam.id === 'pe-civil' ? 'Practice by module' : 'Practice by topic'}
+          subtitle={exam.id === 'pe-civil' ? 'Knowledge areas for each PE module' : 'Review notes and practice for each topic'}
+          testID="by-topic"
+          onPress={() => router.navigate('/topics')}
+        />
       </ListGroup>
 
-      <ListGroup title="Review">
+      <ListGroup title="Memorize formulas">
         <ListRow
           icon="albums-outline"
           title="Formula flashcards"
@@ -54,16 +61,22 @@ export default function Study() {
           onPress={() => router.push({ pathname: '/flashcards', params: { exam: exam.id } })}
         />
         <ListRow
-          icon="document-text-outline"
-          title="Exam documents"
-          subtitle={exam.id === 'pe-civil' ? 'Handbook, specs and design standards' : 'Handbook, specs and exam-day rules'}
-          locked={!exam.access}
-          testID="resources"
-          onPress={() => router.push({ pathname: '/resources', params: { exam: exam.id } })}
+          icon="search-outline"
+          title="Handbook hunt"
+          subtitle="Timed drill: which chapter would you open?"
+          testID="handbook-drill"
+          onPress={() => router.push('/handbook-drill')}
+        />
+        <ListRow
+          icon="calculator-outline"
+          title="Formula guides"
+          subtitle="The most-tested formulas, with worked examples"
+          testID="learn"
+          onPress={() => router.push('/learn')}
         />
       </ListGroup>
 
-      <ListGroup title="Exam simulation">
+      <ListGroup title="Exam day">
         <ListRow
           icon="hourglass-outline"
           title="Full-length timed exam"
@@ -72,6 +85,21 @@ export default function Study() {
           locked={!exam.access}
           testID="full-exam"
           onPress={() => WebBrowser.openBrowserAsync(`${API_URL}/exams/${exam.id}/mock`)}
+        />
+        <ListRow
+          icon="document-text-outline"
+          title="Exam documents"
+          subtitle={exam.id === 'pe-civil' ? 'Handbook, specs and design standards' : 'Handbook, specs and exam-day rules'}
+          locked={!exam.access}
+          testID="resources"
+          onPress={() => router.push({ pathname: '/resources', params: { exam: exam.id } })}
+        />
+        <ListRow
+          icon="calendar-outline"
+          title="Study plan"
+          subtitle={exam.plan ? `Exam in ${exam.plan.daysLeft} days · ${exam.plan.weeklyTarget} questions a week` : 'Set your exam date for a weekly target'}
+          testID="study-plan"
+          onPress={() => router.push('/plan')}
         />
       </ListGroup>
 

@@ -27,8 +27,12 @@ export default function Topic() {
       <Stack.Screen options={{ title: data.name }} />
       <View style={{ gap: Spacing.one }}>
         <ThemedText type="small" themeColor="textSecondary">
-          {data.examQuestions}{/\d/.test(data.examQuestions) ? ' questions on the exam' : ''}
-          {data.mastery ? ` · your mastery ${Math.round(data.mastery.value * 100)}% (${data.mastery.answered} answers)` : ''}
+          {[
+            /\d/.test(data.examQuestions) ? `${data.examQuestions} questions on the exam` : null,
+            data.mastery ? `Your mastery ${Math.round(data.mastery.value * 100)}% (${data.mastery.answered} answers)` : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         </ThemedText>
         <ThemedText>{data.summary}</ThemedText>
         <ThemedText type="small">

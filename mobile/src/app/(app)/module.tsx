@@ -48,11 +48,24 @@ export default function ModuleScreen() {
         ) : (
           <Button title="This is my exam" onPress={makeMine} loading={saving} testID="module-set" />
         )}
-        <Button
-          variant="ghost"
-          title="Key formulas and worked example"
-          onPress={() => router.push({ pathname: '/topic', params: { exam: 'pe-civil', topic: data.module } })}
-        />
+        <View style={{ flexDirection: 'row', gap: Spacing.two }}>
+          <View style={{ flex: 1 }}>
+            <Button
+              variant="ghost"
+              title="Practice all areas"
+              testID="module-practice"
+              onPress={() => router.push({ pathname: '/practice', params: { exam: 'pe-civil', mode: 'topic', topic: data.module } })}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Button
+              variant="ghost"
+              title="Review notes"
+              testID="module-notes"
+              onPress={() => router.push({ pathname: '/topic', params: { exam: 'pe-civil', topic: data.module } })}
+            />
+          </View>
+        </View>
       </View>
 
       {data.areas.map((a) => {

@@ -46,8 +46,8 @@ export interface ExamSummary {
   extension?: { until: string; daysLeft: number; price: number } | null;
   /** Average seconds per question vs. real exam pace (shown after 5+ timed answers). */
   pacing?: { averageS: number; examPaceS: number; answered: number } | null;
-  /** Study plan summary, if the student set an exam date on the website. */
-  plan: { examDate: string; daysLeft: number; weeklyTarget: number; answeredLast7Days: number; status: 'ahead' | 'on-track' | 'behind' } | null;
+  /** Study plan summary, if the student set an exam date. */
+  plan: { examDate: string; weeklyHours?: number; daysLeft: number; weeklyTarget: number; answeredLast7Days: number; status: 'ahead' | 'on-track' | 'behind' } | null;
   readiness: {
     score: number;
     coverage: number;
@@ -158,6 +158,38 @@ export type Resources =
   | { access: true; checked: string; sections: { id: string; title: string; intro?: string; depth: boolean; links: ResourceLink[] }[] }
   | { access: false; checked: string; summary: { links: number; sections: string[] } };
 
+export interface GuideSummary {
+  slug: string;
+  title: string;
+  summary: string;
+  exam: ExamId;
+  topic: string;
+  /** Topic name, used to group the list. */
+  group: string;
+}
+
+export interface Guide {
+  slug: string;
+  title: string;
+  summary: string;
+  formula: string;
+  variables: [string, string][];
+  whenToUse: string;
+  mistakes: string[];
+  handbook: string;
+  exam: ExamId;
+  topic: string;
+  topicName: string;
+  example: { prompt: string; choices: string[]; answer: number; explanation: string } | null;
+  related: { slug: string; title: string }[];
+}
+
+export interface DrillItem {
+  prompt: string;
+  choices: string[];
+  answer: number;
+}
+
 export type QuizSource = 'all' | 'missed' | 'unseen';
 
 export class ApiError extends Error {
@@ -237,6 +269,12 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ questionId, history }),
     }),
+  savePlan: (token: string, exam: ExamId, examDate: string, weeklyHours: number) =>
+    request<{ ok: true }>('/api/mobile/plan', token, { method: 'POST', body: JSON.stringify({ exam, examDate, weeklyHours }) }),
+  deletePlan: (token: string, exam: ExamId) => request<{ ok: true }>(`/api/mobile/plan?exam=${exam}`, token, { method: 'DELETE' }),
+  guides: (token: string) => request<{ guides: GuideSummary[] }>('/api/mobile/learn', token),
+  guide: (token: string, slug: string) => request<Guide>(`/api/mobile/learn?slug=${encodeURIComponent(slug)}`, token),
+  handbookDrill: (token: string, exam: ExamId) => request<{ items: DrillItem[] }>(`/api/mobile/handbook-drill?exam=${exam}`, token),
   answer: (token: string, questionId: string, selected: number, timeMs?: number) =>
     request<Feedback>('/api/mobile/answer', token, {
       method: 'POST',

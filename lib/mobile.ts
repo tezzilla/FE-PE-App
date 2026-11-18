@@ -53,6 +53,7 @@ export async function homePayload(user: User) {
         plan: sp
           ? {
               examDate: sp.saved.examDate.toISOString(),
+              weeklyHours: sp.saved.weeklyHours,
               daysLeft: sp.plan.daysLeft,
               weeklyTarget: sp.plan.weeklyTarget,
               answeredLast7Days: sp.plan.answeredLast7Days,
