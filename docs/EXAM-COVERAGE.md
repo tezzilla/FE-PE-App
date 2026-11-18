@@ -228,11 +228,16 @@ correction, pump operating point, Gumbel flood frequency, signal uniform delay (
 unit time, cost index with capacity scaling, crane lift percent of capacity, dynamic compaction depth,
 MSE geogrid pullout.
 
+## Fifteenth batch (November 2026)
+
+Problem types (11): block shear, shear studs for full composite action, Coulomb active thrust,
+Mononobe-Okabe seismic thrust, secondary compression, infiltration trench length, aerated grit chamber,
+lift station wet well volume, freeway merge flow (vR12), required superelevation, earthwork overhaul.
+
 ## Next batch
 
-1. Structural: masonry shear, steel tension member block shear, composite deck shear studs.
-2. WRE: culvert inlet control (unsubmerged weir form), stormwater infiltration trench sizing, aerated
-   grit chamber detention.
-3. Transportation: freeway merge (on-ramp) capacity check, horizontal sight line offset with spirals.
-4. Construction: crane outrigger pad bearing with mats, earthwork mass haul average haul distance.
-5. Geotechnical: Coulomb active pressure with wall friction, seismic earth pressure (Mononobe-Okabe).
+1. Structural: masonry wall shear, concrete beam deflection with Ie, cantilever retaining wall stem moment.
+2. WRE: culvert inlet control, reservoir routing (storage-indication), water hammer pressure rise.
+3. Transportation: trip distribution (gravity model), pavement rigid slab thickness checks.
+4. Construction: concrete form tie spacing, cost-plus contract fee comparisons.
+5. Geotechnical: braced cut in clay (Peck), group settlement of piles (equivalent footing).

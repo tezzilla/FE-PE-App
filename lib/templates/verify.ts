@@ -826,6 +826,50 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const z = at(p, "layer"), gm = at(p, "γ ="), Le = at(p, "extends"), Fs = at(p, "F* =");
     return 2 * 0.8 * Fs * gm * z * Le;
   },
+
+  // ---- Fifteenth batch (batch-fifteen.ts)
+  "block-shear-plate": (p) => {
+    const t = at(p, "A"), Fy = at(p, "Fy ="), Fu = at(p, "Fu ="), nb = at(p, "line of"), d = at(p, "bolts ("), s = at(p, "load at"), Le = at(p, "end distance is"), e2 = at(p, "side edge is");
+    const dh = d + 1 / 8, L = Le + (nb - 1) * s;
+    const shearRupture = 0.6 * Fu * (L - (nb - 0.5) * dh) * t, shearYield = 0.6 * Fy * L * t, tension = Fu * (e2 - dh / 2) * t;
+    return 0.75 * (Math.min(shearRupture, shearYield) + tension);
+  },
+  "shear-studs-full-composite": (p) => {
+    const As = at(p, "As ="), beff = at(p, "width of"), t = at(p, "and a"), fc = at(p, "f'c ="), Qn = at(p, "Qn =");
+    const C = Math.min(0.85 * fc * beff * t, 50 * As);
+    return 2 * Math.ceil(C / Qn - 1e-9);
+  },
+  "coulomb-active-thrust": (p) => {
+    const H = at(p, "retains"), gm = at(p, "γ ="), phi = rad(at(p, "φ =")), d = rad(at(p, "δ ="));
+    const root = Math.sqrt((Math.sin(phi + d) * Math.sin(phi)) / Math.cos(d));
+    return (0.5 * gm * H * H * Math.cos(phi) ** 2) / (Math.cos(d) * (1 + root) * (1 + root));
+  },
+  "mononobe-okabe-thrust": (p) => {
+    const H = at(p, "A"), gm = at(p, "γ ="), phi = rad(at(p, "φ =")), d = rad(at(p, "δ =")), kh = at(p, "kh =");
+    const th = Math.atan2(kh, 1);
+    const root = Math.sqrt((Math.sin(phi + d) * Math.sin(phi - th)) / Math.cos(d + th));
+    const KAE = Math.cos(phi - th) ** 2 / (Math.cos(th) * Math.cos(d + th) * (1 + root) ** 2);
+    return 0.5 * gm * H * H * KAE;
+  },
+  "secondary-compression": (p) => {
+    const H = at(p, "A"), t1 = at(p, "after"), ep = at(p, "void ratio is"), Ca = at(p, "Cα is"), t2 = at(p, "end of primary consolidation and");
+    return ((Ca * H) / (1 + ep)) * (Math.log(t2 / t1) / Math.LN10) * 1000;
+  },
+  "infiltration-trench-length": (p) => {
+    const A = at(p, "from a"), C = at(p, "coefficient"), P = at(p, "for a"), W = at(p, "trench is"), D = at(p, "ft wide and"), nv = at(p, "porosity");
+    return (C * P * A * 3630) / (nv * W * D); // 1 ac·in = 3,630 ft³
+  },
+  "aerated-grit-chamber": (p) => {
+    const Q = at(p, "flow of"), t = at(p, "with"), D = at(p, "It is"), ratio = at(p, "ratio of");
+    return (Q * t * 60) / (ratio * D * D);
+  },
+  "wet-well-volume": (p) => { const q = at(p, "delivers"), th = at(p, "starts) is"); return (q * th) / 4; },
+  "freeway-merge-flow": (p) => { const vF = at(p, "vF ="), PFM = at(p, "PFM ="), vR = at(p, "vR ="); return vF * PFM + vR; },
+  "required-superelevation": (p) => { const R = at(p, "radius"), V = at(p, "designed for"), fr = at(p, "factor of"); return (V * V / (15 * R) - fr) * 100; },
+  "earthwork-overhaul": (p) => {
+    const V = at(p, "diagram,"), d = at(p, "fill is"), FH = at(p, "free-haul distance is"), price = at(p, "at $");
+    return price * V * ((d - FH) / 100);
+  },
 };
 
 
