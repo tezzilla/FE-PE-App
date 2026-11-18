@@ -91,24 +91,51 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
   const g = t.generate(makeRng(seed));
   const label = (v: number) => f(v, g.sig ?? 3);
   const minGap = g.minGap ?? MIN_GAP;
-  const correct = label(g.answer);
-  const seen = new Set([correct]);
-  const picked: number[] = [];
+  const seen = new Set([label(g.answer)]);
   let usedFallback = false;
 
-  const tryAdd = (v: number) => {
-    if (picked.length >= 3 || !Number.isFinite(v) || v <= 0) return;
-    if (Math.abs(v - g.answer) / Math.abs(g.answer) < minGap) return;
-    const s = label(v);
-    if (seen.has(s)) return;
-    seen.add(s);
-    picked.push(v);
-  };
-  g.distractors.forEach(tryAdd);
-  if (picked.length < 3) usedFallback = true;
-  FALLBACK.forEach((m) => tryAdd(g.answer * m));
+  // Choices are listed ascending, the way the computer-based exams present numbers. To keep the answer
+  // from always sitting in the middle, pick its slot first (A to D with equal odds, from the seed so a
+  // problem always looks the same), then choose how many wrong answers go below and above it.
+  const slot = Math.floor(makeRng((seed ^ 0x5bd1e995) >>> 0).next() * 4);
+  const want = { below: slot, above: 3 - slot };
 
-  // Numeric choices are listed ascending, the way the computer-based exams present them.
+  const usable = (v: number) =>
+    Number.isFinite(v) && v > 0 && Math.abs(v - g.answer) / Math.abs(g.answer) >= minGap && !seen.has(label(v));
+  const below: number[] = [];
+  const above: number[] = [];
+  const take = (v: number) => {
+    if (!usable(v)) return;
+    const side = v < g.answer ? below : above;
+    if (side.length >= (v < g.answer ? want.below : want.above)) return;
+    seen.add(label(v));
+    side.push(v);
+  };
+
+  // 1. Realistic wrong answers from named mistakes, in the order the template lists them.
+  g.distractors.forEach(take);
+  // 2. Fill whichever side is short with nearby values scaled to the problem's precision.
+  if (below.length < want.below || above.length < want.above) {
+    usedFallback = true;
+    const integral = Number.isInteger(g.answer) && g.distractors.every((d) => Number.isInteger(d));
+    const step = Math.max(minGap * 4, 0.08);
+    for (let k = 1; k <= 12 && (below.length < want.below || above.length < want.above); k++) {
+      const lo = g.answer * (1 - step * k * 0.6);
+      const hi = g.answer * (1 + step * k);
+      take(integral ? Math.round(lo) : lo);
+      take(integral ? Math.round(hi) : hi);
+    }
+    FALLBACK.forEach((m) => take(integral ? Math.round(g.answer * m) : g.answer * m));
+  }
+  // 3. If one side still can't be filled (e.g. no positive values below a tiny answer), use the other.
+  const picked = [...below, ...above];
+  if (picked.length < 3) {
+    for (const v of [...g.distractors, ...FALLBACK.map((m) => g.answer * m)]) {
+      if (picked.length >= 3) break;
+      if (usable(v)) { seen.add(label(v)); picked.push(v); }
+    }
+  }
+
   const values = [g.answer, ...picked].sort((a, b) => a - b);
   // Currency goes in front ($61,500); other units after (61.4 kN).
   const withUnit = (v: number) => (g.unit === "$" ? "$" + label(v) : g.unit ? `${label(v)} ${g.unit}` : label(v));

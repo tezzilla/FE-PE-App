@@ -5,6 +5,7 @@ import { SOLD_PLANS } from "@/lib/plans";
 import { Icon } from "@/components/Icon";
 import { FAQ } from "@/components/FAQ";
 import { ProductPreview } from "@/components/ProductPreview";
+import { PriceCompare } from "@/components/PriceCompare";
 import { tutorEnabled } from "@/lib/tutor";
 import { FOUNDER } from "@/lib/content/about";
 
@@ -35,6 +36,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
   const fePlan = subs.find((p) => p.exam === "fe-civil")!;
   const pePlan = subs.find((p) => p.exam === "pe-civil")!;
   const fePass = SOLD_PLANS.find((p) => p.kind === "pass" && p.exam === "fe-civil");
+  const pePass = SOLD_PLANS.find((p) => p.kind === "pass" && p.exam === "pe-civil");
   const topicCount = EXAMS["fe-civil"].topics.length + EXAMS["pe-civil"].topics.length;
   // Only advertise the AI tutor when it's switched on.
   const tutor = tutorEnabled();
@@ -106,39 +108,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* Price comparison */}
-      <section className="navy-section rounded-2xl elevated p-6 sm:p-10 grid md:grid-cols-2 gap-8 items-center reveal">
-        <div className="space-y-3">
-          <p className="eyebrow">Same goal, a fraction of the price</p>
-          <h2 className="text-3xl font-bold tracking-tight">Big review courses cost $1,100 to $2,000. You don&apos;t need one to pass.</h2>
-          <p className="muted">
-            What actually moves your score is working hundreds of exam-style problems with the handbook open. CivilPrep
-            gives you that, without paying for hours of lectures you&apos;ll skip.
-          </p>
-        </div>
-        <div className="space-y-3">
-          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid rgb(255 255 255 / 0.15)" }}>
-            <div>
-              <p className="font-semibold">Typical on-demand review course</p>
-              <p className="muted text-sm">4 to 12 months</p>
-            </div>
-            <p className="text-2xl font-bold muted line-through decoration-2">$1,100+</p>
-          </div>
-          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "2px solid var(--brand)", background: "var(--card)", color: "var(--fg)" }} data-inset>
-            <div>
-              <p className="font-semibold">CivilPrep FE Civil</p>
-              <p className="muted text-sm">{fePass ? `or $${fePass.price} for a ${fePass.days! / 30}-month pass` : "cancel anytime"}</p>
-            </div>
-            <p className="text-2xl font-extrabold">${fePlan.price}<span className="text-base font-normal muted">/mo</span></p>
-          </div>
-          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid rgb(255 255 255 / 0.15)" }}>
-            <div>
-              <p className="font-semibold">CivilPrep PE Civil</p>
-              <p className="muted text-sm">FE content included</p>
-            </div>
-            <p className="text-2xl font-extrabold">${pePlan.price}<span className="text-base font-normal muted">/mo</span></p>
-          </div>
-          <p className="muted text-xs">Course prices are published on-demand prices from major FE/PE review providers, November 2026.</p>
-        </div>
+      <section className="navy-section rounded-2xl elevated p-6 sm:p-10 reveal">
+        <PriceCompare fe={fePlan.price} fePass={fePass?.price} pe={pePlan.price} pePass={pePass?.price} />
       </section>
 
       {/* How it works */}
