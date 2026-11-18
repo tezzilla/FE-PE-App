@@ -183,10 +183,20 @@ Eighth batch (11): segment crash rate, design hourly volume, work zone taper len
 angle, sand cone relative compaction, RQD from core pieces, flat roof snow load, RUSLE soil loss, concrete
 maturity, grade stake cut, pressure pipe wall thickness.
 
+## Ninth batch (November 2026)
+
+Problem types (13): liquefaction factor of safety, pseudo-static infinite slope, heave from exit
+gradient, MSE reinforcement tension, pile elastic shortening, shoring post load, left-turn storage,
+Cooper-Jacob drawdown, groundwater travel time, TMDL load reduction, propped cantilever, dewatering pump
+power, EUAC. Conceptual (18): collapsible soils, karst, peat, sulfate exposure, rock slope kinematics,
+site amplification, clear zones, barrier warrants and deflection, PROWAG widths, roundabout safety,
+conflict points, intersection skew, TTC buffer space, ACI 347 lateral bracing load, submittal review,
+unconfined storativity, image wells. Every PE knowledge area now has at least 5 mapped items.
+
 ## Next batch
 
-1. Geotechnical 7 (problematic soils) and Transportation 3 (roadside design): hand-written questions.
-2. Structural 3 (temporary structures): falsework and shoring loads.
-3. WRE 8 (groundwater): Cooper-Jacob drawdown with time.
-4. Construction 9: crane capacity checks, dewatering pump sizing.
-5. Transportation 6: roundabout and turn-lane geometry.
+1. Geotechnical 2 and 10: Atterberg-limit indices, consolidation test interpretation, pile driving
+   formulas and load test interpretation (Davisson).
+2. Transportation 8: sign placement and sight distance to signs, pavement marking quantities.
+3. Construction 2: staking offsets, slope stakes.
+4. WRE 9: oxygen sag critical point, nitrogen and phosphorus mass balance.

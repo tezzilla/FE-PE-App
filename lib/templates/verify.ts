@@ -517,6 +517,63 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     return (BM + BS - rod) - (E0 + g / 100 * x);
   },
   "pressure-pipe-wall-thickness": (p) => { const D = at(p, "A"), P = at(p, "pressure of"), S = at(p, "stress is"), ca = at(p, "allowance of"); return P * (D / 2) / S + ca; },
+
+  // ---- Ninth batch (batch-nine.ts)
+  "liquefaction-factor-of-safety": (p) => {
+    const z = at(p, "sand at"), dw = at(p, "water table"), gm = at(p, "γ ="), gs = at(p, "kN/m³ above it and"), CRR = at(p, "CRR₇.₅ ="), M = at(p, "magnitude"), a = at(p, "amax =");
+    const sv = gm * dw + gs * (z - dw), se = sv - gw * (z - dw);
+    const csr = 0.65 * a * sv / se * (1 - 0.00765 * z), msf = Math.pow(10, 2.24) / Math.pow(M, 2.56);
+    return CRR * msf / csr;
+  },
+  "pseudo-static-infinite-slope": (p) => {
+    const phi = rad(at(p, "φ' =")), b = rad(at(p, "inclined at")), kh = at(p, "kh =");
+    // resolve weight W = 1 and kh·W along and normal to the slope
+    const N = Math.cos(b) - kh * Math.sin(b), T = Math.sin(b) + kh * Math.cos(b); return N * Math.tan(phi) / T;
+  },
+  "heave-exit-gradient": (p) => { const L = at(p, "last"), dh = at(p, "drops"), gs = at(p, "unit weight of"); return ((gs - gw) / gw) * L / dh; },
+  "mse-reinforcement-tension": (p) => {
+    const Sv = at(p, "spacing of"), z = at(p, "layer"), gm = at(p, "weighs"), phi = at(p, "φ ="), q = at(p, "surcharge of");
+    return (1 - Math.sin(rad(phi))) / (1 + Math.sin(rad(phi))) * (gm * z + q) * Sv;
+  },
+  "pile-elastic-shortening": (p) => {
+    const d = at(p, "A"), E = at(p, "E ="), L = at(p, "GPa) is"), Qp = at(p, "carries"), Qs = at(p, "bearing and"), xi = at(p, "ξ =");
+    return (Qp + xi * Qs) * L / (d * d * E * 1e6) * 1000;
+  },
+  "shoring-post-load": (p) => {
+    const [sx, sy, t] = nums(p); const form = at(p, "dead load of"), live = at(p, "live load of");
+    return (t / 12 * 150 + form + live) * sx * sy / 1000;
+  },
+  "left-turn-storage": (p) => {
+    const V = at(p, "has"), C = at(p, "and a"), pT = at(p, "making up");
+    const cycles = 3600 / C; return 2 * (V / cycles) * ((100 - pT) * 25 + pT * 40) / 100;
+  },
+  "cooper-jacob-drawdown": (p) => {
+    const Q = at(p, "pumps"), T = at(p, "transmissivity"), m = p.match(/storativity (\d+) × 10\^-(\d+)/)!, S = Number(m[1]) * 10 ** -Number(m[2]);
+    const r = at(p, "drawdown"), t = at(p, "m from the well after");
+    return 2.3 * Q / (4 * Math.PI * T) * Math.log10((2.25 * T * t) / (r * r * S)); // the prompt states the 2.3 factor
+  },
+  "groundwater-travel-time": (p) => {
+    const L = at(p, "wells"), h1 = at(p, "levels of"), h2 = at(p, "m and"), K = at(p, "conductivity is"), ne = at(p, "porosity is");
+    return L / (K * (h1 - h2) / L / ne) / 365;
+  },
+  "tmdl-load-reduction": (p) => {
+    const Q = at(p, "flow of"), Cnow = at(p, "phosphorus at"), Ct = at(p, "target is"), mos = at(p, "and");
+    return 8.34 * Q * (Cnow - Ct * (1 - mos / 100));
+  },
+  "propped-cantilever-reaction": (p) => {
+    const L = at(p, "spans"), w = at(p, "load of");
+    // compatibility: cantilever tip deflection wL⁴/8EI cancelled by prop RL³/3EI
+    const R = w * L ** 4 / 8 / (L ** 3 / 3);
+    return p.includes("reaction at the propped end") ? R : Math.abs(R * L - w * L * L / 2);
+  },
+  "dewatering-pump-power": (p) => { const Q = at(p, "deliver"), lift = at(p, "lift of"), fr = at(p, "plus"), eta = at(p, "efficiency is"); return Q * (lift + fr) / 3960 / (eta / 100); },
+  "euac-alternative": (p) => {
+    const P = at(p, "costs $"), M = at(p, "now, $"), S = at(p, "salvage value of $"), N = at(p, "end of its"), i = at(p, "At") / 100;
+    // annualize the net present cost of all cash flows
+    let pw = P; for (let y = 1; y <= N; y++) pw += M / (1 + i) ** y; pw -= S / (1 + i) ** N;
+    let ann = 0; for (let y = 1; y <= N; y++) ann += 1 / (1 + i) ** y;
+    return pw / ann;
+  },
 };
 
 
