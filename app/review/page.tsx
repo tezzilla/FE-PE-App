@@ -38,6 +38,9 @@ export default async function ReviewQueue({ searchParams }: { searchParams: Prom
           <p>Students see: <strong>{user.name ?? user.email}</strong>{user.reviewerCredential ? `, ${user.reviewerCredential}` : ""}</p>
           <Link href="/review/profile" className="underline">Edit how your credential appears</Link>
           <p className="mt-1">
+            <Link href="/review/setup" className="underline font-semibold">Site setup</Link>
+          </p>
+          <p className="mt-1">
             <Link href="/review/reports" className="underline font-semibold">
               Problem reports{openReports ? ` (${openReports} open)` : ""}
             </Link>
