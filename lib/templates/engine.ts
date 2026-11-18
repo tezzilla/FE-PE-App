@@ -85,6 +85,8 @@ export interface BuiltVariant {
   unit: string;
   solution: string;
   usedFallback: boolean;
+  /** Numeric values of the choices, in display order. */
+  values: number[];
 }
 
 export function buildVariant(t: Template, seed: number): BuiltVariant {
@@ -100,10 +102,14 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
   const slot = Math.floor(makeRng((seed ^ 0x5bd1e995) >>> 0).next() * 4);
   const want = { below: slot, above: 3 - slot };
 
-  const usable = (v: number) =>
-    Number.isFinite(v) && v > 0 && Math.abs(v - g.answer) / Math.abs(g.answer) >= minGap && !seen.has(label(v));
   const below: number[] = [];
   const above: number[] = [];
+  // Every choice must sit at least minGap (relative to the answer) from every other choice, not just from
+  // the answer, so two wrong answers never crowd together (e.g. 542 ft and 544 ft).
+  const far = (v: number, x: number) => Math.abs(v - x) / Math.abs(g.answer) >= minGap;
+  const usable = (v: number) =>
+    Number.isFinite(v) && v > 0 && far(v, g.answer) && !seen.has(label(v)) && [...below, ...above, ...extra].every((x) => far(v, x));
+  const extra: number[] = [];
   const take = (v: number) => {
     if (!usable(v)) return;
     const side = v < g.answer ? below : above;
@@ -128,13 +134,13 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
     FALLBACK.forEach((m) => take(integral ? Math.round(g.answer * m) : g.answer * m));
   }
   // 3. If one side still can't be filled (e.g. no positive values below a tiny answer), use the other.
-  const picked = [...below, ...above];
-  if (picked.length < 3) {
-    for (const v of [...g.distractors, ...FALLBACK.map((m) => g.answer * m)]) {
-      if (picked.length >= 3) break;
-      if (usable(v)) { seen.add(label(v)); picked.push(v); }
+  if (below.length + above.length < 3) {
+    for (const v of [...g.distractors, ...FALLBACK.map((m) => g.answer * m), ...[4, 5, 6, 8, 10].map((m) => g.answer * m)]) {
+      if (below.length + above.length + extra.length >= 3) break;
+      if (usable(v)) { seen.add(label(v)); extra.push(v); }
     }
   }
+  const picked = [...below, ...above, ...extra];
 
   const values = [g.answer, ...picked].sort((a, b) => a - b);
   // Currency goes in front ($61,500); other units after (61.4 kN).
@@ -147,6 +153,7 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
     unit: g.unit,
     solution: g.solution,
     usedFallback,
+    values,
   };
 }
 

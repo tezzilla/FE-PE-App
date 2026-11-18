@@ -2,7 +2,7 @@
 // prompt text, with formulas written here from scratch (not imported from the templates), and compares the
 // result with the answer the template marks correct. Used by `npm run test:answers` and by the reviewer
 // "approve all verified" action. A new template needs a solver below, or it can't be auto-approved.
-import { buildVariant, type Template } from "./engine";
+import { buildVariant, makeRng, type Template } from "./engine";
 
 const nums = (s: string) => (s.match(/-?\d[\d,]*\.?\d*/g) ?? []).map((x) => Number(x.replace(/,/g, "")));
 const rad = (d: number) => (d * Math.PI) / 180;
@@ -165,6 +165,8 @@ export interface VerifyResult {
   worstError: number;
   variants: number;
   duplicateChoices: number;
+  /** Variants where two choices sit closer together than the template's minimum gap. */
+  crowdedChoices: number;
   fallbackChoices: number;
   worstPrompt: string;
   reason?: string;
@@ -173,16 +175,22 @@ export interface VerifyResult {
 /** Re-solve `n` variants of a template. Passes when every marked answer is within 0.1% and choices are distinct. */
 export function verifyTemplate(t: Template, n = 200): VerifyResult {
   const solve = SOLVERS[t.id];
-  if (!solve) return { ok: false, worstError: NaN, variants: 0, duplicateChoices: 0, fallbackChoices: 0, worstPrompt: "", reason: "no independent solver for this template" };
-  let worst = 0, dupes = 0, fallback = 0, worstPrompt = "";
+  if (!solve) return { ok: false, worstError: NaN, variants: 0, duplicateChoices: 0, crowdedChoices: 0, fallbackChoices: 0, worstPrompt: "", reason: "no independent solver for this template" };
+  let worst = 0, dupes = 0, fallback = 0, crowded = 0, worstPrompt = "";
   for (let k = 1; k <= n; k++) {
     const v = buildVariant(t, k * 7919);
+    const gap = (t.generate(makeRng(k * 7919)).minGap ?? 0.03) * 0.999;
+    const vs = [...v.values].sort((a, b) => a - b);
+    if (vs.length !== 4 || vs.some((x, i) => i > 0 && (x - vs[i - 1]) / Math.abs(v.answerValue) < gap)) crowded++;
     const expected = solve(v.prompt);
     const err = Math.abs(v.answerValue - expected) / Math.abs(expected);
     if (!(err <= worst)) { worst = Number.isFinite(err) ? err : Infinity; worstPrompt = v.prompt; }
     if (v.usedFallback) fallback++;
     if (new Set(v.choices).size !== v.choices.length) dupes++;
   }
-  const ok = worst < 1e-3 && dupes === 0;
-  return { ok, worstError: worst, variants: n, duplicateChoices: dupes, fallbackChoices: fallback, worstPrompt, reason: ok ? undefined : dupes ? "duplicate answer choices" : "marked answer doesn't match the independent solution" };
+  const ok = worst < 1e-3 && dupes === 0 && crowded === 0;
+  return {
+    ok, worstError: worst, variants: n, duplicateChoices: dupes, crowdedChoices: crowded, fallbackChoices: fallback, worstPrompt,
+    reason: ok ? undefined : dupes ? "duplicate answer choices" : crowded ? "answer choices too close together" : "marked answer doesn't match the independent solution",
+  };
 }

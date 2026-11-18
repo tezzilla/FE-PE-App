@@ -8,7 +8,7 @@ let bad = 0;
 for (const t of TEMPLATES) {
   const r = verifyTemplate(t, 200);
   if (!r.ok) bad++;
-  console.log(`${r.ok ? "ok " : "✗  "} ${t.id.padEnd(26)} max error ${(r.worstError * 100).toFixed(3)}%  fallback-choices ${r.fallbackChoices}/200  duplicate-choices ${r.duplicateChoices}${r.ok ? "" : `  (${r.reason})\n     worst case: ${r.worstPrompt}`}`);
+  console.log(`${r.ok ? "ok " : "✗  "} ${t.id.padEnd(26)} max error ${(r.worstError * 100).toFixed(3)}%  fallback-choices ${r.fallbackChoices}/200  duplicate-choices ${r.duplicateChoices}  crowded ${r.crowdedChoices}${r.ok ? "" : `  (${r.reason})\n     worst case: ${r.worstPrompt}`}`);
 }
 console.log(`\n${TEMPLATES.length} templates, ${bad} need attention`);
 process.exit(bad ? 1 : 0);
