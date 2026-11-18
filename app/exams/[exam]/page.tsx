@@ -85,9 +85,11 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
           const available = access ? qs.length : qs.filter((q) => q.free).length;
           const s = stats[t.slug];
           return (
-            <Link key={t.slug} href={`/exams/${exam}/practice?topic=${t.slug}`} className="card p-4 hover:shadow-md transition">
+            <div key={t.slug} className="card p-4">
               <div className="flex justify-between gap-2">
-                <h2 className="font-semibold">{t.name}</h2>
+                <h2 className="font-semibold">
+                  <Link href={`/exams/${exam}/topics/${t.slug}`} className="hover:underline">{t.name}</Link>
+                </h2>
                 <span className="muted text-sm whitespace-nowrap">{t.examQuestions}{/\d/.test(t.examQuestions) ? " on exam" : ""}</span>
               </div>
               <p className="muted text-sm mt-1">
@@ -99,7 +101,11 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
                   + unlimited problems from {gens} engineer-reviewed generator{gens > 1 ? "s" : ""}{access ? "" : " 🔒"}
                 </p>
               )}
-            </Link>
+              <div className="flex gap-4 mt-2 text-sm">
+                <Link href={`/exams/${exam}/topics/${t.slug}`} className="underline">Review</Link>
+                <Link href={`/exams/${exam}/practice?topic=${t.slug}`} className="underline">Practice</Link>
+              </div>
+            </div>
           );
         })}
       </div>

@@ -2,6 +2,7 @@
 import { deck, scheduleCard, MAX_INTERVAL_DAYS, type CardState } from "../lib/adaptive/cards";
 import { FLASHCARDS, cardTopic, flashcardsFor } from "../lib/content/flashcards";
 import { EXAMS } from "../lib/content/exams";
+import { topicGuide } from "../lib/content/topic-guides";
 
 let failures = 0;
 const check = (ok: boolean, msg: string) => { console.log(`${ok ? "ok " : "✗  "} ${msg}`); if (!ok) failures++; };
@@ -48,6 +49,11 @@ for (const exam of ["fe-civil", "pe-civil"] as const) {
   check(missing.length === 0, `${exam}: every topic has cards${missing.length ? ` (missing: ${missing})` : ""}`);
   check(flashcardsFor(exam).some((c) => c.free), `${exam}: some free cards`);
 }
+for (const exam of ["fe-civil", "pe-civil"] as const) {
+  const missing = EXAMS[exam].topics.filter((t) => { const g = topicGuide(exam, t.slug); return !g || !g.summary || !g.handbook || g.traps.length < 2; });
+  check(missing.length === 0, `${exam}: every topic has a review guide with 2+ traps`);
+}
+check(topicGuide("pe-civil", "water-env")!.summary.startsWith("Depth module") && !topicGuide("fe-civil", "water-env")!.summary.startsWith("Depth"), "PE guides override FE text");
 check(FLASHCARDS.every((c) => c.front.trim() && c.back.trim() && c.ref.trim()), "every card has front, back and a handbook pointer");
 
 console.log(failures ? `\n${failures} failed` : "\nall passed");
