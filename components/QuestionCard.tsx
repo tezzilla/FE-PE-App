@@ -1,6 +1,7 @@
 "use client";
 
 import type { PublicQuestion } from "@/lib/content/types";
+import { ReportProblem } from "./ReportProblem";
 
 export interface Feedback {
   correct: boolean;
@@ -52,6 +53,7 @@ export function QuestionCard({
           <p className="mt-2 whitespace-pre-line">{feedback.explanation}</p>
           {feedback.reference && <p className="muted text-sm mt-2">Reference: {feedback.reference}</p>}
           {feedback.reviewedBy && <p className="muted text-sm mt-1">Problem type reviewed by {feedback.reviewedBy}</p>}
+          <ReportProblem key={question.id} questionId={question.id} selected={selected} />
         </div>
       )}
     </div>

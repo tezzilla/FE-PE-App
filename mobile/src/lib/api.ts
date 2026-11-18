@@ -116,6 +116,11 @@ export const api = {
   smart: (token: string, exam: ExamId) => request<QuestionSet>(`/api/mobile/smart?exam=${exam}`, token),
   practice: (token: string, exam: ExamId, topic?: string) =>
     request<QuestionSet>(`/api/mobile/practice?exam=${exam}${topic ? `&topic=${encodeURIComponent(topic)}` : ''}`, token),
+  report: (token: string, questionId: string, selected: number | null, message: string) =>
+    request<{ ok: true }>('/api/mobile/report', token, {
+      method: 'POST',
+      body: JSON.stringify({ questionId, selected, message }),
+    }),
   answer: (token: string, questionId: string, selected: number) =>
     request<Feedback>('/api/mobile/answer', token, {
       method: 'POST',

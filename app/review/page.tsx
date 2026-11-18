@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireReviewer } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { templateReviewStatus, type ReviewStatus } from "@/lib/reviews";
 import { TEMPLATES } from "@/lib/templates";
 import { EXAMS } from "@/lib/content/exams";
@@ -23,6 +24,7 @@ export default async function ReviewQueue({ searchParams }: { searchParams: Prom
     (a, b) => ORDER.indexOf(status.get(a.id)!.status) - ORDER.indexOf(status.get(b.id)!.status),
   );
   const live = sorted.filter((t) => status.get(t.id)!.status === "approved").length;
+  const openReports = await db.problemReport.count({ where: { status: "open" } });
 
   return (
     <div className="space-y-6">
@@ -35,6 +37,11 @@ export default async function ReviewQueue({ searchParams }: { searchParams: Prom
         <div className="text-sm text-right">
           <p>Students see: <strong>{user.name ?? user.email}</strong>{user.reviewerCredential ? `, ${user.reviewerCredential}` : ""}</p>
           <Link href="/review/profile" className="underline">Edit how your credential appears</Link>
+          <p className="mt-1">
+            <Link href="/review/reports" className="underline font-semibold">
+              Problem reports{openReports ? ` (${openReports} open)` : ""}
+            </Link>
+          </p>
         </div>
       </div>
 

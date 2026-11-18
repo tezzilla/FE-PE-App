@@ -29,6 +29,7 @@ model User {
   attempts             Attempt[]
   mockExams            MockExam[]
   reviews              TemplateReview[]
+  reports              ProblemReport[]
 }
 
 model Attempt {
@@ -80,4 +81,24 @@ model RateLimit {
   key         String   @id
   count       Int
   windowStart DateTime
+}
+
+// Student-submitted "this question is wrong/unclear" reports, triaged by reviewers.
+model ProblemReport {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId  String
+  exam        String
+  topic       String
+  templateId  String?
+  selected    Int?
+  message     String
+  // open | resolved | dismissed
+  status      String    @default("open")
+  resolverNote String?
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+
+  @@index([status, createdAt])
 }

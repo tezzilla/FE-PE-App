@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { ReportProblem } from '@/components/report-problem';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
@@ -67,6 +68,7 @@ export function QuestionView({
               Problem type reviewed by {feedback.reviewedBy}
             </ThemedText>
           )}
+          <ReportProblem key={question.id} questionId={question.id} selected={selected} />
         </View>
       )}
     </Card>

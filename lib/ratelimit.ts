@@ -11,6 +11,8 @@ export const LIMITS = {
   loginIp: { max: 100, windowMs: 15 * 60_000 },
   // New accounts per IP.
   signupIp: { max: 20, windowMs: 60 * 60_000 },
+  // Problem reports per user.
+  reportUser: { max: 20, windowMs: 60 * 60_000 },
 } as const;
 type Limit = (typeof LIMITS)[keyof typeof LIMITS];
 
