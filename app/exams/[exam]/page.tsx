@@ -30,15 +30,15 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
           const b = await bankStats(exam);
           return (
             <p className="text-sm mt-1" style={{ color: "var(--brand)" }}>
-              {b.fixed} worked problems{b.generators ? ` + ${b.generators} problem types with unlimited variations` : ""}
+              {b.fixed} worked problems{b.generators ? ` + ${b.generators} problem type${b.generators === 1 ? "" : "s"} with unlimited variations` : ""}
             </p>
           );
         })()}
       </div>
 
-      {!access && (
+      {!access && user && (
         <div className="card p-4 flex flex-wrap items-center gap-3">
-          <p className="flex-1 min-w-56">You are on the free tier: one sample question per topic. Subscribe for the full bank and mock exams.</p>
+          <p className="flex-1 min-w-56">You&apos;re on the free tier: one sample question per topic. Subscribe for the full bank, timed exams and flashcards.</p>
           <Link href="/pricing" className="btn w-full sm:w-auto">Unlock {def.name}</Link>
         </div>
       )}
@@ -50,9 +50,15 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
           <PacingCard user={user} exam={exam} />
         </>
       ) : (
-        <div className="card p-4 flex flex-wrap items-center gap-3">
-          <p className="flex-1">Smart practice learns what you&apos;re weak at and targets it. Free account required.</p>
-          <Link href="/signup" className="btn">Create free account</Link>
+        <div className="card elevated p-5 sm:p-6 flex flex-wrap items-center gap-4" style={{ borderColor: "var(--brand)" }}>
+          <div className="flex-1 min-w-56">
+            <p className="font-semibold text-lg">Try a free sample question in every topic</p>
+            <p className="muted text-sm">A free account adds the diagnostic, smart practice and your readiness score.</p>
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Link href="/signup" className="btn flex-1 sm:flex-none">Create free account</Link>
+            <Link href="/pricing" className="btn-ghost flex-1 sm:flex-none">Pricing</Link>
+          </div>
         </div>
       )}
 

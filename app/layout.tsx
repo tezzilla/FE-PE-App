@@ -7,7 +7,7 @@ import { MobileTabBar } from "@/components/MobileTabBar";
 
 export const metadata: Metadata = {
   title: "CivilPrep: FE & PE Civil exam prep",
-  description: "Affordable monthly FE and PE Civil exam prep. Practice questions, mock exams, progress tracking.",
+  description: "FE and PE Civil exam prep that adapts to your weak spots: practice problems with worked solutions, full-length timed exams, formula flashcards and a study plan. From $29/month.",
   appleWebApp: { capable: true, title: "CivilPrep", statusBarStyle: "default" },
 };
 
@@ -26,7 +26,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <header className="border-b" style={{ borderColor: "var(--border)" }}>
+        <header
+          className="border-b sticky top-0 z-30 backdrop-blur"
+          style={{ borderColor: "var(--border)", background: "color-mix(in srgb, var(--bg) 85%, transparent)" }}
+        >
           <nav className="mx-auto max-w-5xl px-4 h-14 flex items-center gap-5">
             <Link href="/" className="font-bold text-lg">
               Civil<span style={{ color: "var(--brand)" }}>Prep</span>

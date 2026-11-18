@@ -5,6 +5,8 @@ import { SOLD_PLANS, getPlan, type Plan } from "@/lib/plans";
 import { billingStatus, foundingSpots } from "@/lib/stripe";
 import { getCurrentUser, isReviewer } from "@/lib/auth";
 import { hasActiveSubscription, passAccessUntil } from "@/lib/access";
+import { FAQ } from "@/components/FAQ";
+import { Icon } from "@/components/Icon";
 
 export const dynamic = "force-dynamic";
 
@@ -39,8 +41,9 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold">Simple pricing</h1>
+      <div className="text-center space-y-2">
+        <p className="eyebrow">Pricing</p>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">A full prep course for less than one exam fee</h1>
         <p className="muted mt-2">Pay monthly and cancel anytime, or buy a pass that covers a typical study period.</p>
         <p className="muted text-sm mt-1">
           Monthly plans renew until you cancel; passes are one payment and never renew. See the <Link href="/terms" className="underline">Terms</Link>.
@@ -91,7 +94,16 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
                 {pass && <p className="text-sm mt-1" style={{ color: "#16a34a" }}>You have a pass until {pass.toLocaleDateString("en-US")}.</p>}
               </div>
               {plans.map((p) => (
-                <div key={p.id} className="rounded-lg p-4 space-y-3" style={{ border: "1px solid var(--border)" }}>
+                <div
+                  key={p.id}
+                  className="rounded-xl p-4 space-y-3 relative"
+                  style={{ border: p.kind === "pass" ? "2px solid var(--brand)" : "1px solid var(--border)" }}
+                >
+                  {p.kind === "pass" && (
+                    <span className="absolute -top-3 right-4 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "var(--brand)", color: "white" }}>
+                      Best value
+                    </span>
+                  )}
                   <div className="flex items-baseline justify-between gap-2">
                     <h3 className="font-semibold">{p.kind === "pass" ? `${p.days! / 30}-month pass` : "Monthly"}</h3>
                     <p className="text-3xl font-extrabold">
@@ -103,7 +115,12 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
                     <p className="text-sm muted">${(p.price / (p.days! / 30)).toFixed(0)}/mo equivalent · {p.days} days · no renewal</p>
                   )}
                   <ul className="space-y-1 text-sm">
-                    {p.features.map((f) => <li key={f}>✓ {f}</li>)}
+                    {p.features.map((f) => (
+                      <li key={f} className="flex gap-2">
+                        <span className="mt-0.5 shrink-0" style={{ color: "var(--good)" }}><Icon name="check" size={16} /></span>
+                        {f}
+                      </li>
+                    ))}
                   </ul>
                   {action(p)}
                 </div>
@@ -113,6 +130,29 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
         })}
       </div>
       <p className="muted text-xs text-center">Prices in USD. Sales tax may apply.</p>
+
+      {!user && (
+        <div className="card p-6 flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex-1 text-center sm:text-left">
+            <p className="font-semibold text-lg">Not sure yet? Start free.</p>
+            <p className="muted text-sm">Sample questions in every topic, the diagnostic, and your readiness score. No card required.</p>
+          </div>
+          <Link href="/signup" className="btn w-full sm:w-auto">Create free account</Link>
+        </div>
+      )}
+
+      <section className="space-y-4 max-w-3xl mx-auto pt-4">
+        <h2 className="text-2xl font-bold text-center">Pricing questions</h2>
+        <FAQ
+          items={[
+            { q: "Monthly or a pass: which should I pick?", a: "If your exam is 3 or more months away, a pass costs less than paying monthly for the same time and never renews. If you're testing sooner or aren't sure of your date, monthly lets you stop anytime." },
+            { q: "Does the PE plan include the FE?", a: "Yes. PE Civil plans include all FE Civil content, which is useful for refreshing fundamentals." },
+            { q: "How do I cancel?", a: "From your account page, at any time. You keep access until the end of the period you've paid for." },
+            { q: "What happens to my progress if I cancel?", a: "It stays in your account. If you come back, your readiness score, history and study plan are right where you left them." },
+            { q: "Can my employer pay?", a: "Yes. Checkout produces a receipt, and you can request an invoice. Many firms reimburse exam prep." },
+          ]}
+        />
+      </section>
     </div>
   );
 }
