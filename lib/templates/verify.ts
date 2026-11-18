@@ -574,6 +574,51 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     let ann = 0; for (let y = 1; y <= N; y++) ann += 1 / (1 + i) ** y;
     return pw / ann;
   },
+
+  // ---- Tenth batch (batch-ten.ts)
+  "liquidity-index": (p) => { const w = at(p, "content of"), LL = at(p, "liquid limit of"), PL = at(p, "plastic limit of"); return (w - PL) / (LL - PL); },
+  "compression-index-oedometer": (p) => {
+    const e1 = at(p, "void ratio is"), s1 = at(p, "stress of"), e2 = at(p, "kPa and"), s2 = at(p, nums(p.slice(p.indexOf("kPa and"))).slice(0, 1).join("") + " at");
+    return (e1 - e2) / (Math.log(s2 / s1) / Math.LN10);
+  },
+  "modified-gates-pile": (p) => { const Ed = at(p, "energy of"), Nb = at(p, "set is"); return 1.75 * Math.sqrt(Ed) * (Math.log(10 * Nb) / Math.LN10) - 100; },
+  "davisson-offset": (p) => {
+    const steel = p.includes("H-pile"), D = steel ? at(p, "width") : at(p, "A"), L = at(p, "is"), P = at(p, "load of");
+    const A = steel ? at(p, "A =") : D * D, E = at(p, "E =");
+    return P * (L * 12) / (A * E) + 0.15 + D / 120;
+  },
+  "sign-letter-height": (p) => { const V = at(p, "at"), t = at(p, "need"), extra = at(p, "read"); return (V * 5280 / 3600 * 1.47 / (5280 / 3600) * t + extra) / 30; },
+  "pavement-marking-quantity": (p) => {
+    const L = at(p, "A") * 5280, pass = at(p, "allowed,");
+    return L * 2 + L * (100 - pass) / 100 + L * pass / 100 * (10 / 40);
+  },
+  "slope-stake-offset": (p) => { const w = at(p, "is"), h = at(p, "centerline is"), s = at(p, "slopes are"); return w / 2 + s * h; },
+  "oxygen-sag-minimum-do": (p) => {
+    const L0 = at(p, "L₀ ="), D0 = at(p, "D₀ ="), kd = at(p, "deoxygenation rate is"), kr = at(p, "reaeration rate is"), DOs = at(p, "saturation DO is");
+    // scan the deficit curve for its maximum
+    const D = (t: number) => kd * L0 / (kr - kd) * (Math.exp(-kd * t) - Math.exp(-kr * t)) + D0 * Math.exp(-kr * t);
+    let lo = 0, hi = 60; for (let k = 0; k < 200; k++) { const m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3; if (D(m1) < D(m2)) lo = m1; else hi = m2; }
+    return DOs - D((lo + hi) / 2);
+  },
+  "two-axle-max-moment": (p) => {
+    const L = at(p, "span of"), P = at(p, "equal"), a = at(p, "spaced");
+    // brute-force the axle position and take the largest moment under either axle
+    let best = 0;
+    for (let k = 0; k <= 4000; k++) {
+      const x = (k / 4000) * (L - a); // left axle position, both axles on the span
+      const R = P * (L - x) / L + P * (L - x - a) / L;
+      best = Math.max(best, R * x, R * (x + a) - P * a);
+    }
+    return best;
+  },
+  "live-load-reduction-column": (p) => {
+    const AT = at(p, "area of"), L0 = at(p, "load of"); const k = 0.25 + 15 / Math.sqrt(4 * AT);
+    return (k < 0.5 ? 0.5 : k) * L0 * AT / 1000;
+  },
+  "distribution-storage-volume": (p) => {
+    const MDD = at(p, "demand is"), eqp = at(p, "equalization of"), ff = at(p, "fire flow of"), hr = at(p, "gpm for"), emp = p.includes("emergency") ? at(p, "emergency storage of") : 0;
+    const base = eqp / 100 * MDD + ff * hr * 60 / 1e6; return base * (1 + emp / 100);
+  },
 };
 
 

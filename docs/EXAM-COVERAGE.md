@@ -193,10 +193,18 @@ site amplification, clear zones, barrier warrants and deflection, PROWAG widths,
 conflict points, intersection skew, TTC buffer space, ACI 347 lateral bracing load, submittal review,
 unconfined storativity, image wells. Every PE knowledge area now has at least 5 mapped items.
 
+## Tenth batch (November 2026)
+
+Problem types (11): liquidity index, compression index from oedometer data, FHWA-modified Gates driving
+formula, Davisson offset line, sign letter height, pavement marking quantities, slope stake offset,
+Streeter-Phelps minimum DO, two-axle maximum moment, live load reduction, distribution storage volume.
+Conceptual (8): unconfined compression, pile setup, high-strain dynamic testing, crosshole sonic
+logging, sign mounting height, retroreflectivity, offset stakes, grade stake markings.
+
 ## Next batch
 
-1. Geotechnical 2 and 10: Atterberg-limit indices, consolidation test interpretation, pile driving
-   formulas and load test interpretation (Davisson).
-2. Transportation 8: sign placement and sight distance to signs, pavement marking quantities.
-3. Construction 2: staking offsets, slope stakes.
-4. WRE 9: oxygen sag critical point, nitrogen and phosphorus mass balance.
+1. Structural: two-way slab and shear wall basics, bolt group eccentricity, prestress losses.
+2. WRE: lime-soda softening doses, sludge thickening and dewatering, chlorine contact basin sizing.
+3. Transportation: weaving segment, roundabout entry capacity, spiral curves.
+4. Construction: resource leveling, crane ground pressure with mats, trench box selection.
+5. Geotechnical: lateral pile capacity (Broms), rock bearing, geosynthetic filter criteria.
