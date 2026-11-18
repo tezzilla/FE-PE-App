@@ -706,6 +706,72 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const D = at(p, "A"), L = at(p, "has a"), qu = at(p, "strength of"), aE = at(p, "αE is");
     return 0.65 * aE * Math.sqrt(2.12 * qu) * Math.PI * D * L; // pa(qu/pa)^0.5 = √(pa·qu)
   },
+
+  // ---- Thirteenth batch (batch-thirteen.ts)
+  "moment-magnification-nonsway": (p) => {
+    const Lu = at(p, "length of") * 12, EI = at(p, "(EI)eff =") * 1e6, Pu = at(p, "Pu ="), M1 = at(p, "M₁ ="), M2 = at(p, "M₂ =");
+    const single = p.includes("bent in single");
+    const Pc = (Math.PI * Math.PI * EI) / (Lu * Lu);
+    const Cm = 0.6 - 0.4 * (single ? M1 / M2 : -M1 / M2);
+    return Math.max(1, Cm / (1 - Pu / (0.75 * Pc))) * M2;
+  },
+  "wood-bolt-group-capacity": (p) => {
+    const nb = at(p, "uses"), Z = at(p, "Z ="), CD = at(p, "CD ="), CM = at(p, "CM ="), Cg = at(p, "Cg =");
+    return [nb, Z, CD, CM, Cg].reduce((a, b) => a * b, 1) / 1000;
+  },
+  "base-plate-thickness": (p) => {
+    const d = at(p, "d ="), bf = at(p, "bf ="), Pu = at(p, "Pu ="), m = p.match(/on a (\d+) in × (\d+) in base plate/)!;
+    const B = Number(m[1]), N = Number(m[2]);
+    const l = Math.max((N - 0.95 * d) / 2, (B - 0.8 * bf) / 2);
+    return l * Math.sqrt((2 * Pu) / (0.9 * 36 * B * N));
+  },
+  "sequent-peak-storage": (p) => {
+    const D = at(p, "constant");
+    const flows = nums(p.slice(p.indexOf("dry period are") + 14, p.indexOf("million m³. Ignoring")));
+    // largest cumulative shortfall over any run of consecutive months (max-subarray of D − I)
+    let best = 0;
+    for (let i = 0; i < flows.length; i++) { let s = 0; for (let j = i; j < flows.length; j++) { s += D - flows[j]; best = Math.max(best, s); } }
+    return best;
+  },
+  "sediment-basin-stokes": (p) => {
+    const d = at(p, "particles") / 1000, Q = at(p, "inflow of");
+    const vs = (9.81 * 1652 * d * d) / (18 * 1.002e-3);
+    return Q / vs;
+  },
+  "network-node-pressure": (p) => {
+    const Ws = at(p, "elevation"), z = at(p, "ground elevation"), L = at(p, "through"), Din = Number(p.match(/ft of (\d+)-in main/)![1]), C = at(p, "C ="), Q = at(p, "carrying");
+    const D = Din / 12, hf = (4.73 * L * Math.pow(Q, 1.852)) / (Math.pow(C, 1.852) * Math.pow(D, 4.87));
+    return ((Ws - hf - z) * 62.4) / 144; // γh in psi
+  },
+  "parking-peak-accumulation": (p) => {
+    const N0 = at(p, "holds");
+    const arr = nums(p.slice(p.indexOf("arrivals of") + 11, p.indexOf(" and departures")));
+    const dep = nums(p.slice(p.indexOf("departures of") + 13, p.indexOf(". What")));
+    let occ = N0, peak = N0;
+    arr.forEach((a, i) => { occ += a - dep[i]; peak = Math.max(peak, occ); });
+    return peak;
+  },
+  "walkway-pedestrian-space": (p) => {
+    const W = at(p, "A"), shy = at(p, "loses"), P15 = at(p, "minutes,"), S = at(p, "average");
+    return (S * 15 * (W - shy)) / P15;
+  },
+  "spot-speed-85th": (p) => { const m = at(p, "mean speed of"), s = at(p, "deviation of"); return m + 1.036 * s; },
+  "space-mean-speed": (p) => { const v = nums(p.slice(p.indexOf("clocked at") + 10)); return 1 / (v.reduce((a, x) => a + 1 / x, 0) / v.length); },
+  "cost-loaded-cumulative": (p) => {
+    const acts = [...p.matchAll(/([A-D]) starts at week (\d+), lasts (\d+) weeks, costs \$([\d,]+)/g)].map((m) => ({ s: Number(m[2]), d: Number(m[3]), c: Number(m[4].replace(/,/g, "")) }));
+    const wk = at(p, "end of week");
+    // add up week by week
+    let tot = 0;
+    for (const a of acts) for (let w = 1; w <= wk; w++) if (w > a.s && w <= a.s + a.d) tot += a.c / a.d;
+    return tot;
+  },
+  "preload-surcharge-time": (p) => {
+    const sPerm = at(p, "settle"), sTot = at(p, "settlement to"), H = at(p, "alone, a"), cv = at(p, "cv ="), dbl = p.includes("top and bottom");
+    const U = sPerm / sTot;
+    const Tv = U <= 0.6 ? (Math.PI / 4) * U * U : 1.781 - 0.933 * Math.log10(100 - U * 100);
+    const Hdr = dbl ? H / 2 : H;
+    return (Tv * Hdr * Hdr) / cv;
+  },
 };
 
 

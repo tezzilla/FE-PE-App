@@ -214,11 +214,18 @@ Problem types (11): shear wall hold-down uplift, base plate bearing (AISC J8), t
 web local yielding, filter backwash share, ion exchange run volume, landfill leachate balance, trickling
 filter organic loading, EPDO crash index, concrete pump placement time, rock socket side resistance.
 
+## Thirteenth batch (November 2026)
+
+Problem types (12): nonsway moment magnification, wood bolt group capacity (NDS), base plate thickness,
+sequent peak reservoir storage, sediment basin area from Stokes' law, pressure at a network node,
+parking peak accumulation, walkway pedestrian space, 85th percentile speed, space-mean speed,
+cost-loaded cumulative planned value, preload surcharge time.
+
 ## Next batch
 
-1. Structural: column base plate thickness, slender column moment magnification, wood connection
-   capacity with adjustment factors.
-2. WRE: reservoir yield (mass curve), pipe network pressure at a node, sediment basin sizing.
-3. Transportation: weaving segment basics, parking demand, pedestrian LOS (space per person).
-4. Construction: resource histogram moments, cost-loaded schedule cash flow.
-5. Geotechnical: Broms short pile in clay, consolidation with surcharge removal (preloading).
+1. Structural: sway frame magnification, timber beam lateral stability (CL), masonry shear.
+2. WRE: Hardy Cross single-loop correction, pump curves and operating point, flood frequency (Gumbel).
+3. Transportation: queue length at a signal (D/D/1 per cycle), weaving segment ratio, design vehicle
+   turning paths (conceptual).
+4. Construction: learning curves, cost indexes (escalation), lift plans (crane percent capacity).
+5. Geotechnical: dynamic compaction depth, MSE pullout resistance.
