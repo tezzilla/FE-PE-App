@@ -24,7 +24,7 @@ In **Settings → Environment Variables**, add for all environments:
 | Name | Value |
 |---|---|
 | `AUTH_SECRET` | A random string of 32+ characters. On Windows PowerShell: `[Convert]::ToBase64String((1..32 \| % {Get-Random -Max 256}))` |
-| `APP_URL` | Your site address, e.g. `https://fe-pe-app.vercel.app` (no trailing slash) |
+| `APP_URL` | Your site address: `https://getcivilprep.com` (no trailing slash, no www). Used in emails, Stripe return links and the app. |
 | `REVIEWER_EMAILS` | Your email. Comma-separate to add more reviewers. |
 | `CONTACT_EMAIL` | Public address for legal and privacy requests, shown on the Terms and Privacy pages. |
 | `POSTMARK_SERVER_TOKEN` | Postmark > Servers > your server > API Tokens. Mark Sensitive. Sends password reset, welcome and password-changed emails. |
