@@ -17,7 +17,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
   const { exam } = await params;
   if (!isExamId(exam)) notFound();
   const def = EXAMS[exam];
-  const user = await requireUser();
+  const user = await requireUser(`/exams/${exam}/mock`);
 
   if (!hasExamAccess(user, exam)) {
     return (
@@ -38,7 +38,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
   if (inProgress?.sessions) {
     const sessions = await loadSessions(inProgress.sessions);
     return (
-      <div className="max-w-6xl mx-auto space-y-4">
+      <div className="max-w-6xl mx-auto space-y-4" data-exam-running>
         <h1 className="text-2xl font-bold">{def.name} full exam</h1>
         <FullExam
           discard={

@@ -13,14 +13,13 @@ export const dynamic = "force-dynamic";
 export default async function SmartPractice({ params }: { params: Promise<{ exam: string }> }) {
   const { exam } = await params;
   if (!isExamId(exam)) notFound();
-  const user = await requireUser();
+  const user = await requireUser(`/exams/${exam}/smart`);
   const { questions, reasons } = await smartSession(user, exam, 10);
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h1 className="text-xl sm:text-2xl font-bold">{EXAMS[exam].name}: Smart practice</h1>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">Exam overview</Link>
       </div>
       <p className="muted text-sm">
         10 questions picked for you: problems you missed, topics where you&apos;re weakest relative to how much

@@ -23,7 +23,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
   const { exam } = await params;
   if (!isExamId(exam)) notFound();
   const sp = await searchParams;
-  const user = await requireUser();
+  const user = await requireUser(`/exams/${exam}/quiz`);
   const def = EXAMS[exam];
   const slugs = def.topics.map((t) => t.slug);
   const picked = [sp.topic ?? []].flat().filter((t) => slugs.includes(t));
@@ -37,7 +37,6 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
   const header = (
     <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
       <h1 className="text-xl sm:text-2xl font-bold">{def.name}: {source === "missed" && sp.go ? "Review my misses" : "Custom quiz"}</h1>
-      <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">Exam overview</Link>
     </div>
   );
 

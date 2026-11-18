@@ -50,10 +50,12 @@ export default async function PracticePage({
           {area && <span className="block text-base font-semibold muted mt-1">{area.n}. {area.name}</span>}
         </h1>
         {area ? (
-          <Link href={`/exams/${exam}/modules/${topic}`} className="muted text-sm hover:underline whitespace-nowrap">All knowledge areas</Link>
-        ) : (
-          <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">All topics</Link>
-        )}
+          <Link href={`/exams/${exam}/modules/${topic}`} className="muted text-sm hover:underline whitespace-nowrap">‹ All {topicName(exam, topic!)} areas</Link>
+        ) : topic ? (
+          <Link href={`/exams/${exam}/${exam === "pe-civil" ? "modules" : "topics"}/${topic}`} className="muted text-sm hover:underline whitespace-nowrap">
+            {exam === "pe-civil" ? `‹ ${topicName(exam, topic)} knowledge areas` : `‹ ${topicName(exam, topic)} review notes`}
+          </Link>
+        ) : null}
       </div>
       {!user && (
         <p className="muted text-sm">

@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function Diagnostic({ params }: { params: Promise<{ exam: string }> }) {
   const { exam } = await params;
   if (!isExamId(exam)) notFound();
-  const user = await requireUser();
+  const user = await requireUser(`/exams/${exam}/diagnostic`);
   const def = EXAMS[exam];
   const questions = await diagnosticSession(user, exam, 2);
 
@@ -21,7 +21,6 @@ export default async function Diagnostic({ params }: { params: Promise<{ exam: s
     <div className="space-y-4 max-w-3xl mx-auto">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h1 className="text-xl sm:text-2xl font-bold">{def.name}: Diagnostic</h1>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">Exam overview</Link>
       </div>
       <p className="muted text-sm">
         About 2 questions from each of the {def.topics.length} topics. Your answers set a starting point for smart

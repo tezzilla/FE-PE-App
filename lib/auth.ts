@@ -70,9 +70,10 @@ async function userFromToken(token: string | undefined) {
   }
 }
 
-export async function requireUser() {
+/** The signed-in user, or a redirect to login that comes back to `next` afterwards. */
+export async function requireUser(next?: string) {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  if (!user) redirect(next ? `/login?next=${encodeURIComponent(next)}` : "/login");
   return user;
 }
 

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EXAMS, isExamId } from "@/lib/content/exams";
@@ -27,10 +26,7 @@ export default async function HandbookDrillPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="text-2xl font-bold">{EXAMS[exam].name}: handbook hunt</h1>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline">Back to {EXAMS[exam].shortName}</Link>
-      </div>
+      <h1 className="text-2xl font-bold">{EXAMS[exam].name}: handbook hunt</h1>
       <p className="muted text-sm">
         Ten formulas and rules. Pick the handbook chapter you&apos;d open for each, as fast as you can. Practicing lookups
         builds the speed you need with the electronic handbook on exam day.

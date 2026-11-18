@@ -7,7 +7,7 @@ import { setWeeklyEmail } from "./actions";
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
-  const user = await requireUser();
+  const user = await requireUser("/account");
   const billable = !!user.stripeSubscriptionId && !["canceled", "incomplete_expired"].includes(user.subscriptionStatus ?? "");
 
   return (

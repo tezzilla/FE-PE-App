@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Crumbs } from "@/components/Crumbs";
+import { PE_MODULE_SPECS } from "@/lib/content/pe-spec";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EXAMS, isExamId } from "@/lib/content/exams";
@@ -36,9 +38,15 @@ export default async function TopicReview({ params }: { params: Params }) {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline">{EXAMS[exam].name}</Link>
-        <h1 className="text-2xl sm:text-3xl font-bold">{t.name}</h1>
-        <p className="muted text-sm">{t.examQuestions}{/\d/.test(t.examQuestions) ? " questions on the exam" : ""}</p>
+        <Crumbs
+          items={
+            exam === "pe-civil" && PE_MODULE_SPECS[topic]
+              ? [{ href: `/exams/${exam}`, label: EXAMS[exam].name }, { href: `/exams/${exam}/modules/${topic}`, label: t.name }, { label: "Review notes" }]
+              : [{ href: `/exams/${exam}`, label: EXAMS[exam].name }, { label: t.name }]
+          }
+        />
+        <h1 className="text-2xl sm:text-3xl font-bold mt-1">{t.name}{exam === "pe-civil" ? ": review notes" : ""}</h1>
+        {/\d/.test(t.examQuestions) && <p className="muted text-sm">{t.examQuestions} questions on the exam</p>}
         {mastery && mastery.evidence > 0 && (
           <p className="text-sm mt-1">Your mastery: <strong>{Math.round(mastery.mastery * 100)}%</strong> from {mastery.evidence} answers</p>
         )}

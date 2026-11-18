@@ -10,8 +10,14 @@ import { approvedTemplateCount, bankStats } from "@/lib/questions";
 import { ReadinessCard } from "@/components/ReadinessCard";
 import { StudyPlanCard } from "@/components/StudyPlanCard";
 import { PacingCard } from "@/components/PacingCard";
+import { Icon } from "@/components/Icon";
 import { missedCount } from "@/lib/adaptive/server";
 import { dueCardCount } from "@/lib/cards";
+
+// The hub for one exam: every study tool (with what it is for), then the student's progress, then
+// the topics. The tab row from the exam layout repeats the tools on every page of the exam.
+
+type Tool = { href: string; icon: string; title: string; text: string; locked?: boolean; primary?: boolean; badge?: string };
 
 export default async function ExamPage({ params, searchParams }: { params: Promise<{ exam: string }>; searchParams: Promise<{ planError?: string }> }) {
   const { exam } = await params;
@@ -20,21 +26,43 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
   const def = EXAMS[exam];
   const user = await getCurrentUser();
   const access = hasExamAccess(user, exam);
-  const stats = user ? await topicStats(user.id, exam) : {};
+  const isPe = exam === "pe-civil";
+  const [stats, bank, missed, due, gens] = await Promise.all([
+    user ? topicStats(user.id, exam) : Promise.resolve({} as Awaited<ReturnType<typeof topicStats>>),
+    bankStats(exam),
+    user ? missedCount(user, exam) : Promise.resolve(0),
+    user ? dueCardCount(user, exam) : Promise.resolve(0),
+    Promise.all(def.topics.map((t) => approvedTemplateCount(exam, t.slug))),
+  ]);
+  const base = `/exams/${exam}`;
+
+  const tools: Tool[] = [
+    { href: `${base}/smart`, icon: "target", title: "Smart practice", text: "10 questions picked from your weak spots and due reviews.", primary: true },
+    { href: `${base}/practice`, icon: "shuffle", title: "Mixed practice", text: "Questions from every topic, with worked solutions." },
+    { href: `${base}/quiz`, icon: "list", title: "Custom quiz", text: "Pick topics, length and timing." },
+    ...(missed > 0 ? [{ href: `${base}/quiz?go=1&source=missed&count=${missed > 10 ? 20 : 10}`, icon: "undo", title: "Review my misses", text: "Retry questions you got wrong.", badge: String(missed) }] : []),
+    { href: `${base}/diagnostic`, icon: "compass", title: "Diagnostic", text: `About ${def.topics.length * 2} questions to find your weak topics.` },
+    { href: `${base}/mock`, icon: "timer", title: "Full timed exam", text: "Exam-length, weighted like the real thing.", locked: !access },
+    { href: `${base}/flashcards`, icon: "cards", title: "Formula flashcards", text: "Spaced repetition, with where each formula lives.", badge: due ? `${due} due` : undefined },
+    { href: `${base}/handbook-drill`, icon: "search", title: "Handbook hunt", text: "Timed drill: which chapter would you open?" },
+    { href: "/learn", icon: "book", title: "Formula guides", text: "Free write-ups of the most-tested formulas." },
+    { href: `${base}/resources`, icon: "doc", title: isPe ? "Documents and standards" : "Exam documents", text: isPe ? "Official links and each module's design standards." : "Official links: handbook, specs, exam-day rules.", locked: !access },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">{def.name}</h1>
         <p className="muted mt-1">{def.realExam}</p>
-        {(async () => {
-          const b = await bankStats(exam);
-          return (
-            <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
-              {b.fixed} written questions{b.generators ? ` + ${b.generators} calculation problem${b.generators === 1 ? "" : "s"} that never repeat` : ""}
-            </p>
-          );
-        })()}
+        <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
+          {bank.fixed} written questions{bank.generators ? ` + ${bank.generators} calculation problem${bank.generators === 1 ? "" : "s"} that never repeat` : ""}
+        </p>
+        <p className="text-sm mt-3 flex flex-wrap gap-x-4 gap-y-1">
+          <span className="muted">Jump to:</span>
+          <a href="#tools" className="underline">Study tools</a>
+          {user && <a href="#progress" className="underline">Your progress</a>}
+          <a href="#topics" className="underline">{isPe ? "Modules" : "Topics"}</a>
+        </p>
       </div>
 
       {!access && user && (
@@ -43,14 +71,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
           <Link href="/pricing" className="btn w-full sm:w-auto">Unlock {def.name}</Link>
         </div>
       )}
-
-      {user ? (
-        <>
-          <StudyPlanCard user={user} exam={exam} back={`/exams/${exam}`} error={planError} />
-          <ReadinessCard user={user} exam={exam} back={`/exams/${exam}`} />
-          <PacingCard user={user} exam={exam} />
-        </>
-      ) : (
+      {!user && (
         <div className="card elevated p-5 sm:p-6 flex flex-wrap items-center gap-4" style={{ borderColor: "var(--brand)" }}>
           <div className="flex-1 min-w-56">
             <p className="font-semibold text-lg">Try a free sample question in every topic</p>
@@ -63,68 +84,87 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3">
-        <Link href={`/exams/${exam}/practice`} className="btn-ghost">Mixed practice</Link>
-        {user && (
-          <>
-            <Link href={`/exams/${exam}/quiz`} className="btn-ghost">Build a quiz</Link>
-            {(async () => {
-              const n = await missedCount(user, exam);
-              return n > 0 ? (
-                <Link href={`/exams/${exam}/quiz?go=1&source=missed&count=${n > 10 ? 20 : 10}`} className="btn-ghost">
-                  Review my misses ({n})
-                </Link>
-              ) : null;
-            })()}
-            <Link href={`/exams/${exam}/diagnostic`} className="btn-ghost">Diagnostic</Link>
-            {(async () => {
-              const n = await dueCardCount(user, exam);
-              return <Link href={`/exams/${exam}/flashcards`} className="btn-ghost">Flashcards{n ? ` (${n} due)` : ""}</Link>;
-            })()}
-          </>
-        )}
-        <Link href={`/exams/${exam}/handbook-drill`} className="btn-ghost">Handbook hunt</Link>
-        <Link href={`/exams/${exam}/mock`} className="btn-ghost">Full exam (timed) {access ? "" : "🔒"}</Link>
-        <Link href={`/exams/${exam}/resources`} className="btn-ghost">Exam documents {access ? "" : "🔒"}</Link>
-      </div>
+      <section id="tools" className="space-y-3 scroll-mt-20">
+        <h2 className="text-xl font-semibold">Study tools</h2>
+        <ul className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+          {tools.map((t) => (
+            <li key={t.title}>
+              <Link
+                href={t.href}
+                className="card card-link p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-3 h-full"
+                style={t.primary ? { borderColor: "var(--brand)" } : undefined}
+              >
+                <span className="shrink-0" style={{ color: "var(--brand-text)" }}><Icon name={t.icon} size={22} /></span>
+                <span className="min-w-0">
+                  <span className="font-semibold text-sm sm:text-base flex flex-wrap items-center gap-x-1.5">
+                    {t.title}
+                    {t.badge && <span className="text-xs font-semibold px-1.5 rounded" style={{ background: "var(--brand)", color: "white" }}>{t.badge}</span>}
+                    {t.locked && <span className="muted"><Icon name="lock" size={14} /><span className="sr-only"> (subscribers)</span></span>}
+                  </span>
+                  <span className="muted text-xs sm:text-sm block mt-0.5">{t.text}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        {(await Promise.all(def.topics.map(async (t) => ({ t, gens: await approvedTemplateCount(exam, t.slug) })))).map(({ t, gens }) => {
-          const qs = questionsFor(exam, t.slug);
-          const available = access ? qs.length : qs.filter((q) => q.free).length;
-          const s = stats[t.slug];
-          return (
-            <div key={t.slug} className="card p-4">
-              <div className="flex justify-between gap-2">
-                <h2 className="font-semibold">
-                  <Link href={exam === "pe-civil" ? `/exams/${exam}/modules/${t.slug}` : `/exams/${exam}/topics/${t.slug}`} className="hover:underline">
-                    {exam === "pe-civil" ? `PE Civil: ${t.name}` : t.name}
-                  </Link>
-                </h2>
-                {exam !== "pe-civil" && <span className="muted text-sm whitespace-nowrap">{t.examQuestions}{/\d/.test(t.examQuestions) ? " on exam" : ""}</span>}
-              </div>
-              <p className="muted text-sm mt-1">
-                {available} of {qs.length} questions available
-                {s ? ` · ${Math.round((100 * s.correct) / s.attempted)}% correct (${s.attempted} done)` : ""}
-              </p>
-              {gens > 0 && (
-                <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
-                  + {gens} calculation problem{gens > 1 ? "s" : ""} that never repeat{access ? "" : " 🔒"}
+      {user && (
+        <section id="progress" className="space-y-3 scroll-mt-20">
+          <h2 className="text-xl font-semibold">Your progress</h2>
+          <ReadinessCard user={user} exam={exam} back={base} />
+          <StudyPlanCard user={user} exam={exam} back={base} error={planError} />
+          <PacingCard user={user} exam={exam} />
+        </section>
+      )}
+
+      <section id="topics" className="space-y-3 scroll-mt-20">
+        <div>
+          <h2 className="text-xl font-semibold">{isPe ? "Modules" : "Topics"}</h2>
+          <p className="muted text-sm">
+            {isPe
+              ? "You take one module. Open yours to see every NCEES knowledge area and practice each one."
+              : "Each topic has review notes, key formulas and its own practice set."}
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {def.topics.map((t, i) => {
+            const qs = questionsFor(exam, t.slug);
+            const available = access ? qs.length : qs.filter((q) => q.free).length;
+            const s = stats[t.slug];
+            const home = isPe && PE_MODULE_SPECS[t.slug] ? `${base}/modules/${t.slug}` : `${base}/topics/${t.slug}`;
+            const mine = isPe && user?.peDepth === t.slug;
+            return (
+              <div key={t.slug} className="card p-4 flex flex-col" style={mine ? { borderColor: "var(--brand)" } : undefined}>
+                <div className="flex justify-between gap-2">
+                  <h3 className="font-semibold">
+                    <Link href={home} className="hover:underline">{t.name}</Link>
+                    {mine && <span className="text-xs font-semibold ml-2" style={{ color: "var(--brand-text)" }}>Your module</span>}
+                  </h3>
+                  {!isPe && <span className="muted text-sm whitespace-nowrap">{t.examQuestions}{/\d/.test(t.examQuestions) ? " on exam" : ""}</span>}
+                </div>
+                <p className="muted text-sm mt-1">
+                  {available} of {qs.length} questions available
+                  {s ? ` · ${Math.round((100 * s.correct) / s.attempted)}% correct (${s.attempted} done)` : ""}
                 </p>
-              )}
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm">
-                {exam === "pe-civil" && PE_MODULE_SPECS[t.slug] && (
-                  <Link href={`/exams/${exam}/modules/${t.slug}`} className="underline font-semibold">
-                    {PE_MODULE_SPECS[t.slug].areas.length} knowledge areas
-                  </Link>
+                {gens[i] > 0 && (
+                  <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
+                    + {gens[i]} calculation problem{gens[i] > 1 ? "s" : ""} that never repeat{access ? "" : " 🔒"}
+                  </p>
                 )}
-                <Link href={`/exams/${exam}/topics/${t.slug}`} className="underline">Review</Link>
-                <Link href={`/exams/${exam}/practice?topic=${t.slug}`} className="underline">Practice</Link>
+                <div className="flex flex-wrap gap-2 mt-auto pt-3">
+                  {isPe && PE_MODULE_SPECS[t.slug] ? (
+                    <Link href={home} className="btn-ghost !py-1.5 !px-3 text-sm">{PE_MODULE_SPECS[t.slug].areas.length} knowledge areas</Link>
+                  ) : (
+                    <Link href={home} className="btn-ghost !py-1.5 !px-3 text-sm">Review notes</Link>
+                  )}
+                  <Link href={`${base}/practice?topic=${t.slug}`} className="btn-ghost !py-1.5 !px-3 text-sm">Practice</Link>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

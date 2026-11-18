@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Crumbs } from "@/components/Crumbs";
 import { notFound } from "next/navigation";
 import { EXAMS, isExamId } from "@/lib/content/exams";
 import { requireUser } from "@/lib/auth";
@@ -22,7 +23,7 @@ export default async function MockReport({ params }: { params: Promise<{ exam: s
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
-      <Link href={`/exams/${exam}/mock`} className="muted text-sm hover:underline">← Full exams</Link>
+      <Crumbs items={[{ href: `/exams/${exam}`, label: EXAMS[exam].name }, { href: `/exams/${exam}/mock`, label: "Full exams" }, { label: "Score report" }]} />
       <div className="card p-6 text-center space-y-1">
         <p className="muted text-sm">{EXAMS[exam].name} · {(m.completedAt ?? m.createdAt).toLocaleDateString("en-US")}</p>
         <p className="text-4xl font-extrabold">{pct}%</p>

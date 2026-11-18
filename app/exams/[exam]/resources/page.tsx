@@ -22,7 +22,6 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline">{def.name}</Link>
         <h1 className="text-2xl sm:text-3xl font-bold">Exam documents and resources</h1>
         <p className="muted mt-1">
           Every official document you need for the {def.shortName}, plus {exam === "pe-civil" ? "each PE module's design standards, marked free or paid" : "registration and exam-day rules"}. Links go to NCEES, publishers and government sites; we don&apos;t host these documents.

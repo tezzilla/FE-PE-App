@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { getCurrentUser, isReviewer } from "@/lib/auth";
+import { hasPaidAccess } from "@/lib/access";
+import { HeaderLinks } from "@/components/HeaderLinks";
 import { logout } from "./actions/auth";
 import { MobileTabBar } from "@/components/MobileTabBar";
 
@@ -30,19 +32,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           className="border-b sticky top-0 z-30 backdrop-blur"
           style={{ borderColor: "var(--border)", background: "color-mix(in srgb, var(--bg) 85%, transparent)" }}
         >
-          <nav className="mx-auto max-w-5xl px-4 h-14 flex items-center gap-5">
+          <nav className="mx-auto max-w-5xl px-4 h-14 flex items-center gap-4 lg:gap-5">
             <Link href="/" className="font-bold text-lg">
               Civil<span style={{ color: "var(--brand-text)" }}>Prep</span>
             </Link>
-            <Link href="/exams/fe-civil" className="muted hover:underline hidden sm:inline">FE Civil</Link>
-            <Link href="/exams/pe-civil" className="muted hover:underline hidden sm:inline">PE Civil</Link>
-            <Link href="/pricing" className="muted hover:underline hidden sm:inline">Pricing</Link>
+            <HeaderLinks
+              className="hidden md:inline whitespace-nowrap"
+              links={[
+                ...(user ? [{ href: "/dashboard", label: "Dashboard" }] : []),
+                { href: "/exams/fe-civil", label: "FE Civil" },
+                { href: "/exams/pe-civil", label: "PE Civil" },
+                { href: "/learn", label: "Formula guides" },
+                ...(hasPaidAccess(user) ? [] : [{ href: "/pricing", label: "Pricing" }]),
+              ]}
+            />
             <div className="ml-auto flex items-center gap-3">
               {user ? (
                 <>
-                  {isReviewer(user) && <Link href="/review" className="hover:underline">Review</Link>}
-                  <Link href="/dashboard" className="hover:underline hidden sm:inline">Dashboard</Link>
-                  <Link href="/account" className="hover:underline hidden sm:inline">Account</Link>
+                  {isReviewer(user) && <HeaderLinks links={[{ href: "/review", label: "Review" }]} />}
+                  <HeaderLinks className="hidden md:inline whitespace-nowrap" links={[{ href: "/account", label: "Account" }]} />
                   <form action={logout}>
                     <button className="muted hover:underline">Log out</button>
                   </form>
@@ -56,9 +64,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
           </nav>
         </header>
-        <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-6 sm:py-8 pb-24 sm:pb-8">{children}</main>
+        <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-6 sm:py-8 pb-24 md:pb-8">{children}</main>
         <MobileTabBar signedIn={!!user} />
-        <footer className="muted text-sm text-center px-4 pt-2 pb-24 sm:py-6">
+        <footer className="muted text-sm text-center px-4 pt-2 pb-24 md:py-6">
           <p>CivilPrep is not affiliated with or endorsed by NCEES. FE and PE are exams administered by NCEES.</p>
           <p className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
             <Link href="/learn" className="hover:underline">Formula guides</Link>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Crumbs } from "@/components/Crumbs";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EXPLAINERS, getExplainer } from "@/lib/content/explainers";
@@ -40,7 +41,7 @@ export default async function ExplainerPage({ params }: { params: Promise<{ slug
   return (
     <article className="max-w-3xl mx-auto space-y-6">
       <div className="space-y-2">
-        <Link href="/learn" className="muted text-sm hover:underline">Formula guides</Link>
+        <Crumbs items={[{ href: "/learn", label: "Formula guides" }, { label: e.title }]} />
         <h1 className="text-3xl font-bold tracking-tight">{e.title}</h1>
         <p className="muted text-lg">{e.summary}</p>
       </div>

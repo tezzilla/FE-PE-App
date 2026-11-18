@@ -13,7 +13,7 @@ export default async function FlashcardsPage({ params, searchParams }: { params:
   if (!isExamId(exam)) notFound();
   const def = EXAMS[exam];
   if (topic && !def.topics.some((t) => t.slug === topic)) notFound();
-  const user = await requireUser();
+  const user = await requireUser(`/exams/${exam}/flashcards`);
   const d = await cardDeck(user, exam, topic);
 
   return (
@@ -22,7 +22,6 @@ export default async function FlashcardsPage({ params, searchParams }: { params:
         <h1 className="text-xl sm:text-2xl font-bold">
           {def.name}: Formula flashcards{topic ? ` · ${def.topics.find((t) => t.slug === topic)!.name}` : ""}
         </h1>
-        <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">Exam overview</Link>
       </div>
       <p className="muted text-sm">
         {d.dueCount} due · {d.newCount} new today · {d.learned} of {d.visible} learned. Knowing where a formula lives in the

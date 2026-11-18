@@ -14,6 +14,14 @@ const PATHS: Record<string, string> = {
   chevron: "m6 9 6 6 6-6",
   compass: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm3.5-12.5-2 5-5 2 2-5 5-2Z",
   chart: "M4 20V10M10 20V4M16 20v-7M22 20H2",
+  home: "M3 11 12 3l9 8M5 9.5V20h5v-6h4v6h5V9.5",
+  book: "M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h14",
+  user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0",
+  list: "M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01",
+  undo: "M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 5 5",
+  shuffle: "M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5",
+  lock: "M6 11h12v10H6V11Zm2 0V7a4 4 0 0 1 8 0v4",
 };
 
 export function Icon({ name, size = 20, className }: { name: keyof typeof PATHS | string; size?: number; className?: string }) {

@@ -163,3 +163,9 @@ body {
   .page-break-before { break-before: page; }
   .reveal, .enter, .flip-in { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
+
+/* Sideways-scrolling tab rows: scroll without a visible bar. */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+/* No exam tabs while a timed exam is running. */
+body:has([data-exam-running]) .exam-nav { display: none; }
