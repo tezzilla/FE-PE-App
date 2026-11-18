@@ -870,6 +870,51 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const V = at(p, "diagram,"), d = at(p, "fill is"), FH = at(p, "free-haul distance is"), price = at(p, "at $");
     return price * V * ((d - FH) / 100);
   },
+
+  // ---- Sixteenth batch (batch-sixteen.ts)
+  "rc-beam-deflection-ie": (p) => {
+    const b = at(p, "supported"), h = at(p, "in ×"), fc = at(p, "f'c ="), L = at(p, "spans") * 12, w = at(p, "load of") / 12, Icr = at(p, "Icr =");
+    const Ig = (b * h * h * h) / 12, Ec = 57 * Math.sqrt(fc), Mcr = ((0.0075 * Math.sqrt(fc)) * Ig) / (h / 2), Ma = (w * L * L) / 8; // kip·in
+    const Ie = Icr / (1 - Math.pow((2 * Mcr) / (3 * Ma), 2) * (1 - Icr / Ig));
+    return (5 * w * L ** 4) / (384 * Ec * Ie);
+  },
+  "cantilever-stem-moment": (p) => {
+    const h = at(p, "retains"), gm = at(p, "γ ="), Ka = at(p, "Ka ="), q = p.includes("surcharge") ? at(p, "with a") : 0;
+    // integrate pressure × lever arm over the stem height
+    const N = 400; let M = 0;
+    for (let i = 0; i < N; i++) { const z = ((i + 0.5) / N) * h; M += Ka * (gm * z + q) * (h - z) * (h / N); }
+    return 1.6 * M;
+  },
+  "linear-reservoir-routing": (p) => {
+    const K = at(p, "K ="), dt = at(p, "Over a"), I1 = at(p, "from"), I2 = at(p, "cfs to") || at(p, " to "), O1 = at(p, "start is");
+    const S1 = K * O1;
+    // solve S1 + dt[(I1 + I2)/2 − (O1 + O2)/2] = K·O2 for O2
+    return (S1 + dt * ((I1 + I2) / 2 - O1 / 2)) / (K + dt / 2);
+  },
+  "water-hammer-pressure": (p) => { const V = at(p, "flowing at"), a = at(p, "wave speed is"); return (1000 * a * V) / 1000; },
+  "orifice-outlet-diameter": (p) => { const Q = at(p, "pass"), h = at(p, "cfs when the water is"); const A = Q / (0.6 * Math.sqrt(64.4 * h)); return 24 * Math.sqrt(A / Math.PI); },
+  "gravity-model-trips": (p) => {
+    const P = at(p, "produces"), z = p.match(/to zone ([ABC])\?/)![1];
+    const zones = [...p.matchAll(/zone ([ABC]) ([\d,]+)(?: attractions)? \(F = ([\d.]+)\)/g)].map((m) => ({ id: m[1], A: Number(m[2].replace(/,/g, "")), F: Number(m[3]) }));
+    const tot = zones.reduce((s, x) => s + x.A * x.F, 0), me = zones.find((x) => x.id === z)!;
+    return P * ((me.A * me.F) / tot);
+  },
+  "crest-curve-available-ssd": (p) => { const L = at(p, "is"), A = at(p, "difference of"); return Math.sqrt((2158 * L) / A); },
+  "skid-mark-speed": (p) => { const d = at(p, "marks"), G = at(p, "on a") / 100, fr = at(p, "friction is"); return Math.sqrt(30 * d * (fr + G)); },
+  "form-tie-spacing": (p) => { const pr = at(p, "pressure of"), T = at(p, "load of"); return 12 * Math.sqrt(T / pr); },
+  "cost-plus-incentive-fee": (p) => {
+    const TC = at(p, "target cost of $"), TF = at(p, "target fee of $"), sh = at(p, "overrun is") / 100, AC = at(p, "actual cost is $");
+    return TF + sh * TC - sh * AC;
+  },
+  "braced-cut-clay-peck": (p) => {
+    const H = at(p, "A"), gm = at(p, "γ ="), cu = at(p, "cu ="), sv = at(p, "tributary height of"), sh = at(p, "spaced");
+    return Math.max(gm * H * (1 - (4 * cu) / (gm * H)), 0.3 * gm * H) * sv * sh;
+  },
+  "pile-group-settlement": (p) => {
+    const Bg = at(p, "dimensions"), Lg = at(p, "m ×"), Q = at(p, "carries"), Hc = at(p, "layer"), Cc = at(p, "Cc ="), e0 = at(p, "e₀ ="), z = at(p, "mid-depth"), s0 = at(p, "σ'₀ =");
+    const ds = Q / ((Bg + z) * (Lg + z));
+    return (Cc / (1 + e0)) * Hc * Math.log10(1 + ds / s0) * 1000;
+  },
 };
 
 

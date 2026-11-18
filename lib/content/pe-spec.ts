@@ -86,7 +86,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Pump application and analysis, including wet wells, lift stations, and cavitation",
           "Pipe network analysis (e.g., series, parallel, loop networks)",
         ],
-        skills: ["continuity-pipe", "darcy-weisbach-si", "hazen-williams-headloss-us", "pump-system-power", "parallel-pipes-hw", "series-pipes-darcy", "pipe-bend-force", "pe-water-002", "dewatering-pump-power", "network-node-pressure", "hardy-cross-correction", "pump-operating-point"],
+        skills: ["continuity-pipe", "darcy-weisbach-si", "hazen-williams-headloss-us", "pump-system-power", "parallel-pipes-hw", "series-pipes-darcy", "pipe-bend-force", "pe-water-002", "dewatering-pump-power", "network-node-pressure", "hardy-cross-correction", "pump-operating-point", "water-hammer-pressure"],
       },
       {
         n: 6,
@@ -99,7 +99,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Stormwater collection and drainage (e.g., culvert, stormwater inlets, gutter flow, street flow, storm sewer pipes)",
           "Sub- and supercritical flow",
         ],
-        skills: ["manning-rect-si", "critical-depth-rect", "froude-number-rect", "hydraulic-jump-energy-loss", "hec22-gutter-flow", "culvert-outlet-control-hw", "storm-sewer-size", "pe-water-001"],
+        skills: ["manning-rect-si", "critical-depth-rect", "froude-number-rect", "hydraulic-jump-energy-loss", "hec22-gutter-flow", "culvert-outlet-control-hw", "storm-sewer-size", "pe-water-001", "orifice-outlet-diameter"],
       },
       {
         n: 7,
@@ -116,7 +116,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Depletions (e.g., evaporation, detention, percolation, diversions)",
           "Stormwater management and treatment (e.g., detention and retention ponds, infiltration, swales, constructed wetlands)",
         ],
-        skills: ["rational-method", "nrcs-curve-number", "tr55-sheet-flow", "tr55-shallow-flow", "nrcs-lag-tc", "unit-hydrograph-peak", "unit-hydrograph-convolution", "muskingum-outflow", "detention-storage-triangular", "pe-env-010", "pe-env-014", "sequent-peak-storage", "gumbel-flood-frequency", "infiltration-trench-length"],
+        skills: ["rational-method", "nrcs-curve-number", "tr55-sheet-flow", "tr55-shallow-flow", "nrcs-lag-tc", "unit-hydrograph-peak", "unit-hydrograph-convolution", "muskingum-outflow", "detention-storage-triangular", "pe-env-010", "pe-env-014", "sequent-peak-storage", "gumbel-flood-frequency", "infiltration-trench-length", "linear-reservoir-routing", "orifice-outlet-diameter"],
       },
       {
         n: 8,
@@ -235,7 +235,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Deflection",
           "Special topics (e.g., torsion, buckling, fatigue, progressive collapse, thermal deformation, bearing)",
         ],
-        skills: ["udl-max-moment", "fixed-end-moment", "ss-udl-deflection-us", "cantilever-tip-deflection", "euler-buckling", "pe-struct-001", "propped-cantilever-reaction", "two-axle-max-moment", "moment-magnification-nonsway", "sway-moment-magnification"],
+        skills: ["udl-max-moment", "fixed-end-moment", "ss-udl-deflection-us", "cantilever-tip-deflection", "euler-buckling", "pe-struct-001", "propped-cantilever-reaction", "two-axle-max-moment", "moment-magnification-nonsway", "sway-moment-magnification", "rc-beam-deflection-ie"],
       },
       {
         n: 3,
@@ -280,7 +280,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Deep foundations (e.g., piers, piles, caissons, drilled shafts)",
           "Retaining walls",
         ],
-        skills: ["rc-beam-design-moment", "rc-beam-shear-vc", "rc-tied-column-axial", "one-way-slab-min-thickness", "steel-required-z", "steel-ltb-inelastic", "steel-beam-shear", "aisc-column-capacity", "beam-column-interaction", "plate-tension-capacity", "composite-beam-phi-mn", "fillet-weld-strength", "bolt-shear-bearing", "timber-joist-allowable-moment", "timber-column-capacity", "cmu-wall-axial-asd", "footing-punching-shear-vu", "footing-one-way-shear-vu", "pile-group-efficiency", "retaining-wall-overturning", "pe-struct-002", "pe-struct-003", "pe-struct-007", "pe-struct-010", "bolt-group-eccentric", "prestress-elastic-shortening", "two-way-slab-thickness", "shear-wall-uplift", "base-plate-bearing", "development-length-tension", "web-local-yielding", "moment-magnification-nonsway", "wood-bolt-group-capacity", "base-plate-thickness", "sway-moment-magnification", "timber-beam-stability-cl", "block-shear-plate", "shear-studs-full-composite"],
+        skills: ["rc-beam-design-moment", "rc-beam-shear-vc", "rc-tied-column-axial", "one-way-slab-min-thickness", "steel-required-z", "steel-ltb-inelastic", "steel-beam-shear", "aisc-column-capacity", "beam-column-interaction", "plate-tension-capacity", "composite-beam-phi-mn", "fillet-weld-strength", "bolt-shear-bearing", "timber-joist-allowable-moment", "timber-column-capacity", "cmu-wall-axial-asd", "footing-punching-shear-vu", "footing-one-way-shear-vu", "pile-group-efficiency", "retaining-wall-overturning", "pe-struct-002", "pe-struct-003", "pe-struct-007", "pe-struct-010", "bolt-group-eccentric", "prestress-elastic-shortening", "two-way-slab-thickness", "shear-wall-uplift", "base-plate-bearing", "development-length-tension", "web-local-yielding", "moment-magnification-nonsway", "wood-bolt-group-capacity", "base-plate-thickness", "sway-moment-magnification", "timber-beam-stability-cl", "block-shear-plate", "shear-studs-full-composite", "rc-beam-deflection-ie", "cantilever-stem-moment"],
       },
     ],
   },
@@ -395,7 +395,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Underpinning methods and effects on adjacent infrastructure",
           "Ground anchors, tie-backs, soil nails, and rock anchors (e.g., design and quality control)",
         ],
-        skills: ["rankine-active-thrust", "passive-thrust-cohesion", "wall-thrust-surcharge-water", "retaining-wall-sliding", "retaining-wall-overturning", "cantilever-sheet-pile-depth", "braced-cut-strut-load", "pe-geo-002", "mse-reinforcement-tension", "mse-pullout-resistance", "coulomb-active-thrust", "mononobe-okabe-thrust"],
+        skills: ["rankine-active-thrust", "passive-thrust-cohesion", "wall-thrust-surcharge-water", "retaining-wall-sliding", "retaining-wall-overturning", "cantilever-sheet-pile-depth", "braced-cut-strut-load", "pe-geo-002", "mse-reinforcement-tension", "mse-pullout-resistance", "coulomb-active-thrust", "mononobe-okabe-thrust", "cantilever-stem-moment", "braced-cut-clay-peck"],
       },
       {
         n: 9,
@@ -406,7 +406,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Bearing capacity",
           "Settlement, including induced stress distribution",
         ],
-        skills: ["strip-footing-bearing-wt", "clay-bearing-undrained", "nc-clay-settlement", "oc-clay-settlement", "consolidation-time", "stress-21-method", "pe-geo-001", "compression-index-oedometer", "preload-surcharge-time", "secondary-compression"],
+        skills: ["strip-footing-bearing-wt", "clay-bearing-undrained", "nc-clay-settlement", "oc-clay-settlement", "consolidation-time", "stress-21-method", "pe-geo-001", "compression-index-oedometer", "preload-surcharge-time", "secondary-compression", "pile-group-settlement"],
       },
       {
         n: 10,
@@ -420,7 +420,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Static and dynamic load testing",
           "Integrity testing methods",
         ],
-        skills: ["pile-alpha-capacity", "pile-group-efficiency", "drilled-shaft-beta", "pe-geo-011", "pile-elastic-shortening", "modified-gates-pile", "davisson-offset", "pe-geo-020", "pe-geo-021", "pe-geo-022", "rock-socket-side-resistance"],
+        skills: ["pile-alpha-capacity", "pile-group-efficiency", "drilled-shaft-beta", "pe-geo-011", "pile-elastic-shortening", "modified-gates-pile", "davisson-offset", "pe-geo-020", "pe-geo-021", "pe-geo-022", "rock-socket-side-resistance", "pile-group-settlement"],
       },
     ],
   },
@@ -454,7 +454,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Traffic forecasts and monitoring",
           "Highway safety analysis (e.g., crash modification factors, Highway Safety Manual)",
         ],
-        skills: ["freeway-flow-rate", "critical-lane-vc", "incident-queue-delay", "pe-trans-006", "pe-trans-012", "pe-trans-013", "pe-trans-014", "pe-trans-015", "segment-crash-rate", "aadt-design-hour-volume", "roundabout-entry-capacity", "toll-booth-queue-wait", "epdo-crash-index", "parking-peak-accumulation", "walkway-pedestrian-space", "spot-speed-85th", "space-mean-speed", "signal-uniform-delay", "freeway-merge-flow"],
+        skills: ["freeway-flow-rate", "critical-lane-vc", "incident-queue-delay", "pe-trans-006", "pe-trans-012", "pe-trans-013", "pe-trans-014", "pe-trans-015", "segment-crash-rate", "aadt-design-hour-volume", "roundabout-entry-capacity", "toll-booth-queue-wait", "epdo-crash-index", "parking-peak-accumulation", "walkway-pedestrian-space", "spot-speed-85th", "space-mean-speed", "signal-uniform-delay", "freeway-merge-flow", "gravity-model-trips"],
       },
       {
         n: 3,
@@ -491,7 +491,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Vertical alignment (e.g., geometrics, vertical clearance)",
           "Stopping and passing sight distance (e.g., crest curve, sag curve)",
         ],
-        skills: ["stopping-sight-distance", "crest-curve-length-ssd", "sag-curve-headlight", "vertical-curve-elevation", "crest-high-point", "pe-trans-002"],
+        skills: ["stopping-sight-distance", "crest-curve-length-ssd", "sag-curve-headlight", "vertical-curve-elevation", "crest-high-point", "pe-trans-002", "crest-curve-available-ssd"],
       },
       {
         n: 6,
@@ -607,7 +607,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Engineering economic analysis (e.g., cost analysis for resource selection, break-even, net-present value, life-cycle costing)",
           "Work measurement and productivity (e.g., earned value)",
         ],
-        skills: ["earthwork-truck-loads", "average-end-area-volume", "earthwork-waste-shrinkage", "borrow-volume-compaction", "earned-value-index", "estimate-at-completion", "benefit-cost-ratio", "capitalized-cost", "pe-const-001", "euac-alternative", "equipment-owning-cost", "cost-loaded-cumulative", "learning-curve-unit-time", "cost-index-capacity-scaling", "earthwork-overhaul"],
+        skills: ["earthwork-truck-loads", "average-end-area-volume", "earthwork-waste-shrinkage", "borrow-volume-compaction", "earned-value-index", "estimate-at-completion", "benefit-cost-ratio", "capitalized-cost", "pe-const-001", "euac-alternative", "equipment-owning-cost", "cost-loaded-cumulative", "learning-curve-unit-time", "cost-index-capacity-scaling", "earthwork-overhaul", "cost-plus-incentive-fee"],
       },
       {
         n: 5,
@@ -661,7 +661,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Storm characteristics and runoff analysis (e.g., rational and SCS/NRCS methods, types of flow, flow characteristics, hydrographic application, erosion control, runoff time of concentration, storm frequency, rainfall measurement and distribution)",
           "Detention/retention ponds",
         ],
-        skills: ["rational-method", "nrcs-curve-number", "manning-rect-si", "detention-storage-triangular", "culvert-outlet-control-hw", "dewatering-pump-power", "sediment-basin-stokes"],
+        skills: ["rational-method", "nrcs-curve-number", "manning-rect-si", "detention-storage-triangular", "culvert-outlet-control-hw", "dewatering-pump-power", "sediment-basin-stokes", "linear-reservoir-routing"],
       },
       {
         n: 9,
@@ -691,7 +691,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Support of excavation",
           "Construction loads on permanent structures (e.g., erection analysis, equipment loading)",
         ],
-        skills: ["wall-formwork-pressure", "braced-cut-strut-load", "cantilever-sheet-pile-depth", "pe-const-015", "shoring-post-load", "heave-exit-gradient", "pe-struct-012"],
+        skills: ["wall-formwork-pressure", "braced-cut-strut-load", "cantilever-sheet-pile-depth", "pe-const-015", "shoring-post-load", "heave-exit-gradient", "pe-struct-012", "form-tie-spacing", "braced-cut-clay-peck"],
       },
       {
         n: 11,

@@ -19,8 +19,9 @@ import { BATCH_TWELVE } from "./batch-twelve";
 import { BATCH_THIRTEEN } from "./batch-thirteen";
 import { BATCH_FOURTEEN } from "./batch-fourteen";
 import { BATCH_FIFTEEN } from "./batch-fifteen";
+import { BATCH_SIXTEEN } from "./batch-sixteen";
 
-export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE, ...EXPANDED, ...PE_DEPTH, ...FE_CORE_2, ...SPEC_GAPS, ...OPS_DESIGN, ...NETWORKS_TIMBER, ...BATCH_FIVE, ...BATCH_SIX, ...BATCH_SEVEN, ...BATCH_EIGHT, ...BATCH_NINE, ...BATCH_TEN, ...BATCH_ELEVEN, ...BATCH_TWELVE, ...BATCH_THIRTEEN, ...BATCH_FOURTEEN, ...BATCH_FIFTEEN];
+export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE, ...EXPANDED, ...PE_DEPTH, ...FE_CORE_2, ...SPEC_GAPS, ...OPS_DESIGN, ...NETWORKS_TIMBER, ...BATCH_FIVE, ...BATCH_SIX, ...BATCH_SEVEN, ...BATCH_EIGHT, ...BATCH_NINE, ...BATCH_TEN, ...BATCH_ELEVEN, ...BATCH_TWELVE, ...BATCH_THIRTEEN, ...BATCH_FOURTEEN, ...BATCH_FIFTEEN, ...BATCH_SIXTEEN];
 
 const BY_ID = new Map(TEMPLATES.map((t) => [t.id, t]));
 

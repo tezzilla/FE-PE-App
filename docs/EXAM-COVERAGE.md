@@ -234,6 +234,12 @@ Problem types (11): block shear, shear studs for full composite action, Coulomb 
 Mononobe-Okabe seismic thrust, secondary compression, infiltration trench length, aerated grit chamber,
 lift station wet well volume, freeway merge flow (vR12), required superelevation, earthwork overhaul.
 
+## Sixteenth batch (November 2026)
+
+Problem types (12): cracked beam deflection with Ie, retaining wall stem moment, linear reservoir routing,
+water hammer, orifice outlet diameter, gravity model trips, crest curve available SSD, speed from skid
+marks, form tie spacing, cost-plus-incentive fee, braced cut in clay (Peck), pile group settlement.
+
 ## Next batch
 
 1. Structural: masonry wall shear, concrete beam deflection with Ie, cantilever retaining wall stem moment.
