@@ -101,7 +101,7 @@ check(r.weakest.every((w) => weak.includes(w.topic)), `top 3 "focus next" topics
 const now = simulate(realPool);
 console.log(`\nSame student on TODAY's content (fixed questions plus every template in lib/templates):`);
 console.log(`  weak topics ${now.weakRate.toFixed(0)} vs strong ${now.strongRate.toFixed(0)} per unit weight, avg session ${now.sessionSizes.toFixed(1)} questions`);
-console.log(`  (Weak topics run out of fresh material. More templates per topic fix this.)`);
+console.log(`  (Topics without templates run out of fresh material; add templates there first.)`);
 
 console.log(`\n${failures} failure(s)`);
 process.exit(failures ? 1 : 0);
