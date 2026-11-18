@@ -44,7 +44,9 @@ export function nextLabel(prev: Omit<CardState, "due"> | null, grade: CardGrade,
   const ms = s.due.getTime() - now.getTime();
   if (ms < DAY) return `${Math.round(ms / MIN)} min`;
   const d = Math.round(ms / DAY);
-  return d < 30 ? `${d} d` : `${Math.round(d / 30)} mo`;
+  if (d < 30) return d === 1 ? "1 day" : `${d} days`;
+  const mo = Math.round(d / 30);
+  return mo === 1 ? "1 month" : `${mo} months`;
 }
 
 /**

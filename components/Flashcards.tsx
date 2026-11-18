@@ -64,13 +64,16 @@ export function Flashcards({ cards: initial, endpoint = "/api/cards" }: { cards:
         )}
       </button>
       {flipped ? (
-        <div className="grid grid-cols-4 gap-2">
-          {GRADE_LABELS.map((label, g) => (
-            <button key={label} className={g === 2 ? "btn" : "btn-ghost"} disabled={busy} onClick={() => grade(g as CardGrade)}>
-              <span className="block">{label}</span>
-              <span className="block text-xs opacity-75">{nextLabel(prev, g as CardGrade)}</span>
-            </button>
-          ))}
+        <div className="space-y-2">
+          <p className="muted text-xs text-center">How well did you remember it? Each button shows when you&apos;ll see this card again.</p>
+          <div className="grid grid-cols-4 gap-2">
+            {GRADE_LABELS.map((label, g) => (
+              <button key={label} className={`${g === 2 ? "btn" : "btn-ghost"} !flex-col !px-1 leading-tight`} disabled={busy} onClick={() => grade(g as CardGrade)}>
+                <span>{label}</span>
+                <span className="text-xs font-normal opacity-80">in {nextLabel(prev, g as CardGrade)}</span>
+              </button>
+            ))}
+          </div>
         </div>
       ) : (
         <button className="btn w-full" onClick={() => setFlipped(true)}>Show answer</button>
