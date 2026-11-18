@@ -19,7 +19,7 @@ export const LIMITS = {
   // Problem reports per user.
   reportUser: { max: 20, windowMs: 60 * 60_000 },
 } as const;
-type Limit = (typeof LIMITS)[keyof typeof LIMITS];
+type Limit = { readonly max: number; readonly windowMs: number };
 
 /** Client IP. On Vercel, x-forwarded-for is set by Vercel's edge, not trusted from the client. */
 export async function clientIp() {

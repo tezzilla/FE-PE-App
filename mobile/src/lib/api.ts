@@ -69,6 +69,8 @@ export interface QuestionSet {
   questions: Question[];
   reasons?: Record<string, string>;
   topicNames: Record<string, string>;
+  /** The AI tutor is switched on for this site. */
+  tutor?: boolean;
 }
 
 export interface Feedback {
@@ -151,6 +153,11 @@ export const api = {
     request<{ due: string; interval: number }>('/api/mobile/cards', token, {
       method: 'POST',
       body: JSON.stringify({ cardId, grade }),
+    }),
+  tutor: (token: string, questionId: string, history: { role: 'user' | 'assistant'; text: string }[]) =>
+    request<{ reply: string; left: number }>('/api/mobile/tutor', token, {
+      method: 'POST',
+      body: JSON.stringify({ questionId, history }),
     }),
   answer: (token: string, questionId: string, selected: number, timeMs?: number) =>
     request<Feedback>('/api/mobile/answer', token, {

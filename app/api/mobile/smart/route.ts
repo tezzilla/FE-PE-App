@@ -4,6 +4,7 @@ import { isExamId, EXAMS } from "@/lib/content/exams";
 import { toPublic } from "@/lib/content";
 import { smartSession } from "@/lib/adaptive/server";
 import { unauthorized } from "@/lib/mobile";
+import { tutorEnabled } from "@/lib/tutor";
 
 // GET ?exam=fe-civil -> { questions, reasons, topicNames }
 export async function GET(req: Request) {
@@ -16,5 +17,6 @@ export async function GET(req: Request) {
     questions: questions.map(toPublic),
     reasons,
     topicNames: Object.fromEntries(EXAMS[exam].topics.map((t) => [t.slug, t.name])),
+    tutor: tutorEnabled(),
   });
 }

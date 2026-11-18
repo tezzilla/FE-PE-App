@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PublicQuestion } from "@/lib/content/types";
 import { QuestionCard, type Feedback } from "./QuestionCard";
+import { TutorPanel } from "./TutorPanel";
 
 export function Practice({
   questions,
@@ -13,6 +14,7 @@ export function Practice({
   againLabel = "Practice again",
   timeLimitS,
   paceS,
+  tutor = false,
 }: {
   questions: PublicQuestion[];
   topicNames: Record<string, string>;
@@ -24,6 +26,8 @@ export function Practice({
   timeLimitS?: number;
   /** Real exam pace in seconds per question, shown with the student's own pace. */
   paceS?: number;
+  /** Show "Ask the AI tutor" after each answer. */
+  tutor?: boolean;
 }) {
   const [i, setI] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -121,6 +125,7 @@ export function Practice({
         <p className="text-sm font-medium" style={{ color: "var(--brand)" }}>Why this question: {reasons[q.id]}</p>
       )}
       <QuestionCard question={q} selected={selected} onSelect={feedback ? undefined : setSelected} feedback={feedback} />
+      {feedback && tutor && <TutorPanel key={q.id} questionId={q.id} />}
       <div className="flex justify-end">
         {feedback ? (
           <button className="btn" onClick={next}>Next question</button>

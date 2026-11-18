@@ -17,9 +17,11 @@
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "test:plan": "tsx scripts/test-plan.ts",
     "test:quiz": "tsx scripts/test-quiz.ts",
-    "test:cards": "tsx scripts/test-cards.ts"
+    "test:cards": "tsx scripts/test-cards.ts",
+    "test:tutor": "tsx scripts/test-tutor.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "1.10.0",
     "@prisma/client": "6.19.3",
     "bcryptjs": "3.0.3",
     "jose": "6.2.17",

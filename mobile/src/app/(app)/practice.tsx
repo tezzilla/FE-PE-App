@@ -4,6 +4,7 @@ import { View } from 'react-native';
 
 import { QuestionView } from '@/components/question-view';
 import { ThemedText } from '@/components/themed-text';
+import { Tutor } from '@/components/tutor';
 import { Button, Card, ErrorView, Loading, Screen } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useSession } from '@/ctx';
@@ -112,6 +113,7 @@ export default function Practice() {
         )}
       </View>
       <QuestionView question={q} selected={selected} onSelect={setSelected} feedback={feedback} />
+      {feedback && data.tutor && <Tutor key={q.id} questionId={q.id} />}
       {checkError && <ThemedText type="small" style={{ color: theme.bad }}>{checkError}</ThemedText>}
       {feedback ? (
         <Button title={i + 1 < data.questions.length ? 'Next question' : 'Finish'} onPress={next} testID="next" />

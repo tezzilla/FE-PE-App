@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
 import { smartSession } from "@/lib/adaptive/server";
 import { Practice } from "@/components/Practice";
+import { tutorEnabled } from "@/lib/tutor";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,7 @@ export default async function SmartPractice({ params }: { params: Promise<{ exam
         questions={questions.map(toPublic)}
         topicNames={Object.fromEntries(EXAMS[exam].topics.map((t) => [t.slug, t.name]))}
         lockedCount={0}
+        tutor={tutorEnabled()}
         reasons={reasons}
         againLabel="Next smart session"
       />

@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { canSeeQuestion, hasExamAccess } from "@/lib/access";
 import { approvedTemplateCount, generatedQuestions } from "@/lib/questions";
 import { Practice } from "@/components/Practice";
+import { tutorEnabled } from "@/lib/tutor";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,7 @@ export default async function PracticePage({
         questions={shuffle([...visible, ...generated]).map(toPublic)}
         topicNames={Object.fromEntries(EXAMS[exam].topics.map((t) => [t.slug, t.name]))}
         lockedCount={locked}
+        tutor={tutorEnabled() && !!user}
       />
     </div>
   );

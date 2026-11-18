@@ -5,6 +5,7 @@ import { questionsFor, shuffle, toPublic } from "@/lib/content";
 import { canSeeQuestion, hasExamAccess } from "@/lib/access";
 import { generatedQuestions } from "@/lib/questions";
 import { unauthorized } from "@/lib/mobile";
+import { tutorEnabled } from "@/lib/tutor";
 
 // GET ?exam=fe-civil&topic=statics -> { questions, topicNames }
 export async function GET(req: Request) {
@@ -21,5 +22,6 @@ export async function GET(req: Request) {
   return NextResponse.json({
     questions: shuffle([...fixed, ...generated]).map(toPublic),
     topicNames: Object.fromEntries(EXAMS[exam].topics.map((t) => [t.slug, t.name])),
+    tutor: tutorEnabled(),
   });
 }

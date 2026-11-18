@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { diagnosticSession } from "@/lib/adaptive/server";
 import { EXAM_PACE_S } from "@/lib/adaptive/quiz";
 import { Practice } from "@/components/Practice";
+import { tutorEnabled } from "@/lib/tutor";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ export default async function Diagnostic({ params }: { params: Promise<{ exam: s
         questions={questions.map(toPublic)}
         topicNames={Object.fromEntries(def.topics.map((t) => [t.slug, t.name]))}
         lockedCount={0}
+        tutor={tutorEnabled()}
         againLabel="Another diagnostic round"
         paceS={EXAM_PACE_S[exam]}
       />

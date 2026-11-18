@@ -7,6 +7,7 @@ import { hasExamAccess } from "@/lib/access";
 import { missedCount, quizSession } from "@/lib/adaptive/server";
 import { EXAM_PACE_S, QUIZ_COUNTS, QUIZ_SOURCES, type QuizSource } from "@/lib/adaptive/quiz";
 import { Practice } from "@/components/Practice";
+import { tutorEnabled } from "@/lib/tutor";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
             questions={questions.map(toPublic)}
             topicNames={topicNames}
             lockedCount={0}
+            tutor={tutorEnabled()}
             againLabel="New quiz, same settings"
             timeLimitS={timed ? questions.length * EXAM_PACE_S[exam] : undefined}
             paceS={EXAM_PACE_S[exam]}
