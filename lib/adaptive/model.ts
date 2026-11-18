@@ -20,7 +20,8 @@ export const INTERVALS_H = [0.25, 24, 72, 168, 504, 1440];
  * word for word, so it waits a day: long enough that the student has to re-solve it, not recall it.
  */
 export const FIXED_MISS_INTERVAL_H = 24;
-export const REVIEW_SHARE = 0.3; // at most 30% of a session is spaced review
+export const REVIEW_SHARE = 0.3; // at most 30% of a session is spaced review of items answered correctly
+export const MISS_SHARE = 0.5; // missed items due for another try may take up to half a session
 export const EVIDENCE_FOR_FULL_COVERAGE = 5;
 
 const HOUR = 3600_000;
@@ -190,7 +191,14 @@ export function planSession(
     .map((item) => ({ item, s: state.skills.get(item.skill) }))
     .filter((x): x is { item: PoolItem; s: SkillState } => !!x.s && x.s.due <= now)
     .sort((a, b) => Number(a.s.lastCorrect) - Number(b.s.lastCorrect) || a.s.due.getTime() - b.s.due.getTime());
-  for (const { item, s } of due.slice(0, Math.ceil(size * REVIEW_SHARE))) {
+  // Misses are the most valuable practice, so they get a larger share than spaced reviews. Without
+  // this, a big bank produces misses faster than a 30% review share can bring them back.
+  const reviewCap = Math.ceil(size * MISS_SHARE), spacedCap = Math.ceil(size * REVIEW_SHARE);
+  let spaced = 0;
+  for (const { item, s } of due) {
+    if (picks.length >= reviewCap) break;
+    if (s.lastCorrect && spaced >= spacedCap) continue;
+    if (s.lastCorrect) spaced++;
     picks.push({ item, reason: { kind: s.lastCorrect ? "review-spaced" : "review-missed", since: s.last } });
     used.add(item.skill);
   }

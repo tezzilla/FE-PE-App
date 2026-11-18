@@ -1,6 +1,7 @@
 import type { ExamId, PublicQuestion, Question } from "./types";
 import { FE_CIVIL } from "./fe-civil";
 import { PE_CIVIL } from "./pe-civil";
+import { FE_CONCEPTS, PE_CONCEPTS } from "./concepts";
 
 /** FNV-1a hash of a string, for stable per-question randomness. */
 function hash(s: string) {
@@ -32,7 +33,7 @@ export function balanceChoices(q: Question): Question {
   return { ...q, choices, answer: target };
 }
 
-export const ALL_QUESTIONS: Question[] = [...FE_CIVIL, ...PE_CIVIL].map(balanceChoices);
+export const ALL_QUESTIONS: Question[] = [...FE_CIVIL, ...FE_CONCEPTS, ...PE_CIVIL, ...PE_CONCEPTS].map(balanceChoices);
 
 const BY_ID = new Map(ALL_QUESTIONS.map((q) => [q.id, q]));
 

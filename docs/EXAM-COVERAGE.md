@@ -112,13 +112,29 @@ by an independent checker (`lib/templates/verify.ts`). "Fixed" questions are han
 
 **Bold** = added in the second November 2026 batch (21 problem types). The first batch added 32.
 
-## Next batch (highest exam weight with no coverage)
+## Third batch (November 2026)
 
-1. Wind velocity pressure and design pressures (Structural 1).
-2. Spread footing design: punching and one-way shear (Structural 5E).
-3. Braced excavation and sheet pile embedment (Geotechnical 8C, Construction 10E).
-4. Crane outrigger loads and lifting capacity (Construction 9B).
-5. Signal clearance intervals (yellow and all-red) and intersection sight distance (Transportation 6, 7).
-6. Nutrient removal and anaerobic digester sizing (WRE 11).
-7. Unit hydrograph and detention basin routing (WRE 7, FE 10).
-8. Compaction: relative compaction and borrow volume (Geotechnical 3, Construction 6F).
+Problem types (13): windward wall wind pressure; footing punching and one-way shear; braced cut strut
+load; crane outrigger mat area; borrow volume and water to add for compaction; yellow plus red
+clearance interval; intersection sight distance; primary sludge volume; nitrification oxygen demand;
+unit hydrograph peak with NRCS runoff; triangular-hydrograph detention storage.
+
+Hand-written conceptual questions (47, `lib/content/concepts.ts`): ethics and contracts (expert
+testimony, comity, E&O insurance, lump sum, liquidated damages), project delivery (design-build, CMAR),
+OSHA excavation and fall protection (5 ft, 20 ft, 4 ft/25 ft egress, 2 ft spoil, Type A/B/C slopes, 6 ft
+fall protection, competent person), MUTCD (warning sign colors, yellow vs. white markings, TTC zone
+areas, taper length), roadside recoverable slopes, crash rates, USCS classification, sensitivity, RQD,
+quick condition, frost heave, expansive clays, coagulation, DBPs, softening, SVI, nitrification
+alkalinity, breakpoint chlorination, TMDL, cavitation, determinacy, influence lines, ASCE 7 risk
+category, NDS load duration, IBC special inspections.
+
+## Next batch (highest exam weight with thin coverage)
+
+1. More conceptual questions: soil classification by AASHTO, rock and site exploration methods,
+   traffic signal warrants, sign placement, concrete testing (slump, air, cylinders), weld and bolt
+   inspection, stormwater BMPs.
+2. Pipe networks: parallel pipes and Hardy Cross (WRE 5D).
+3. Timber and masonry member design with NDS/TMS adjustment factors (Structural 4).
+4. Mass haul and borrow balance (Construction 9F, Transportation 9C).
+5. Gravity sewer design: full-flow capacity and minimum slope (WRE 11A).
+6. Lateral pile capacity and pile group efficiency (Geotechnical 10).

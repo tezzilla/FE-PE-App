@@ -250,6 +250,40 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     let PA = 0; for (let y = 1; y <= n; y++) PA += 1 / (1 + i) ** y;
     return B * PA / (P + M * PA);
   },
+  // ---- Ops and design batch (ops-design.ts)
+  "wind-windward-pressure": (p) => { const V = at(p, "speed of"), Kz = at(p, "Kz ="); return 0.00256 * Kz * V * V * 0.85 * 0.85 * 0.8; },
+  "footing-punching-shear-vu": (p) => {
+    const c = at(p, "column"), B = at(p, "footing"), d = at(p, "d ="), Pu = at(p, "load is");
+    // soil pressure acting outside the critical perimeter at d/2 from the faces
+    const inside = ((c + d) / 12) ** 2; return Pu * (1 - inside / (B * B));
+  },
+  "footing-one-way-shear-vu": (p) => {
+    const c = at(p, "column"), B = at(p, "footing"), d = at(p, "d ="), Pu = at(p, "load is");
+    const strip = (B - c / 12) / 2 - d / 12; return Pu * strip / B; // fraction of the footing area beyond the section
+  },
+  "braced-cut-strut-load": (p) => {
+    const H = at(p, "A"), gm = at(p, "(γ ="), phi = at(p, "φ ="), sh = at(p, "struts spaced"), sv = at(p, "tributary height of");
+    const Ka = (1 - Math.sin(rad(phi))) / (1 + Math.sin(rad(phi))); return 0.65 * Ka * gm * H * sv * sh;
+  },
+  "crane-mat-area": (p) => {
+    const W = at(p, "weighs"), P = at(p, "It lifts"), R = at(p, "radius of"), a = at(p, "are each"), qa = at(p, "bearing is");
+    // vertical equilibrium plus moments about the center of rotation: Rf − Rr = P·R/a, Rf + Rr = W + P
+    const Rf = ((W + P) + (P * R) / a) / 2; return Rf / 2 / qa;
+  },
+  "borrow-volume-compaction": (p) => { const Vf = at(p, "needs"), RC = at(p, "requires"), gmax = at(p, "weight is"), gb = at(p, "in-place dry unit weight is"); return Vf * (RC / 100) * gmax / gb; },
+  "compaction-water-to-add": (p) => { const gd = at(p, "weight of"), w2 = at(p, "moisture content of"), w1 = at(p, "arrives at"); return gd * 27 * (w2 - w1) / 100 / 8.34; },
+  "signal-change-clearance": (p) => {
+    const V = at(p, "speed of"), G = at(p, "on a") / 100, W = at(p, "is"); const v = V * at(p, "Use v =");
+    return 1 + v / (20 + 64.4 * G) + (W + 20) / v;
+  },
+  "intersection-sight-distance": (p) => {
+    const V = at(p, "design speed is"); const left = p.includes("turns left");
+    const lanes = left ? at(p, "crossing") : 1; return V * at(p, "ISD =") * ((left ? 7.5 : 6.5) + 0.5 * Math.max(0, lanes - 1));
+  },
+  "primary-sludge-volume": (p) => { const Q = at(p, "treats"), TSS = at(p, "TSS of"), rem = at(p, "removes"), ps = at(p, "sludge is"); return (Q * TSS * rem / 100 / 1000) / (1020 * ps / 100); },
+  "nitrification-oxygen": (p) => { const Q = at(p, "treating"), N0 = at(p, "ammonia from"), Ne = at(p, "mg/L to"); return Q * (N0 - Ne) * 4.57 / 1000; },
+  "unit-hydrograph-peak": (p) => { const up = at(p, "peak of"), CN = at(p, "curve number is"), P = at(p, "storm is"); const S = 1000 / CN - 10, Ia = 0.2 * S; return up * (P - Ia) ** 2 / (P - Ia + S); },
+  "detention-storage-triangular": (p) => { const Qp = at(p, "peak of"), tb = at(p, "base time of"), Qa = at(p, "release is"); return (tb * 3600) * (Qp - Qa) / 2 / 43560; },
 };
 
 
