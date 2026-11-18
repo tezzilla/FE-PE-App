@@ -18,13 +18,18 @@ export function emailEnabled() {
 
 /** Send one email. Never throws: email problems must not break sign-up or password reset. */
 export async function sendEmail(email: Email): Promise<boolean> {
+  return (await sendEmailDetailed(email)).ok;
+}
+
+/** Same as sendEmail, but also returns Postmark's error code and message (for the setup page). */
+export async function sendEmailDetailed(email: Email): Promise<{ ok: boolean; code?: number; message?: string }> {
   if (!emailEnabled()) {
     if (process.env.NODE_ENV === "production") {
       console.error(`Email not sent (POSTMARK_SERVER_TOKEN/EMAIL_FROM missing): "${email.subject}"`);
     } else {
       console.log(`[dev email] to=${email.to} subject="${email.subject}"\n${email.text}`);
     }
-    return false;
+    return { ok: false, message: "Email isn't configured." };
   }
   try {
     const res = await fetch("https://api.postmarkapp.com/email", {
@@ -46,12 +51,12 @@ export async function sendEmail(email: Email): Promise<boolean> {
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       console.error(`Postmark error ${res.status}: ${body.ErrorCode ?? ""} ${body.Message ?? ""}`);
-      return false;
+      return { ok: false, code: body.ErrorCode, message: body.Message };
     }
-    return true;
+    return { ok: true };
   } catch (e) {
     console.error("Postmark request failed", e);
-    return false;
+    return { ok: false, message: "Couldn't reach Postmark." };
   }
 }
 

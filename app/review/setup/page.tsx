@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { requireReviewer } from "@/lib/auth";
 import { setupStatus, type CheckState } from "@/lib/setup-status";
 import { sendTestEmail } from "./actions";
+import { SubmitButton } from "./SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +14,12 @@ const BADGE: Record<CheckState, { text: string; color: string }> = {
 };
 
 const TEST_MSG: Record<string, string> = {
-  sent: "Test email sent to your address. Check your inbox (and spam). If it doesn't arrive, look at Postmark > your server > Activity.",
+  sent: "Test email sent. Check that inbox (and spam). If it doesn't arrive, look at Postmark > your server > Activity.",
+  pending:
+    "Postmark accepted your settings but held this email: your Postmark account is still pending approval, and until then it only sends to addresses on your own domain (getcivilprep.com). Your token and sender are working. Once Postmark approves the account, emails will reach any address. To test now, send it to support@getcivilprep.com instead.",
   failed: "Postmark refused the test email. Postmark > your server > Activity shows why (often: account still pending approval, or EMAIL_FROM isn't on a verified domain).",
   off: "Email isn't configured yet.",
+  notallowed: "For safety, test emails can only go to your own login email or an address on your sending domain.",
 };
 
 export default async function SetupPage({ searchParams }: { searchParams: Promise<{ test?: string }> }) {
@@ -33,7 +37,6 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
       <p className="muted text-sm">
         Checks the live settings. Secret values are never shown. {bad ? `${bad} item${bad > 1 ? "s" : ""} need attention.` : "Everything is set."}
       </p>
-      {test && TEST_MSG[test] && <div className="card p-3 text-sm">{TEST_MSG[test]}</div>}
       <div className="space-y-3">
         {checks.map((c) => (
           <div key={c.name} className="card p-4 space-y-1">
@@ -46,9 +49,20 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
           </div>
         ))}
       </div>
-      <form action={sendTestEmail} className="card p-4 flex flex-wrap items-center gap-3">
-        <p className="flex-1 min-w-56 text-sm">Send a test email to <strong>{user.email}</strong>.</p>
-        <button className="btn">Send test email</button>
+      <form id="test-email" action={sendTestEmail} className="card p-4 space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="flex-1 min-w-56 text-sm">
+            Send a test email to
+            <input name="to" type="email" className="input mt-1" defaultValue={user.email} aria-label="Test email recipient" />
+            <span className="muted text-xs">Your own email, or any address on your sending domain.</span>
+          </label>
+          <SubmitButton />
+        </div>
+        {test && TEST_MSG[test] && (
+          <p role="status" className="text-sm p-3 rounded" style={{ background: "var(--bg)", border: `1px solid ${test === "sent" ? "#16a34a" : test === "pending" ? "#ca8a04" : "#dc2626"}` }}>
+            {TEST_MSG[test]}
+          </p>
+        )}
       </form>
     </div>
   );
