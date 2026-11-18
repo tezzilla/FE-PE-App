@@ -32,13 +32,15 @@ export function QuestionCard({
             if (idx === feedback.answer) border = "#16a34a";
             else if (idx === selected) border = "#dc2626";
           } else if (idx === selected) border = "var(--brand)";
+          // Motion on the student's own pick: a pulse when right, a short shake when wrong.
+          const anim = feedback && idx === selected ? (feedback.correct ? "anim-correct" : "anim-wrong") : "";
           return (
             <button
               key={idx}
               type="button"
               disabled={!onSelect}
               onClick={() => onSelect?.(idx)}
-              className="w-full text-left rounded-lg px-4 py-3 border-2 flex gap-3"
+              className={`w-full text-left rounded-lg px-4 py-3 border-2 flex gap-3 transition-colors ${onSelect ? "hover:bg-black/[0.03] dark:hover:bg-white/[0.04]" : ""} ${anim}`}
               style={{ borderColor: border }}
             >
               <span className="font-semibold">{"ABCD"[idx] ?? idx + 1}.</span>
@@ -48,7 +50,7 @@ export function QuestionCard({
         })}
       </div>
       {feedback && (
-        <div className="rounded-lg p-4" style={{ background: feedback.correct ? "#16a34a22" : "#dc262622" }}>
+        <div className="rounded-lg p-4 enter" style={{ background: feedback.correct ? "#16a34a22" : "#dc262622" }}>
           <p className="font-semibold">{feedback.correct ? "Correct" : `Incorrect. Answer: ${"ABCD"[feedback.answer]}`}</p>
           <p className="mt-2 whitespace-pre-line">{feedback.explanation}</p>
           {feedback.reference && <p className="muted text-sm mt-2">Reference: {feedback.reference}</p>}

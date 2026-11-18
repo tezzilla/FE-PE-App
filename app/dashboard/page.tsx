@@ -67,7 +67,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                           <span className="muted">{pct}% · {s.attempted} answered</span>
                         </div>
                         <div className="h-2 rounded mt-1" style={{ background: "var(--border)" }}>
-                          <div className="h-2 rounded" style={{ width: `${pct}%`, background: pct >= 70 ? "#16a34a" : pct >= 50 ? "#ca8a04" : "#dc2626" }} />
+                          <div className="h-2 rounded bar-fill" style={{ width: `${pct}%`, background: pct >= 70 ? "#16a34a" : pct >= 50 ? "#ca8a04" : "#dc2626" }} />
                         </div>
                       </div>
                     );

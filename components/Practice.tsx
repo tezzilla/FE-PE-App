@@ -122,7 +122,7 @@ export function Practice({
         ) : null}
       </p>
       {reasons?.[q.id] && (
-        <p className="text-sm font-medium" style={{ color: "var(--brand)" }}>Why this question: {reasons[q.id]}</p>
+        <p className="text-sm font-medium" style={{ color: "var(--brand-text)" }}>Why this question: {reasons[q.id]}</p>
       )}
       <QuestionCard question={q} selected={selected} onSelect={feedback ? undefined : setSelected} feedback={feedback} />
       {feedback && tutor && <TutorPanel key={q.id} questionId={q.id} />}

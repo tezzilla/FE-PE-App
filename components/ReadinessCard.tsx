@@ -25,7 +25,7 @@ export async function ReadinessCard({ user, exam, back }: { user: User; exam: Ex
           <div>
             <div className="flex justify-between text-sm"><span>Exam coverage</span><span className="muted">{cov}%</span></div>
             <div className="h-2 rounded mt-1" style={{ background: "var(--border)" }}>
-              <div className="h-2 rounded" style={{ width: `${cov}%`, background: "var(--brand)" }} />
+              <div className="h-2 rounded bar-fill" style={{ width: `${cov}%`, background: "var(--brand)" }} />
             </div>
           </div>
           <p className="text-sm">

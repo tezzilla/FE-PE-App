@@ -29,7 +29,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
         {(async () => {
           const b = await bankStats(exam);
           return (
-            <p className="text-sm mt-1" style={{ color: "var(--brand)" }}>
+            <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
               {b.fixed} worked problems{b.generators ? ` + ${b.generators} problem type${b.generators === 1 ? "" : "s"} with unlimited variations` : ""}
             </p>
           );
@@ -104,7 +104,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
                 {s ? ` · ${Math.round((100 * s.correct) / s.attempted)}% correct (${s.attempted} done)` : ""}
               </p>
               {gens > 0 && (
-                <p className="text-sm mt-1" style={{ color: "var(--brand)" }}>
+                <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
                   + unlimited problems from {gens} engineer-reviewed generator{gens > 1 ? "s" : ""}{access ? "" : " 🔒"}
                 </p>
               )}

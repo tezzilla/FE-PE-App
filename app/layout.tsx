@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           <nav className="mx-auto max-w-5xl px-4 h-14 flex items-center gap-5">
             <Link href="/" className="font-bold text-lg">
-              Civil<span style={{ color: "var(--brand)" }}>Prep</span>
+              Civil<span style={{ color: "var(--brand-text)" }}>Prep</span>
             </Link>
             <Link href="/exams/fe-civil" className="muted hover:underline hidden sm:inline">FE Civil</Link>
             <Link href="/exams/pe-civil" className="muted hover:underline hidden sm:inline">PE Civil</Link>

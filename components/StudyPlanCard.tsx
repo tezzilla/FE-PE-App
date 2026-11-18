@@ -63,7 +63,7 @@ export async function StudyPlanCard({ user, exam, back, error }: { user: User; e
             <span style={{ color: st.color }} className="font-semibold">{st.text}</span>
           </div>
           <div className="h-2 rounded mt-1" style={{ background: "var(--border)" }}>
-            <div className="h-2 rounded" style={{ width: `${Math.round(pct * 100)}%`, background: st.color }} />
+            <div className="h-2 rounded bar-fill" style={{ width: `${Math.round(pct * 100)}%`, background: st.color }} />
           </div>
         </div>
       )}

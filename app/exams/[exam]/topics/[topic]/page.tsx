@@ -78,7 +78,7 @@ export default async function TopicReview({ params }: { params: Params }) {
               {example.choices.map((c, i) => <li key={i}><span className="font-semibold">{letter(i)}.</span> {c}</li>)}
             </ol>
             <details>
-              <summary className="cursor-pointer font-medium" style={{ color: "var(--brand)" }}>Show solution</summary>
+              <summary className="cursor-pointer font-medium" style={{ color: "var(--brand-text)" }}>Show solution</summary>
               <div className="mt-2 space-y-2">
                 <p><strong>Answer: {letter(example.answer)}.</strong> {example.choices[example.answer]}</p>
                 <p className="whitespace-pre-line">{example.explanation}</p>

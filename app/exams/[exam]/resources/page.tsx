@@ -51,7 +51,7 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
             <section key={s.id} className="space-y-2">
               <h2 className="text-xl font-semibold">
                 {s.title}
-                {s.id === depth && <span className="text-sm font-normal" style={{ color: "var(--brand)" }}> · your depth module</span>}
+                {s.id === depth && <span className="text-sm font-normal" style={{ color: "var(--brand-text)" }}> · your depth module</span>}
               </h2>
               {s.intro && <p className="muted text-sm">{s.intro}</p>}
               <ul className="card divide-y" style={{ borderColor: "var(--border)" }}>
@@ -64,7 +64,7 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
                       {l.cost && (
                         <span
                           className="text-xs font-semibold px-2 py-0.5 rounded whitespace-nowrap"
-                          style={l.cost === "free" ? { background: "#16a34a", color: "#fff" } : { border: "1px solid var(--border)" }}
+                          style={l.cost === "free" ? { background: "#15803d", color: "#fff" } : { border: "1px solid var(--border)" }}
                         >
                           {l.cost === "free" ? "Free" : "Purchase"}
                         </span>

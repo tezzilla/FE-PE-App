@@ -10,7 +10,7 @@ export function ProductPreview() {
           <span className="eyebrow">Smart practice · Question 4 of 10</span>
           <span className="muted text-xs">Example</span>
         </div>
-        <p className="text-xs font-medium" style={{ color: "var(--brand)" }}>
+        <p className="text-xs font-medium" style={{ color: "var(--brand-text)" }}>
           Why this question: Hydrology is your weakest topic on the exam.
         </p>
         <p className="leading-relaxed">
@@ -40,7 +40,7 @@ export function ProductPreview() {
         <div className="flex items-center gap-3 pt-1">
           <span className="muted text-xs whitespace-nowrap">Your readiness</span>
           <div className="h-1.5 rounded flex-1" style={{ background: "var(--border)" }}>
-            <div className="h-1.5 rounded" style={{ width: "72%", background: "var(--brand)" }} />
+            <div className="h-1.5 rounded bar-fill" style={{ width: "72%", background: "var(--brand)" }} />
           </div>
           <span className="font-bold" style={{ color: "var(--good)" }}>72%</span>
         </div>

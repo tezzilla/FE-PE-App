@@ -50,15 +50,16 @@ export function Flashcards({ cards: initial, endpoint = "/api/cards" }: { cards:
       <button
         type="button"
         onClick={() => setFlipped((f) => !f)}
-        className="card p-6 w-full text-left min-h-48 flex flex-col justify-center gap-3"
+        key={card.id}
+        className="card p-6 w-full text-left min-h-48 flex flex-col justify-center gap-3 flip-in"
         aria-label={flipped ? "Hide answer" : "Show answer"}
       >
         <p className="text-lg font-semibold">{card.front}</p>
         {flipped ? (
-          <>
+          <div key={`${card.id}-back`} className="flip-in space-y-3">
             <p className="whitespace-pre-line font-mono text-[15px] leading-relaxed">{card.back}</p>
             <p className="muted text-xs">Find it on exam day: {card.ref}</p>
-          </>
+          </div>
         ) : (
           <p className="muted text-sm">Recall it, then tap to check.</p>
         )}

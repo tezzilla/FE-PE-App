@@ -14,7 +14,7 @@ export const Colors = {
     backgroundSelected: '#e2e8f0',
     textSecondary: '#64748b',
     border: '#e2e8f0',
-    brand: '#ea580c',
+    brand: '#c2410c', // 5.2:1 with white text; matches the website's buttons
     onBrand: '#ffffff',
     good: '#16a34a',
     warn: '#ca8a04',

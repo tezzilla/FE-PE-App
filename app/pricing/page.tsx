@@ -100,7 +100,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
                   style={{ border: p.kind === "pass" ? "2px solid var(--brand)" : "1px solid var(--border)" }}
                 >
                   {p.kind === "pass" && (
-                    <span className="absolute -top-3 right-4 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "var(--brand)", color: "white" }}>
+                    <span className="absolute -top-3 right-4 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "var(--btn-bg)", color: "var(--btn-fg)" }}>
                       Best value
                     </span>
                   )}

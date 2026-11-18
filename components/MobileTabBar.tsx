@@ -25,7 +25,7 @@ export function MobileTabBar({ signedIn }: { signedIn: boolean }) {
             key={t.label}
             href={t.href}
             className="flex flex-col items-center justify-center h-14 text-xs"
-            style={{ color: active ? "var(--brand)" : "var(--muted)", fontWeight: active ? 600 : 400 }}
+            style={{ color: active ? "var(--brand-text)" : "var(--muted)", fontWeight: active ? 600 : 400 }}
             aria-current={active ? "page" : undefined}
           >
             <span className="text-lg leading-none" aria-hidden>{t.icon}</span>

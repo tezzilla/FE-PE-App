@@ -60,10 +60,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
 
       {/* Hero */}
       <section className="hero-glow -mx-4 px-4 pt-4 sm:pt-10 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
-        <div className="space-y-6">
+        <div className="space-y-6 enter">
           <p className="eyebrow">FE &amp; PE Civil exam prep</p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05]">
-            Pass the FE and PE Civil without the <span style={{ color: "var(--brand)" }}>$1,000 course.</span>
+            Pass the FE and PE Civil without the <span style={{ color: "var(--brand-text)" }}>$1,000 course.</span>
           </h1>
           <p className="muted text-lg sm:text-xl leading-relaxed max-w-xl">
             Practice that adapts to your weak spots, full-length timed exams, and worked solutions that point you to
@@ -84,13 +84,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
             ))}
           </ul>
         </div>
-        <div className="lg:pl-6 pb-6">
+        <div className="lg:pl-6 pb-6 enter enter-3">
           <ProductPreview />
         </div>
       </section>
 
       {/* Proof strip */}
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 reveal">
         {[
           ["110 + 80", "question timed FE and PE exams"],
           [String(topicCount), "FE and PE topic areas covered"],
@@ -98,14 +98,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
           tutor ? ["24/7", "AI tutor on every solution"] : ["Free", "sample questions in every topic"],
         ].map(([n, l]) => (
           <div key={l} className="card p-5 text-center">
-            <p className="text-3xl font-extrabold" style={{ color: "var(--brand)" }}>{n}</p>
+            <p className="text-3xl font-extrabold tracking-tight">{n}</p>
             <p className="muted text-sm mt-1">{l}</p>
           </div>
         ))}
       </section>
 
       {/* Price comparison */}
-      <section className="card elevated p-6 sm:p-10 grid md:grid-cols-2 gap-8 items-center">
+      <section className="navy-section rounded-2xl elevated p-6 sm:p-10 grid md:grid-cols-2 gap-8 items-center reveal">
         <div className="space-y-3">
           <p className="eyebrow">Same goal, a fraction of the price</p>
           <h2 className="text-3xl font-bold tracking-tight">Big review courses cost $1,100 to $2,000. You don&apos;t need one to pass.</h2>
@@ -115,21 +115,21 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
           </p>
         </div>
         <div className="space-y-3">
-          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid var(--border)" }}>
+          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid rgb(255 255 255 / 0.15)" }}>
             <div>
               <p className="font-semibold">Typical on-demand review course</p>
               <p className="muted text-sm">4 to 12 months</p>
             </div>
             <p className="text-2xl font-bold muted line-through decoration-2">$1,100+</p>
           </div>
-          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "2px solid var(--brand)", background: "var(--brand-soft)" }}>
+          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "2px solid var(--brand)", background: "var(--card)", color: "var(--fg)" }} data-inset>
             <div>
               <p className="font-semibold">CivilPrep FE Civil</p>
               <p className="muted text-sm">{fePass ? `or $${fePass.price} for a ${fePass.days! / 30}-month pass` : "cancel anytime"}</p>
             </div>
             <p className="text-2xl font-extrabold">${fePlan.price}<span className="text-base font-normal muted">/mo</span></p>
           </div>
-          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid var(--border)" }}>
+          <div className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid rgb(255 255 255 / 0.15)" }}>
             <div>
               <p className="font-semibold">CivilPrep PE Civil</p>
               <p className="muted text-sm">FE content included</p>
@@ -141,7 +141,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* How it works */}
-      <section className="space-y-8">
+      <section className="space-y-8 reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">How it works</p>
           <h2 className="text-3xl font-bold tracking-tight">A plan that adjusts to you every day</h2>
@@ -161,7 +161,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* Features */}
-      <section className="space-y-8">
+      <section className="space-y-8 reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">Everything you need</p>
           <h2 className="text-3xl font-bold tracking-tight">Built for how engineers actually study</h2>
@@ -178,7 +178,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* Pick your exam */}
-      <section className="space-y-8">
+      <section className="space-y-8 reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">Pick your exam</p>
           <h2 className="text-3xl font-bold tracking-tight">Try free questions in every topic</h2>
@@ -194,7 +194,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
                 </div>
                 <p className="muted">{e.description}</p>
                 <p className="text-sm">{e.topics.length} topic areas · {e.realExam}</p>
-                <span className="mt-auto pt-2 inline-flex items-center gap-1.5 font-semibold" style={{ color: "var(--brand)" }}>
+                <span className="mt-auto pt-2 inline-flex items-center gap-1.5 font-semibold" style={{ color: "var(--brand-text)" }}>
                   Explore {e.shortName} <Icon name="arrow" size={16} />
                 </span>
               </Link>
@@ -204,7 +204,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* Trust */}
-      <section className="card p-6 sm:p-10 flex flex-col md:flex-row gap-6 items-start">
+      <section className="card p-6 sm:p-10 flex flex-col md:flex-row gap-6 items-start reveal">
         <span className="icon-tile shrink-0" style={{ width: "3rem", height: "3rem" }}><Icon name="shield" size={24} /></span>
         <div className="space-y-2">
           <h2 className="text-2xl font-bold">Checked by an engineer, not just a computer</h2>
@@ -217,7 +217,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* FAQ */}
-      <section className="space-y-8 max-w-3xl mx-auto">
+      <section className="space-y-8 max-w-3xl mx-auto reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">Questions</p>
           <h2 className="text-3xl font-bold tracking-tight">Frequently asked</h2>
@@ -226,10 +226,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       </section>
 
       {/* Final CTA */}
-      <section className="rounded-2xl p-8 sm:p-12 text-center space-y-4" style={{ background: "var(--brand)", color: "white" }}>
+      <section className="navy-section rounded-2xl p-8 sm:p-12 text-center space-y-4 reveal">
         <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Start studying in two minutes</h2>
         <p className="text-lg opacity-90 max-w-xl mx-auto">Create a free account, take the diagnostic, and see exactly where you stand.</p>
-        <Link href="/signup" className="btn-lg inline-flex items-center font-semibold rounded-lg" style={{ background: "white", color: "var(--brand)" }}>
+        <Link href="/signup" className="btn btn-lg">
           Start free <Icon name="arrow" size={18} className="ml-2" />
         </Link>
       </section>
