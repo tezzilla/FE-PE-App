@@ -43,7 +43,23 @@ export interface Generated {
   /** Wrong answers built from common mistakes, full precision. */
   distractors: number[];
   solution: string;
+  /** Significant figures for the answer choices (default 3). Use more for e.g. elevations (487.23 ft). */
+  sig?: number;
+  /** Minimum relative gap between a distractor and the answer (default 0.03). */
+  minGap?: number;
 }
+
+/**
+ * Where a problem comes from. Only content we may sell is allowed:
+ * - original: written for CivilPrep. `basis` cites any public method it uses (formulas and methods
+ *   aren't copyrightable; specific problem text and presentation are).
+ * - public-domain: e.g. US federal government works (17 U.S.C. 105). Cite the document.
+ * - cc-by / cc-by-sa: openly licensed for commercial use; attribution required (and share-alike for -sa).
+ * NonCommercial (NC) and NoDerivatives (ND) licenses are not allowed. scripts/validate-* enforce this.
+ */
+export type Provenance =
+  | { type: "original"; basis?: string }
+  | { type: "public-domain" | "cc-by" | "cc-by-sa"; source: string; url?: string; license?: string };
 
 export interface Template {
   id: string;
@@ -53,6 +69,8 @@ export interface Template {
   /** Topic slug for each exam this template appears in. */
   topics: Partial<Record<ExamId, string>>;
   reference?: string;
+  /** Defaults to { type: "original" }. */
+  provenance?: Provenance;
   generate(r: Rng): Generated;
 }
 
@@ -71,7 +89,8 @@ export interface BuiltVariant {
 
 export function buildVariant(t: Template, seed: number): BuiltVariant {
   const g = t.generate(makeRng(seed));
-  const label = (v: number) => f(v);
+  const label = (v: number) => f(v, g.sig ?? 3);
+  const minGap = g.minGap ?? MIN_GAP;
   const correct = label(g.answer);
   const seen = new Set([correct]);
   const picked: number[] = [];
@@ -79,7 +98,7 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
 
   const tryAdd = (v: number) => {
     if (picked.length >= 3 || !Number.isFinite(v) || v <= 0) return;
-    if (Math.abs(v - g.answer) / Math.abs(g.answer) < MIN_GAP) return;
+    if (Math.abs(v - g.answer) / Math.abs(g.answer) < minGap) return;
     const s = label(v);
     if (seen.has(s)) return;
     seen.add(s);

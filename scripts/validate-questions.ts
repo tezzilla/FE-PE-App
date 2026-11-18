@@ -17,6 +17,9 @@ for (const q of ALL_QUESTIONS) {
   if (new Set(q.choices).size !== q.choices.length) fail(q.id, "duplicate choices");
   if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= q.choices.length) fail(q.id, "answer index out of range");
   if (!q.explanation.trim()) fail(q.id, "missing explanation");
+  const prov = q.provenance ?? { type: "original" };
+  if (!["original", "public-domain", "cc-by", "cc-by-sa"].includes(prov.type)) fail(q.id, `provenance "${prov.type}" isn't allowed`);
+  if (prov.type !== "original" && !("source" in prov && prov.source)) fail(q.id, `${prov.type} content must cite its source`);
 }
 
 for (const exam of Object.values(EXAMS)) {

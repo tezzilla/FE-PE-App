@@ -11,6 +11,8 @@ export interface Question {
   reference?: string; // where to look in the NCEES reference handbook / codes
   free?: boolean; // visible on the free tier
   templateId?: string; // set for generated problems
+  /** Where this question came from (see Provenance in lib/templates/engine.ts). Defaults to original. */
+  provenance?: import("../templates/engine").Provenance;
 }
 
 /** Shape sent to the browser. Never includes the answer or explanation. */

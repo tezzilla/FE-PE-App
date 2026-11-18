@@ -89,6 +89,9 @@ Credential wording: until your license is issued, don't use "P.E." Update it at 
 
 ## Adding questions
 
+See **docs/CONTENT-SOURCING.md** for which sources are allowed (no NonCommercial licenses, no other prep companies' questions). Every item carries a `provenance` that the validators check.
+
+
 Questions live in `lib/content/fe-civil.ts` and `lib/content/pe-civil.ts`. Each has `topic`, `prompt`, `choices`, `answer` (index), `explanation`, optional `reference` and `free`. Run `npm run test:content` after editing.
 
 **Content must be original.** NCEES practice exams and commercial course problems are copyrighted. Write new problems against the published exam specifications.

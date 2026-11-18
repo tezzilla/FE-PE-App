@@ -16,6 +16,14 @@ for (const t of TEMPLATES) {
       console.error(`✗ ${t.id}: unknown topic ${exam}/${topic}`); errors++;
     }
   }
+  const prov = t.provenance ?? { type: "original" };
+  if (!["original", "public-domain", "cc-by", "cc-by-sa"].includes(prov.type)) {
+    console.error(`✗ ${t.id}: provenance "${prov.type}" isn't allowed (no NonCommercial or NoDerivatives sources)`); errors++;
+  }
+  if (prov.type !== "original" && !("source" in prov && prov.source)) {
+    console.error(`✗ ${t.id}: ${prov.type} content must cite its source`); errors++;
+  }
+  if (!t.reference) { console.error(`✗ ${t.id}: missing reference`); errors++; }
   let fallbacks = 0;
   const prompts = new Set<string>();
   for (let seed = 1; seed <= N; seed++) {
