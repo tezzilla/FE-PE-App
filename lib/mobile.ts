@@ -4,7 +4,7 @@ import type { User } from "@prisma/client";
 import { EXAMS, EXAM_IDS, topicName } from "./content/exams";
 import { accessSummary, hasActiveSubscription, hasExamAccess, hasPaidAccess } from "./access";
 import { getPlan } from "./plans";
-import { examReadiness, learnerState } from "./adaptive/server";
+import { examReadiness, learnerState, studyPlanFor } from "./adaptive/server";
 import { topicMastery } from "./adaptive/model";
 
 export const unauthorized = () => NextResponse.json({ error: "Sign in required" }, { status: 401 });
@@ -28,12 +28,21 @@ export async function homePayload(user: User) {
   const exams = await Promise.all(
     EXAM_IDS.map(async (id) => {
       const def = EXAMS[id];
-      const [r, state] = await Promise.all([examReadiness(user, id), learnerState(user.id, id)]);
+      const [r, state, sp] = await Promise.all([examReadiness(user, id), learnerState(user.id, id), studyPlanFor(user, id)]);
       return {
         id,
         name: def.name,
         realExam: def.realExam,
         access: hasExamAccess(user, id),
+        plan: sp
+          ? {
+              examDate: sp.saved.examDate.toISOString(),
+              daysLeft: sp.plan.daysLeft,
+              weeklyTarget: sp.plan.weeklyTarget,
+              answeredLast7Days: sp.plan.answeredLast7Days,
+              status: sp.plan.status,
+            }
+          : null,
         readiness: {
           score: r.score,
           coverage: r.coverage,

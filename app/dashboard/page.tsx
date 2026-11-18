@@ -5,6 +5,7 @@ import { EXAMS } from "@/lib/content/exams";
 import { topicStats } from "@/lib/progress";
 import { db } from "@/lib/db";
 import { ReadinessCard } from "@/components/ReadinessCard";
+import { StudyPlanCard } from "@/components/StudyPlanCard";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,11 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                 <h2 className="text-xl font-semibold">{e.name} {hasExamAccess(user, e.id) ? "" : <span className="muted text-sm">(free tier)</span>}</h2>
                 <Link href={`/exams/${e.id}`} className="hover:underline text-sm">Study →</Link>
               </div>
+              {(await db.studyPlan.count({ where: { userId: user.id, exam: e.id } })) > 0 ? (
+                <StudyPlanCard user={user} exam={e.id} back="/dashboard" />
+              ) : (
+                <p className="text-sm"><Link href={`/exams/${e.id}`} className="underline">Set your {e.shortName} exam date</Link> to get a weekly study plan.</p>
+              )}
               <ReadinessCard user={user} exam={e.id} back="/dashboard" />
               {entries.length === 0 ? (
                 <p className="muted text-sm">No questions answered yet.</p>

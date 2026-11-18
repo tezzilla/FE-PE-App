@@ -37,6 +37,7 @@ model User {
   reports              ProblemReport[]
   passes               Pass[]
   resetTokens          PasswordResetToken[]
+  studyPlans           StudyPlan[]
 }
 
 model Attempt {
@@ -148,4 +149,18 @@ model PasswordResetToken {
   createdAt DateTime  @default(now())
 
   @@index([userId])
+}
+
+// A student's exam date and weekly study time for one exam; the plan itself is computed (lib/adaptive/plan.ts).
+model StudyPlan {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam        String
+  examDate    DateTime
+  weeklyHours Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, exam])
 }

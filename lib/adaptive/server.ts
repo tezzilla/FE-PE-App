@@ -12,6 +12,7 @@ import {
   computeState, describeReason, planSession, readiness, topicWeights,
   type LearnerState, type PoolItem, type Readiness,
 } from "./model";
+import { buildPlan } from "./plan";
 
 export async function learnerState(userId: string, exam: ExamId, now = new Date()): Promise<LearnerState> {
   const attempts = await db.attempt.findMany({
@@ -63,4 +64,27 @@ export async function examReadiness(user: User, exam: ExamId): Promise<Readiness
   const dueReviews = [...state.skills].filter(([k, s]) => available.has(k) && s.due <= now).length;
   const answered = [...state.topics.values()].reduce((a, t) => a + t.evidence, 0);
   return { ...readiness(state, weightsFor(user, exam)), dueReviews, answered };
+}
+
+/** The user's study plan for an exam, computed from their saved date/hours and live progress. */
+export async function studyPlanFor(user: User, exam: ExamId) {
+  const saved = await db.studyPlan.findUnique({ where: { userId_exam: { userId: user.id, exam } } });
+  if (!saved) return null;
+  const now = new Date();
+  const [state, answeredLast7Days, fullExams] = await Promise.all([
+    learnerState(user.id, exam, now),
+    db.attempt.count({ where: { userId: user.id, exam, createdAt: { gte: new Date(now.getTime() - 7 * 24 * 3600 * 1000) } } }),
+    db.mockExam.findMany({ where: { userId: user.id, exam, status: "completed" }, select: { completedAt: true, createdAt: true } }),
+  ]);
+  const r = readiness(state, weightsFor(user, exam));
+  const plan = buildPlan({
+    exam,
+    today: now,
+    examDate: saved.examDate,
+    weeklyHours: saved.weeklyHours,
+    answeredLast7Days,
+    focus: r.weakest.map((w) => ({ topic: w.topic, name: topicName(exam, w.topic), mastery: w.mastery })),
+    fullExamsDone: fullExams.map((m) => m.completedAt ?? m.createdAt),
+  });
+  return { saved, plan };
 }

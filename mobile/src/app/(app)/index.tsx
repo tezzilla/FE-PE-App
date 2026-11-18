@@ -94,6 +94,14 @@ function ExamCard({ exam }: { exam: ExamSummary }) {
           )}
         </View>
       </View>
+      {exam.plan && exam.plan.daysLeft >= 0 && (
+        <ThemedText type="small" testID={`plan-${exam.id}`}>
+          Exam in {exam.plan.daysLeft} days · last 7 days {exam.plan.answeredLast7Days}/{exam.plan.weeklyTarget} questions ·{' '}
+          <ThemedText type="smallBold" style={{ color: exam.plan.status === 'behind' ? theme.warn : theme.good }}>
+            {exam.plan.status === 'behind' ? 'behind' : exam.plan.status === 'ahead' ? 'ahead' : 'on track'}
+          </ThemedText>
+        </ThemedText>
+      )}
       <ThemedText type="small" themeColor="textSecondary">
         Focus next: <ThemedText type="small">{r.weakest.map((w) => w.name).join(', ')}</ThemedText>
       </ThemedText>

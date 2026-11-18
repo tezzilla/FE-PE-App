@@ -7,9 +7,11 @@ import { hasExamAccess } from "@/lib/access";
 import { topicStats } from "@/lib/progress";
 import { approvedTemplateCount, bankStats } from "@/lib/questions";
 import { ReadinessCard } from "@/components/ReadinessCard";
+import { StudyPlanCard } from "@/components/StudyPlanCard";
 
-export default async function ExamPage({ params }: { params: Promise<{ exam: string }> }) {
+export default async function ExamPage({ params, searchParams }: { params: Promise<{ exam: string }>; searchParams: Promise<{ planError?: string }> }) {
   const { exam } = await params;
+  const { planError } = await searchParams;
   if (!isExamId(exam)) notFound();
   const def = EXAMS[exam];
   const user = await getCurrentUser();
@@ -39,7 +41,10 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
       )}
 
       {user ? (
-        <ReadinessCard user={user} exam={exam} back={`/exams/${exam}`} />
+        <>
+          <StudyPlanCard user={user} exam={exam} back={`/exams/${exam}`} error={planError} />
+          <ReadinessCard user={user} exam={exam} back={`/exams/${exam}`} />
+        </>
       ) : (
         <div className="card p-4 flex flex-wrap items-center gap-3">
           <p className="flex-1">Smart practice learns what you&apos;re weak at and targets it. Free account required.</p>

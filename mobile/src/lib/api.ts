@@ -38,6 +38,8 @@ export interface ExamSummary {
   name: string;
   realExam: string;
   access: boolean;
+  /** Study plan summary, if the student set an exam date on the website. */
+  plan: { examDate: string; daysLeft: number; weeklyTarget: number; answeredLast7Days: number; status: 'ahead' | 'on-track' | 'behind' } | null;
   readiness: {
     score: number;
     coverage: number;
