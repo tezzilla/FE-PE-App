@@ -12,6 +12,8 @@
   --navy-fg: #e2e8f0;
   --btn-bg: #c2410c;       /* buttons: 5.2:1 with white text */
   --btn-fg: #ffffff;
+  --chart-line: #c2410c;   /* single-series line; validated for the light surface */
+  --chart-grid: #e2e8f0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,6 +29,8 @@
     --navy-fg: #e2e8f0;
     --btn-bg: #fb923c;     /* bright orange with dark text: 8.3:1 */
     --btn-fg: #0b1120;
+    --chart-line: #ea580c; /* validated against the dark card surface #111827 */
+    --chart-grid: #1f2937;
   }
 }
 

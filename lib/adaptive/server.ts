@@ -132,3 +132,23 @@ export async function pacing(user: User, exam: ExamId) {
   const overallMs = total ? groups.reduce((a, g) => a + (g._avg.timeMs ?? 0) * g._count.timeMs, 0) / total : 0;
   return { rows: rows.map((r) => ({ ...r, name: topicName(exam, r.topic) })), total, overallS: Math.round(overallMs / 1000) };
 }
+
+/** Readiness at the end of each of the last `weeks` weeks (oldest first), from the first week with answers. */
+export async function readinessHistory(user: User, exam: ExamId, weeks = 8) {
+  const attempts = await db.attempt.findMany({
+    where: { userId: user.id, exam },
+    select: { questionId: true, topic: true, correct: true, createdAt: true },
+    orderBy: { createdAt: "asc" },
+  });
+  if (!attempts.length) return [];
+  const w = weightsFor(user, exam);
+  const now = Date.now();
+  const out: { date: string; score: number; answered: number }[] = [];
+  for (let k = weeks - 1; k >= 0; k--) {
+    const at = new Date(now - k * 7 * 24 * 3600 * 1000);
+    const upTo = attempts.filter((a) => a.createdAt <= at);
+    if (!upTo.length) continue;
+    out.push({ date: at.toISOString(), score: readiness(computeState(upTo, at), w).score, answered: upTo.length });
+  }
+  return out;
+}

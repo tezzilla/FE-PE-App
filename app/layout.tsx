@@ -61,6 +61,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <footer className="muted text-sm text-center px-4 pt-2 pb-24 sm:py-6">
           <p>CivilPrep is not affiliated with or endorsed by NCEES. FE and PE are exams administered by NCEES.</p>
           <p className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <Link href="/learn" className="hover:underline">Formula guides</Link>
             <Link href="/free/fe-civil" className="hover:underline">Free FE problems</Link>
             <Link href="/free/pe-civil" className="hover:underline">Free PE problems</Link>
             <Link href="/compare" className="hover:underline">Compare</Link>

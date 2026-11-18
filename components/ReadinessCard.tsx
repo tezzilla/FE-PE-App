@@ -2,11 +2,12 @@ import Link from "next/link";
 import type { User } from "@prisma/client";
 import type { ExamId } from "@/lib/content/types";
 import { EXAMS, topicName } from "@/lib/content/exams";
-import { examReadiness } from "@/lib/adaptive/server";
+import { examReadiness, readinessHistory } from "@/lib/adaptive/server";
+import { ReadinessTrend } from "@/components/ReadinessTrend";
 import { setPeDepth } from "@/app/actions/prefs";
 
 export async function ReadinessCard({ user, exam, back }: { user: User; exam: ExamId; back: string }) {
-  const r = await examReadiness(user, exam);
+  const [r, history] = await Promise.all([examReadiness(user, exam), readinessHistory(user, exam)]);
   const pct = Math.round(r.score * 100);
   const cov = Math.round(r.coverage * 100);
   const color = pct >= 70 ? "#16a34a" : pct >= 55 ? "#ca8a04" : "#dc2626";
@@ -36,6 +37,8 @@ export async function ReadinessCard({ user, exam, back }: { user: User; exam: Ex
         </div>
         <Link href={`/exams/${exam}/smart`} className="btn self-center w-full sm:w-auto">Smart practice</Link>
       </div>
+
+      {history.length >= 2 && <ReadinessTrend points={history} />}
 
       {exam === "pe-civil" && (
         <form action={setPeDepth} className="flex flex-wrap items-center gap-2 text-sm">

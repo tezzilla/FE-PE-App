@@ -83,6 +83,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
             })()}
           </>
         )}
+        <Link href={`/exams/${exam}/handbook-drill`} className="btn-ghost">Handbook hunt</Link>
         <Link href={`/exams/${exam}/mock`} className="btn-ghost">Full exam (timed) {access ? "" : "🔒"}</Link>
         <Link href={`/exams/${exam}/resources`} className="btn-ghost">Exam documents {access ? "" : "🔒"}</Link>
       </div>

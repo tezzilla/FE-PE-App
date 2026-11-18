@@ -74,6 +74,14 @@ export default async function ModulePage({ params }: { params: Promise<{ exam: s
                   </li>
                 ))}
               </ul>
+              {seen > 0 && (
+                <div className="flex items-center gap-3 text-xs" aria-label={`${Math.round((100 * right) / seen)}% right on the ${seen} items practiced`}>
+                  <div className="h-1.5 rounded flex-1 max-w-48" style={{ background: "var(--chart-grid)" }}>
+                    <div className="h-1.5 rounded bar-fill" style={{ width: `${Math.round((100 * right) / seen)}%`, background: "var(--chart-line)" }} />
+                  </div>
+                  <span className="muted">{Math.round((100 * seen) / total)}% of this area practiced</span>
+                </div>
+              )}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-sm">
                 <p className="muted">
                   {fixed} question{fixed === 1 ? "" : "s"}
