@@ -99,7 +99,7 @@ check(Math.abs(r.score - truth) < 0.1, "readiness estimate within 10 points of t
 check(r.weakest.every((w) => weak.includes(w.topic)), `top 3 "focus next" topics are all truly weak (${r.weakest.map((w) => w.topic).join(", ")})`);
 
 const now = simulate(realPool);
-console.log(`\nSame student on TODAY's content (templates only in water/fluids):`);
+console.log(`\nSame student on TODAY's content (fixed questions plus every template in lib/templates):`);
 console.log(`  weak topics ${now.weakRate.toFixed(0)} vs strong ${now.strongRate.toFixed(0)} per unit weight, avg session ${now.sessionSizes.toFixed(1)} questions`);
 console.log(`  (Weak topics run out of fresh material. More templates per topic fix this.)`);
 
