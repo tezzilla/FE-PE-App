@@ -13,6 +13,7 @@ import {
   type LearnerState, type PoolItem, type Readiness,
 } from "./model";
 import { buildPlan } from "./plan";
+import { missedSkills, paceRows, pickDiagnostic, pickQuiz, type QuizOptions } from "./quiz";
 
 export async function learnerState(userId: string, exam: ExamId, now = new Date()): Promise<LearnerState> {
   const attempts = await db.attempt.findMany({
@@ -27,7 +28,7 @@ export function weightsFor(user: User, exam: ExamId) {
 }
 
 /** Everything this user is allowed to practice right now, as skills. */
-async function pool(user: User, exam: ExamId): Promise<PoolItem[]> {
+export async function pool(user: User, exam: ExamId): Promise<PoolItem[]> {
   const items: PoolItem[] = questionsFor(exam)
     .filter((q) => canSeeQuestion(user, q))
     .map((q) => ({ skill: q.id, topic: q.topic, regenerable: false }));
@@ -40,6 +41,13 @@ async function pool(user: User, exam: ExamId): Promise<PoolItem[]> {
   return items;
 }
 
+/** A concrete question for a pool item. Problem types get fresh numbers every time. */
+function itemQuestion(item: PoolItem, exam: ExamId): Question | undefined {
+  if (!item.regenerable) return questionsFor(exam).find((x) => x.id === item.skill);
+  const t = getTemplate(item.skill.slice(4));
+  return t ? (templateToQuestion(t, exam, randomSeed()) ?? undefined) : undefined;
+}
+
 export async function smartSession(user: User, exam: ExamId, size = 10) {
   const now = new Date();
   const [state, items] = await Promise.all([learnerState(user.id, exam, now), pool(user, exam)]);
@@ -47,9 +55,7 @@ export async function smartSession(user: User, exam: ExamId, size = 10) {
   const questions: Question[] = [];
   const reasons: Record<string, string> = {};
   for (const p of picks) {
-    const q = p.item.regenerable
-      ? templateToQuestion(getTemplate(p.item.skill.slice(4))!, exam, randomSeed()) // fresh numbers every time
-      : questionsFor(exam).find((x) => x.id === p.item.skill);
+    const q = itemQuestion(p.item, exam);
     if (!q) continue;
     questions.push(q);
     reasons[q.id] = describeReason(p.reason, (t) => topicName(exam, t), now);
@@ -87,4 +93,42 @@ export async function studyPlanFor(user: User, exam: ExamId) {
     fullExamsDone: fullExams.map((m) => m.completedAt ?? m.createdAt),
   });
   return { saved, plan };
+}
+
+/** A custom quiz (topics, size, source). */
+export async function quizSession(user: User, exam: ExamId, opts: QuizOptions) {
+  const [state, items] = await Promise.all([learnerState(user.id, exam), pool(user, exam)]);
+  return pickQuiz(items, state, opts).flatMap((i) => itemQuestion(i, exam) ?? []);
+}
+
+/** About 2 questions per topic to find a starting point. */
+export async function diagnosticSession(user: User, exam: ExamId, perTopic = 2) {
+  const [state, items] = await Promise.all([learnerState(user.id, exam), pool(user, exam)]);
+  const topics = EXAMS[exam].topics.map((t) => t.slug);
+  return pickDiagnostic(items, state, topics, perTopic).flatMap((i) => itemQuestion(i, exam) ?? []);
+}
+
+/** Problems whose last answer was wrong and that the student can still practice. */
+export async function missedCount(user: User, exam: ExamId) {
+  const [state, items] = await Promise.all([learnerState(user.id, exam), pool(user, exam)]);
+  const missed = missedSkills(state);
+  return items.filter((i) => missed.has(i.skill)).length;
+}
+
+/** Average answer time per topic against exam pace (timed practice answers from the last 90 days). */
+export async function pacing(user: User, exam: ExamId) {
+  const since = new Date(Date.now() - 90 * 24 * 3600 * 1000);
+  const groups = await db.attempt.groupBy({
+    by: ["topic"],
+    where: { userId: user.id, exam, timeMs: { not: null }, createdAt: { gte: since } },
+    _avg: { timeMs: true },
+    _count: { timeMs: true },
+  });
+  const rows = paceRows(
+    exam,
+    groups.map((g) => ({ topic: g.topic, avgMs: g._avg.timeMs ?? 0, n: g._count.timeMs })),
+  );
+  const total = groups.reduce((a, g) => a + g._count.timeMs, 0);
+  const overallMs = total ? groups.reduce((a, g) => a + (g._avg.timeMs ?? 0) * g._count.timeMs, 0) / total : 0;
+  return { rows: rows.map((r) => ({ ...r, name: topicName(exam, r.topic) })), total, overallS: Math.round(overallMs / 1000) };
 }

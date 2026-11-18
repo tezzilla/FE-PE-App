@@ -7,6 +7,6 @@ export async function POST(req: Request) {
   const user = await getBearerUser();
   if (!user) return unauthorized();
   const body = await req.json().catch(() => null);
-  const r = await gradeAnswer(user, body?.questionId, body?.selected);
+  const r = await gradeAnswer(user, body?.questionId, body?.selected, body?.timeMs);
   return NextResponse.json(r.body, { status: r.status });
 }

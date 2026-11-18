@@ -1,5 +1,5 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 import { QuestionView } from '@/components/question-view';
@@ -27,6 +27,11 @@ export default function Practice() {
   const [score, setScore] = useState({ done: 0, correct: 0 });
   const [busy, setBusy] = useState(false);
   const [checkError, setCheckError] = useState<string | null>(null);
+  // Per-question clock for pacing stats; restarts when a new question (or a new set) appears.
+  const shownAt = useRef(Date.now());
+  useEffect(() => {
+    shownAt.current = Date.now();
+  }, [i, data]);
 
   const title = smart ? 'Smart practice' : (data?.topicNames[params.topic ?? ''] ?? 'Practice');
   const header = <Stack.Screen options={{ title }} />;
@@ -41,7 +46,7 @@ export default function Practice() {
     setBusy(true);
     setCheckError(null);
     try {
-      const fb = await api.answer(token, q.id, selected);
+      const fb = await api.answer(token, q.id, selected, Date.now() - shownAt.current);
       setFeedback(fb);
       setScore((s) => ({ done: s.done + 1, correct: s.correct + (fb.correct ? 1 : 0) }));
     } catch (e) {

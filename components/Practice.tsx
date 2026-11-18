@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PublicQuestion } from "@/lib/content/types";
 import { QuestionCard, type Feedback } from "./QuestionCard";
 
@@ -11,6 +11,8 @@ export function Practice({
   lockedCount,
   reasons,
   againLabel = "Practice again",
+  timeLimitS,
+  paceS,
 }: {
   questions: PublicQuestion[];
   topicNames: Record<string, string>;
@@ -18,6 +20,10 @@ export function Practice({
   /** Why the adaptive engine picked each question, keyed by question id. */
   reasons?: Record<string, string>;
   againLabel?: string;
+  /** Optional countdown for the whole set (timed quiz). */
+  timeLimitS?: number;
+  /** Real exam pace in seconds per question, shown with the student's own pace. */
+  paceS?: number;
 }) {
   const [i, setI] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -25,20 +31,46 @@ export function Practice({
   const [score, setScore] = useState({ done: 0, correct: 0 });
   const [busy, setBusy] = useState(false);
 
-  const q = questions[i];
+  const [timeUp, setTimeUp] = useState(false);
+  const [left, setLeft] = useState(timeLimitS ?? 0);
+  const [spentMs, setSpentMs] = useState(0);
+  const shownAt = useRef(Date.now());
+
+  const q = timeUp ? undefined : questions[i];
+
+  // Restart the per-question clock whenever a new question appears.
+  useEffect(() => {
+    shownAt.current = Date.now();
+  }, [i]);
+
+  useEffect(() => {
+    if (!timeLimitS) return;
+    const end = Date.now() + timeLimitS * 1000;
+    const id = setInterval(() => {
+      const s = Math.max(0, Math.round((end - Date.now()) / 1000));
+      setLeft(s);
+      if (s === 0) {
+        setTimeUp(true);
+        clearInterval(id);
+      }
+    }, 1000);
+    return () => clearInterval(id);
+  }, [timeLimitS]);
 
   async function check() {
     if (selected === null || !q) return;
+    const timeMs = Date.now() - shownAt.current;
     setBusy(true);
     const res = await fetch("/api/answer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ questionId: q.id, selected }),
+      body: JSON.stringify({ questionId: q.id, selected, timeMs }),
     });
     setBusy(false);
     if (!res.ok) return alert("Could not check answer. Try again.");
     const fb: Feedback = await res.json();
     setFeedback(fb);
+    setSpentMs((t) => t + timeMs);
     setScore((s) => ({ done: s.done + 1, correct: s.correct + (fb.correct ? 1 : 0) }));
   }
 
@@ -51,9 +83,18 @@ export function Practice({
   if (!q) {
     return (
       <div className="card p-6 space-y-3 text-center">
-        <h2 className="text-xl font-bold">Set complete</h2>
+        <h2 className="text-xl font-bold">{timeUp ? "Time's up" : "Set complete"}</h2>
         {score.done > 0 && (
           <p>You got {score.correct} of {score.done} correct ({Math.round((100 * score.correct) / score.done)}%).</p>
+        )}
+        {timeUp && score.done < questions.length && (
+          <p className="muted text-sm">You answered {score.done} of {questions.length} in the time allowed.</p>
+        )}
+        {score.done > 0 && paceS && (
+          <p className="muted text-sm">
+            Your pace: {fmt(spentMs / score.done / 1000)} per question. Exam pace: {fmt(paceS)}.
+            {spentMs / score.done / 1000 > paceS * 1.25 ? " You're slower than exam pace; try timed quizzes." : ""}
+          </p>
         )}
         {lockedCount > 0 && (
           <p className="muted">{lockedCount} more questions in this set are available to subscribers.</p>
@@ -70,6 +111,11 @@ export function Practice({
     <div className="space-y-3">
       <p className="muted text-sm">
         Question {i + 1} of {questions.length} · {topicNames[q.topic]} · Score {score.correct}/{score.done}
+        {timeLimitS ? (
+          <span className="font-semibold" style={{ color: left < 60 ? "#dc2626" : undefined }} aria-label="Time left">
+            {" "}· {fmt(left)} left
+          </span>
+        ) : null}
       </p>
       {reasons?.[q.id] && (
         <p className="text-sm font-medium" style={{ color: "var(--brand)" }}>Why this question: {reasons[q.id]}</p>
@@ -84,4 +130,10 @@ export function Practice({
       </div>
     </div>
   );
+}
+
+function fmt(seconds: number) {
+  const s = Math.max(0, Math.round(seconds));
+  const m = Math.floor(s / 60);
+  return m ? `${m}:${String(s % 60).padStart(2, "0")}` : `${s}s`;
 }

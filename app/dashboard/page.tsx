@@ -6,6 +6,7 @@ import { topicStats } from "@/lib/progress";
 import { db } from "@/lib/db";
 import { ReadinessCard } from "@/components/ReadinessCard";
 import { StudyPlanCard } from "@/components/StudyPlanCard";
+import { EXAM_PACE_S } from "@/lib/adaptive/quiz";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,10 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
               )}
               <ReadinessCard user={user} exam={e.id} back="/dashboard" />
               {entries.length === 0 ? (
-                <p className="muted text-sm">No questions answered yet.</p>
+                <div className="card p-4 flex flex-wrap items-center gap-3">
+                  <p className="flex-1 min-w-56">New to {e.shortName}? A {e.topics.length * 2}-question diagnostic finds your weak topics in about {Math.round((e.topics.length * 2 * EXAM_PACE_S[e.id]) / 60)} minutes.</p>
+                  <Link href={`/exams/${e.id}/diagnostic`} className="btn w-full sm:w-auto">Take the diagnostic</Link>
+                </div>
               ) : (
                 <div className="card p-4 space-y-3">
                   {entries.map((t) => {

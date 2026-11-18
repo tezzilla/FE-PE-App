@@ -8,6 +8,8 @@ import { topicStats } from "@/lib/progress";
 import { approvedTemplateCount, bankStats } from "@/lib/questions";
 import { ReadinessCard } from "@/components/ReadinessCard";
 import { StudyPlanCard } from "@/components/StudyPlanCard";
+import { PacingCard } from "@/components/PacingCard";
+import { missedCount } from "@/lib/adaptive/server";
 
 export default async function ExamPage({ params, searchParams }: { params: Promise<{ exam: string }>; searchParams: Promise<{ planError?: string }> }) {
   const { exam } = await params;
@@ -44,6 +46,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
         <>
           <StudyPlanCard user={user} exam={exam} back={`/exams/${exam}`} error={planError} />
           <ReadinessCard user={user} exam={exam} back={`/exams/${exam}`} />
+          <PacingCard user={user} exam={exam} />
         </>
       ) : (
         <div className="card p-4 flex flex-wrap items-center gap-3">
@@ -54,6 +57,20 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
 
       <div className="flex flex-wrap gap-3">
         <Link href={`/exams/${exam}/practice`} className="btn-ghost">Mixed practice</Link>
+        {user && (
+          <>
+            <Link href={`/exams/${exam}/quiz`} className="btn-ghost">Build a quiz</Link>
+            {(async () => {
+              const n = await missedCount(user, exam);
+              return n > 0 ? (
+                <Link href={`/exams/${exam}/quiz?go=1&source=missed&count=${n > 10 ? 20 : 10}`} className="btn-ghost">
+                  Review my misses ({n})
+                </Link>
+              ) : null;
+            })()}
+            <Link href={`/exams/${exam}/diagnostic`} className="btn-ghost">Diagnostic</Link>
+          </>
+        )}
         <Link href={`/exams/${exam}/mock`} className="btn-ghost">Full exam (timed) {access ? "" : "🔒"}</Link>
       </div>
 

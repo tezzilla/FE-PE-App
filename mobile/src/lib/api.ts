@@ -127,9 +127,9 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ questionId, selected, message }),
     }),
-  answer: (token: string, questionId: string, selected: number) =>
+  answer: (token: string, questionId: string, selected: number, timeMs?: number) =>
     request<Feedback>('/api/mobile/answer', token, {
       method: 'POST',
-      body: JSON.stringify({ questionId, selected }),
+      body: JSON.stringify({ questionId, selected, timeMs }),
     }),
 };

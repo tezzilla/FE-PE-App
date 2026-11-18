@@ -15,7 +15,8 @@
     "vercel-build": "node scripts/postgres-schema.mjs && prisma generate --schema prisma/generated/postgres.prisma && prisma db push --skip-generate --schema prisma/generated/postgres.prisma && next build",
     "stripe:setup": "tsx scripts/stripe-setup.ts",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
-    "test:plan": "tsx scripts/test-plan.ts"
+    "test:plan": "tsx scripts/test-plan.ts",
+    "test:quiz": "tsx scripts/test-quiz.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

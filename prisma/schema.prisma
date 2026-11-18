@@ -49,6 +49,8 @@ model Attempt {
   topic      String
   selected   Int
   correct    Boolean
+  // Seconds-level pacing: time from showing the question to checking the answer (practice only).
+  timeMs     Int?
   createdAt  DateTime @default(now())
 
   @@index([userId, exam])
