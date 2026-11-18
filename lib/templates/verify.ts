@@ -284,6 +284,61 @@ export const SOLVERS: Record<string, (p: string) => number> = {
   "nitrification-oxygen": (p) => { const Q = at(p, "treating"), N0 = at(p, "ammonia from"), Ne = at(p, "mg/L to"); return Q * (N0 - Ne) * 4.57 / 1000; },
   "unit-hydrograph-peak": (p) => { const up = at(p, "peak of"), CN = at(p, "curve number is"), P = at(p, "storm is"); const S = 1000 / CN - 10, Ia = 0.2 * S; return up * (P - Ia) ** 2 / (P - Ia + S); },
   "detention-storage-triangular": (p) => { const Qp = at(p, "peak of"), tb = at(p, "base time of"), Qa = at(p, "release is"); return (tb * 3600) * (Qp - Qa) / 2 / 43560; },
+
+  // ---- Networks, sewers, timber and FE gaps (networks-timber.ts)
+  "parallel-pipes-hw": (p) => {
+    const Q = at(p, "flow of"), D1 = at(p, "Pipe 1 is"), L1 = at(p, "Pipe 1 is " + D1 + " in diameter,"), C1 = at(p, "C ="), rest = p.slice(p.indexOf("Pipe 2"));
+    const D2 = at(rest, "Pipe 2 is"), L2 = at(rest, "diameter,"), C2 = at(rest, "C =");
+    // find the common head loss by bisection, flows from Hazen-Williams solved for Q
+    const q = (C: number, D: number, L: number, h: number) => ((h * C ** 1.852 * (D / 12) ** 4.87) / (4.73 * L)) ** (1 / 1.852);
+    let lo = 0, hi = 1e4;
+    for (let i = 0; i < 200; i++) { const h = (lo + hi) / 2; if (q(C1, D1, L1, h) + q(C2, D2, L2, h) > Q) hi = h; else lo = h; }
+    return q(C1, D1, L1, lo);
+  },
+  "series-pipes-darcy": (p) => {
+    const [Q, L1, D1, f1, L2, D2, f2] = nums(p);
+    const hf = (L: number, D: number, fr: number) => { const V = 4 * Q / (Math.PI * D * D); return fr * L / D * V * V / (2 * g); };
+    return hf(L1, D1, f1) + hf(L2, D2, f2);
+  },
+  "sewer-full-flow-capacity": (p) => { const [Din, nn, S] = nums(p); const D = Din / 12, P = Math.PI * D, A = P * D / 4; return 1.486 / nn * A * (A / P) ** (2 / 3) * Math.sqrt(S); },
+  "sewer-min-slope": (p) => { const [Din, nn, V] = nums(p); const R = Din / 48; return (V * nn / 1.486) ** 2 / R ** (4 / 3); },
+  "timber-joist-allowable-moment": (p) => {
+    const [b, d] = nums(p); const Fb = at(p, "Fb ="), CF = at(p, "CF ="), CD = at(p, "CD ="), Cr = at(p, "Cr =");
+    return Fb * CF * CD * Cr * (b * d * d / 6) / 12;
+  },
+  "timber-column-capacity": (p) => {
+    const d = nums(p)[0], le = at(p, "length of") * 12, Fc = at(p, "Fc ="), E = at(p, "E'min ="), CD = at(p, "CD ="), c = at(p, "with c =");
+    const Fs = Fc * CD, FcE = 0.822 * E / (le / d) ** 2, a = FcE / Fs;
+    // smaller root of c·Cp² − (1 + α)Cp + α = 0
+    const Cp = ((1 + a) - Math.sqrt((1 + a) ** 2 - 4 * c * a)) / (2 * c);
+    return Fs * Cp * d * d / 1000;
+  },
+  "pile-group-efficiency": (p) => {
+    const m = at(p, "group has"), nc = at(p, "rows of"), D = at(p, "pile is"), s = at(p, "spacing is"), Q = at(p, "capacity is");
+    const th = Math.atan2(D, s) * 180 / Math.PI; return (1 - th * ((nc - 1) * m + (m - 1) * nc) / (90 * m * nc)) * m * nc * Q;
+  },
+  "earthwork-waste-shrinkage": (p) => { const [cut, fill, sh] = nums(p); return cut - fill / (1 - sh / 100); },
+  "aashto-group-index": (p) => {
+    const F = at(p, "has"), LL = at(p, "liquid limit of"), PI = at(p, "plasticity index of");
+    return Math.max(0, Math.round((F - 35) * (0.2 + 0.005 * (LL - 40)) + 0.01 * (F - 15) * (PI - 10)));
+  },
+  "orifice-discharge": (p) => { const [d, h, Cd] = nums(p); return Cd * Math.PI * (d / 2000) ** 2 * Math.sqrt(2 * g * h) * 1000; },
+  "floating-block-freeboard": (p) => { const [H, s] = nums(p); const sf = p.includes("seawater") ? 1.025 : 1; return H * (1 - s / sf); },
+  "pipe-bend-force": (p) => {
+    const V = at(p, "flows at"), D = at(p, "bend in a"), pr = at(p, "pressure is"); const A = Math.PI * D * D / 4, Q = V * A;
+    const fx = pr * A + Q * V, fy = pr * A + Q * V; return Math.hypot(fx, fy); // ρ = 1,000 kg/m³ → kN with Q·V
+  },
+  "area-by-coordinates": (p) => {
+    const pts = [...p.matchAll(/\(E (-?\d+), N (-?\d+)\)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+    // trapezoid rule over the boundary
+    let a = 0; for (let i = 0; i < pts.length; i++) { const [e1, n1] = pts[i], [e2, n2] = pts[(i + 1) % pts.length]; a += (e2 - e1) * (n1 + n2) / 2; }
+    return Math.abs(a);
+  },
+  "disk-spin-up-time": (p) => { const [m, R, T, rpm] = nums(p); const I = m * R * R / 2; return (rpm / 60 * 2 * Math.PI) * I / T; },
+  "beam-shear-stress-at-y": (p) => {
+    const [b, h, V, y] = nums(p); // τ = (V/2I)(h²/4 − y²)
+    return V * 1000 / (2 * (b * h ** 3 / 12)) * (h * h / 4 - y * y);
+  },
 };
 
 

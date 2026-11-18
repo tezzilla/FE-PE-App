@@ -128,13 +128,26 @@ quick condition, frost heave, expansive clays, coagulation, DBPs, softening, SVI
 alkalinity, breakpoint chlorination, TMDL, cavitation, determinacy, influence lines, ASCE 7 risk
 category, NDS load duration, IBC special inspections.
 
-## Next batch (highest exam weight with thin coverage)
+## Fourth batch (November 2026)
 
-1. More conceptual questions: soil classification by AASHTO, rock and site exploration methods,
-   traffic signal warrants, sign placement, concrete testing (slump, air, cylinders), weld and bolt
-   inspection, stormwater BMPs.
-2. Pipe networks: parallel pipes and Hardy Cross (WRE 5D).
-3. Timber and masonry member design with NDS/TMS adjustment factors (Structural 4).
-4. Mass haul and borrow balance (Construction 9F, Transportation 9C).
-5. Gravity sewer design: full-flow capacity and minimum slope (WRE 11A).
-6. Lateral pile capacity and pile group efficiency (Geotechnical 10).
+Problem types (15): parallel pipes (Hazen-Williams), pipes in series (Darcy), sewer full-flow capacity
+and minimum slope, timber joist allowable moment and timber column capacity (NDS), pile group
+efficiency, earthwork waste with shrinkage, AASHTO group index, orifice discharge, floating block
+freeboard, force on a pipe bend, area by coordinates, disk spin-up time, beam shear stress at a point.
+
+Conceptual questions (33): compaction tests, AASHTO subgrade ratings, slump, 0.2% offset yield,
+toughness, exceedance probability, time of concentration, adding decibels, indicator organisms, the
+four-step travel model, state plane projections, contours, signal warrants, sign shapes, ADA curb
+ramps, roundabout right-of-way, ACI cylinder acceptance, bolt pretensioning methods, weld NDT,
+reshoring, crane load charts, Shelby tubes, CPT, liquefaction susceptibility, seismic site class,
+infiltration vs. inflow, fire flow pressure, reverse osmosis, bioretention, braced frames,
+post-tensioning.
+
+## Next batch
+
+1. Masonry (TMS 402) and composite steel-concrete beams (Structural 4E, 5C).
+2. Superelevation runoff length and vertical clearance (Transportation 4C, 5A).
+3. Activated sludge oxygen demand and secondary clarifier solids loading (WRE 11E).
+4. Drawdown from multiple wells (superposition) and unconfined Thiem (WRE 8).
+5. Lateral earth pressure with surcharge and water (Geotechnical 8A).
+6. Resource leveling and linear scheduling (Construction 5).
