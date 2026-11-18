@@ -962,6 +962,65 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const W = at(p, "width of"), S = at(p, "ft at"), L = at(p, "placing"), P = at(p, "needs"), E = at(p, "efficiency is");
     return (16.3 * W * S * L * E) / P;
   },
+
+  // ---- Eighteenth batch (batch-eighteen.ts)
+  "plate-load-scaling": (p) => { const Sp = at(p, "settles"), Bf = at(p, "how much will a"); return Sp * Math.pow((2 * Bf) / (Bf + 0.3), 2); },
+  "dam-uplift-force": (p) => { const B = at(p, "has a"), h1 = at(p, "heel is"), h2 = at(p, "toe is"); return 9.81 * B * (h1 + h2) / 2; },
+  "pile-downdrag-load": (p) => {
+    const D = at(p, "A"), Lc = at(p, "through"), gp = at(p, "γ' ="), fill = at(p, "under"), beta = at(p, "β =");
+    // average of the stress at the top (fill) and at the bottom (fill + γ'L)
+    const sv = (fill + (fill + gp * Lc)) / 2;
+    return beta * sv * Math.PI * D * Lc;
+  },
+  "collapse-potential": (p) => { const e0 = at(p, "void ratio"), e1 = at(p, "reaching e ="), e2 = at(p, "after which e ="); return (100 * (e1 - e2)) / (1 + e0); },
+  "seismic-story-force": (p) => {
+    const h = at(p, "with"), V = at(p, "V ="), w2 = at(p, "weights are"), w3 = at(p, "level 2,"), wr = at(p, "level 3 and");
+    const target = p.match(/acts at (level 2|level 3|the roof)\?/)![1];
+    const wh = [w2 * h, w3 * 2 * h, wr * 3 * h], idx = ["level 2", "level 3", "the roof"].indexOf(target);
+    return (V * wh[idx]) / (wh[0] + wh[1] + wh[2]);
+  },
+  "slab-punching-capacity": (p) => { const d = at(p, "d ="), c = at(p, "on a"), fc = at(p, "f'c ="); return (3 * Math.sqrt(fc) * (4 * c + 4 * d) * d) / 1000; },
+  "restrained-thermal-force": (p) => { const E = at(p, "E ="), a = at(p, "α =") * 1e-6, A = at(p, "area of"), dT = at(p, "rises by"); return E * a * dT * A; }, // GPa·mm² = kN
+  "swamee-jain-friction": (p) => {
+    const V = at(p, "flows at"), D = at(p, "s in a"), eps = at(p, "ε =") / 1000, Re = (V * D) / 1e-6;
+    const x = Math.log(eps / (3.7 * D) + 5.74 / Math.pow(Re, 0.9)) / Math.LN10;
+    return 0.25 / (x * x);
+  },
+  "alternate-depth": (p) => {
+    const q = at(p, "carries"), y1 = at(p, "depth of"), E = y1 + (q * q) / (2 * 9.81 * y1 * y1);
+    // Newton iteration from a deep starting guess converges to the subcritical root
+    let y = E;
+    for (let i = 0; i < 100; i++) { const F = y + (q * q) / (2 * 9.81 * y * y) - E, dF = 1 - (q * q) / (9.81 * y * y * y); y -= F / dF; }
+    return y;
+  },
+  "population-geometric": (p) => {
+    const P1 = at(p, "had"), P2 = at(p, "people in one census and"), nY = at(p, "planned for");
+    return P2 * Math.exp((nY / 10) * Math.log(P2 / P1));
+  },
+  "harmon-peak-flow": (p) => {
+    const P = at(p, "serves") / 1000, q = at(p, "flow of");
+    return (P * 1000 * q * (1 + 14 / (4 + Math.sqrt(P)))) / 1e6;
+  },
+  "countermeasure-benefit-cost": (p) => {
+    const N = at(p, "averages"), cpc = at(p, "cost of $"), CMF = at(p, "CMF ="), cost = at(p, "costs $"), yrs = at(p, "lasts"), i = at(p, "At") / 100;
+    let pw = 0; for (let y = 1; y <= yrs; y++) pw += (N * (1 - CMF) * cpc) / (1 + i) ** y;
+    return pw / cost;
+  },
+  "headway-density": (p) => { const h = at(p, "headway of"), v = at(p, "speed of"); return 3600 / (h * v); },
+  "pert-completion-probability": (p) => {
+    const acts = [...p.matchAll(/\((\d+), (\d+), (\d+)\)/g)].map((m) => [Number(m[1]), Number(m[2]), Number(m[3])]);
+    const T = at(p, "within"), te = acts.reduce((s, [a, m, b]) => s + (a + 4 * m + b) / 6, 0), sd = Math.sqrt(acts.reduce((s, [a, , b]) => s + ((b - a) / 6) ** 2, 0));
+    const z = (T - te) / sd;
+    // normal CDF by Simpson integration of the density from −8 to z
+    const N = 2000, lo = -8, hgt = (z - lo) / N, pdf = (x: number) => Math.exp((-x * x) / 2) / Math.sqrt(2 * Math.PI);
+    let s = pdf(lo) + pdf(z); for (let k = 1; k < N; k++) s += pdf(lo + k * hgt) * (k % 2 ? 4 : 2);
+    return ((s * hgt) / 3) * 100;
+  },
+  "footing-concrete-takeoff": (p) => {
+    const nF = at(p, "has"), B = at(p, "each"), t = Number(p.match(/× ([\d.]+) in thick/)![1]), w = at(p, "Allowing");
+    return (nF * B * B * (t / 12) * (1 + w / 100)) / 27;
+  },
+  "crew-unit-cost": (p) => { const n0 = at(p, "crew of"), wage = at(p, "at $"), equip = at(p, "costs $"), prod = at(p, "places"); return (n0 * wage + equip) / prod; },
 };
 
 

@@ -246,6 +246,13 @@ Problem types (12): elastic LTB, concrete T-beam, spiral reinforcement ratio, ti
 main sizing, rational method with IDF equation, breakpoint chlorine feed, digester methane, trip
 generation regression, density from detector occupancy, required rimpull, roller production.
 
+## Eighteenth batch (November 2026)
+
+Problem types (16): plate load test scaling, dam uplift force, pile downdrag, collapse potential, seismic
+story force, slab punching shear, restrained thermal force, Swamee-Jain friction factor, alternate depth,
+geometric population projection, Harmon peak flow, countermeasure B/C, density from headway, PERT
+probability, footing concrete take-off, crew unit cost. Bank passes 300 calculation problem types.
+
 ## Next batch
 
 1. Structural: masonry wall shear, concrete beam deflection with Ie, cantilever retaining wall stem moment.

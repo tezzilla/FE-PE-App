@@ -32,7 +32,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Activity identification and sequencing",
           "Economic and sustainability analysis (e.g., present worth, lifecycle costs, comparison of alternatives)",
         ],
-        skills: ["estimate-at-completion", "earned-value-index", "cpm-total-float", "least-cost-crashing", "average-end-area-volume", "benefit-cost-ratio", "capitalized-cost", "pe-const-001", "pe-const-017", "euac-alternative", "cost-loaded-cumulative", "cost-index-capacity-scaling"],
+        skills: ["estimate-at-completion", "earned-value-index", "cpm-total-float", "least-cost-crashing", "average-end-area-volume", "benefit-cost-ratio", "capitalized-cost", "pe-const-001", "pe-const-017", "euac-alternative", "cost-loaded-cumulative", "cost-index-capacity-scaling", "footing-concrete-takeoff"],
       },
       {
         n: 2,
@@ -86,7 +86,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Pump application and analysis, including wet wells, lift stations, and cavitation",
           "Pipe network analysis (e.g., series, parallel, loop networks)",
         ],
-        skills: ["continuity-pipe", "darcy-weisbach-si", "hazen-williams-headloss-us", "pump-system-power", "parallel-pipes-hw", "series-pipes-darcy", "pipe-bend-force", "pe-water-002", "dewatering-pump-power", "network-node-pressure", "hardy-cross-correction", "pump-operating-point", "water-hammer-pressure", "water-main-size"],
+        skills: ["continuity-pipe", "darcy-weisbach-si", "hazen-williams-headloss-us", "pump-system-power", "parallel-pipes-hw", "series-pipes-darcy", "pipe-bend-force", "pe-water-002", "dewatering-pump-power", "network-node-pressure", "hardy-cross-correction", "pump-operating-point", "water-hammer-pressure", "water-main-size", "swamee-jain-friction"],
       },
       {
         n: 6,
@@ -99,7 +99,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Stormwater collection and drainage (e.g., culvert, stormwater inlets, gutter flow, street flow, storm sewer pipes)",
           "Sub- and supercritical flow",
         ],
-        skills: ["manning-rect-si", "critical-depth-rect", "froude-number-rect", "hydraulic-jump-energy-loss", "hec22-gutter-flow", "culvert-outlet-control-hw", "storm-sewer-size", "pe-water-001", "orifice-outlet-diameter"],
+        skills: ["manning-rect-si", "critical-depth-rect", "froude-number-rect", "hydraulic-jump-energy-loss", "hec22-gutter-flow", "culvert-outlet-control-hw", "storm-sewer-size", "pe-water-001", "orifice-outlet-diameter", "alternate-depth"],
       },
       {
         n: 7,
@@ -159,7 +159,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Hardness and softening",
           "Other treatment (e.g., ion exchange, carbon adsorption, ozone, UV, specific constituent removal)",
         ],
-        skills: ["chlorine-ct", "total-hardness", "rapid-mix-power", "filters-required", "pe-env-005", "pe-env-008", "pe-env-009", "pe-env-011", "distribution-storage-volume", "lime-softening-dose", "contact-basin-volume", "filter-backwash-percent", "ion-exchange-run-volume", "network-node-pressure", "water-main-size", "breakpoint-chlorine-dose"],
+        skills: ["chlorine-ct", "total-hardness", "rapid-mix-power", "filters-required", "pe-env-005", "pe-env-008", "pe-env-009", "pe-env-011", "distribution-storage-volume", "lime-softening-dose", "contact-basin-volume", "filter-backwash-percent", "ion-exchange-run-volume", "network-node-pressure", "water-main-size", "breakpoint-chlorine-dose", "population-geometric"],
       },
       {
         n: 11,
@@ -177,7 +177,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Disinfection",
           "Advanced treatment (e.g., advanced oxidation process, effluent filtration, adsorption, reclaimed water)",
         ],
-        skills: ["activated-sludge-srt", "food-to-microorganism", "aeration-basin-volume", "aeration-oxygen-demand", "nitrification-oxygen", "sewer-full-flow-capacity", "sewer-min-slope", "pe-env-003", "pe-env-004", "pe-env-007", "pe-env-012", "pe-env-013", "sludge-thickening-volume", "thickener-diameter", "trickling-filter-organic-loading", "aerated-grit-chamber", "wet-well-volume", "digester-methane"],
+        skills: ["activated-sludge-srt", "food-to-microorganism", "aeration-basin-volume", "aeration-oxygen-demand", "nitrification-oxygen", "sewer-full-flow-capacity", "sewer-min-slope", "pe-env-003", "pe-env-004", "pe-env-007", "pe-env-012", "pe-env-013", "sludge-thickening-volume", "thickener-diameter", "trickling-filter-organic-loading", "aerated-grit-chamber", "wet-well-volume", "digester-methane", "harmon-peak-flow"],
       },
       {
         n: 12,
@@ -194,7 +194,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Retaining walls",
           "Construction methods",
         ],
-        skills: ["earthwork-truck-loads", "earthwork-waste-shrinkage", "average-end-area-volume", "vertical-curve-elevation", "crest-high-point", "horizontal-curve-length", "curve-external-distance", "retaining-wall-sliding", "retaining-wall-overturning", "pe-const-003", "pe-const-006", "pe-trans-003", "work-zone-taper-length", "rusle-soil-loss", "grade-stake-cut", "slope-stake-offset", "pe-const-020", "pe-const-021", "sediment-basin-stokes"],
+        skills: ["earthwork-truck-loads", "earthwork-waste-shrinkage", "average-end-area-volume", "vertical-curve-elevation", "crest-high-point", "horizontal-curve-length", "curve-external-distance", "retaining-wall-sliding", "retaining-wall-overturning", "pe-const-003", "pe-const-006", "pe-trans-003", "work-zone-taper-length", "rusle-soil-loss", "grade-stake-cut", "slope-stake-offset", "pe-const-020", "pe-const-021", "sediment-basin-stokes", "dam-uplift-force"],
       },
     ],
   },
@@ -219,7 +219,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Tributary areas and load paths (e.g., lateral and vertical)",
           "Load combinations",
         ],
-        skills: ["lrfd-governing-combination", "tributary-girder-moment", "seismic-base-shear-elf", "wind-windward-pressure", "wall-thrust-surcharge-water", "pe-struct-004", "pe-struct-009", "flat-roof-snow-load", "live-load-reduction-column", "two-axle-max-moment", "shear-wall-uplift", "coulomb-active-thrust"],
+        skills: ["lrfd-governing-combination", "tributary-girder-moment", "seismic-base-shear-elf", "wind-windward-pressure", "wall-thrust-surcharge-water", "pe-struct-004", "pe-struct-009", "flat-roof-snow-load", "live-load-reduction-column", "two-axle-max-moment", "shear-wall-uplift", "coulomb-active-thrust", "seismic-story-force"],
       },
       {
         n: 2,
@@ -235,7 +235,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Deflection",
           "Special topics (e.g., torsion, buckling, fatigue, progressive collapse, thermal deformation, bearing)",
         ],
-        skills: ["udl-max-moment", "fixed-end-moment", "ss-udl-deflection-us", "cantilever-tip-deflection", "euler-buckling", "pe-struct-001", "propped-cantilever-reaction", "two-axle-max-moment", "moment-magnification-nonsway", "sway-moment-magnification", "rc-beam-deflection-ie"],
+        skills: ["udl-max-moment", "fixed-end-moment", "ss-udl-deflection-us", "cantilever-tip-deflection", "euler-buckling", "pe-struct-001", "propped-cantilever-reaction", "two-axle-max-moment", "moment-magnification-nonsway", "sway-moment-magnification", "rc-beam-deflection-ie", "restrained-thermal-force"],
       },
       {
         n: 3,
@@ -280,7 +280,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Deep foundations (e.g., piers, piles, caissons, drilled shafts)",
           "Retaining walls",
         ],
-        skills: ["rc-beam-design-moment", "rc-beam-shear-vc", "rc-tied-column-axial", "one-way-slab-min-thickness", "steel-required-z", "steel-ltb-inelastic", "steel-beam-shear", "aisc-column-capacity", "beam-column-interaction", "plate-tension-capacity", "composite-beam-phi-mn", "fillet-weld-strength", "bolt-shear-bearing", "timber-joist-allowable-moment", "timber-column-capacity", "cmu-wall-axial-asd", "footing-punching-shear-vu", "footing-one-way-shear-vu", "pile-group-efficiency", "retaining-wall-overturning", "pe-struct-002", "pe-struct-003", "pe-struct-007", "pe-struct-010", "bolt-group-eccentric", "prestress-elastic-shortening", "two-way-slab-thickness", "shear-wall-uplift", "base-plate-bearing", "development-length-tension", "web-local-yielding", "moment-magnification-nonsway", "wood-bolt-group-capacity", "base-plate-thickness", "sway-moment-magnification", "timber-beam-stability-cl", "block-shear-plate", "shear-studs-full-composite", "rc-beam-deflection-ie", "cantilever-stem-moment", "steel-ltb-elastic", "rc-tbeam-flexure", "spiral-reinforcement-ratio", "timber-beam-shear-capacity"],
+        skills: ["rc-beam-design-moment", "rc-beam-shear-vc", "rc-tied-column-axial", "one-way-slab-min-thickness", "steel-required-z", "steel-ltb-inelastic", "steel-beam-shear", "aisc-column-capacity", "beam-column-interaction", "plate-tension-capacity", "composite-beam-phi-mn", "fillet-weld-strength", "bolt-shear-bearing", "timber-joist-allowable-moment", "timber-column-capacity", "cmu-wall-axial-asd", "footing-punching-shear-vu", "footing-one-way-shear-vu", "pile-group-efficiency", "retaining-wall-overturning", "pe-struct-002", "pe-struct-003", "pe-struct-007", "pe-struct-010", "bolt-group-eccentric", "prestress-elastic-shortening", "two-way-slab-thickness", "shear-wall-uplift", "base-plate-bearing", "development-length-tension", "web-local-yielding", "moment-magnification-nonsway", "wood-bolt-group-capacity", "base-plate-thickness", "sway-moment-magnification", "timber-beam-stability-cl", "block-shear-plate", "shear-studs-full-composite", "rc-beam-deflection-ie", "cantilever-stem-moment", "steel-ltb-elastic", "rc-tbeam-flexure", "spiral-reinforcement-ratio", "timber-beam-shear-capacity", "slab-punching-capacity"],
       },
     ],
   },
@@ -302,7 +302,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Rock classification and characterization (e.g., recovery, rock quality designation, rock mass rating systems, weathering, discontinuity)",
           "Groundwater exploration, sampling, and characterization",
         ],
-        skills: ["spt-n160", "aashto-group-index", "pe-geo-003", "pe-geo-007", "pe-geo-008", "rqd-from-core-run"],
+        skills: ["spt-n160", "aashto-group-index", "pe-geo-003", "pe-geo-007", "pe-geo-008", "rqd-from-core-run", "plate-load-scaling"],
       },
       {
         n: 2,
@@ -367,7 +367,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Dewatering, seepage analysis, groundwater flow, and impact on nearby structures",
           "Drainage design/infiltration and seepage control",
         ],
-        skills: ["flow-net-seepage", "thiem-unconfined-flow", "pe-geo-004", "heave-exit-gradient", "groundwater-travel-time", "geotextile-aos"],
+        skills: ["flow-net-seepage", "thiem-unconfined-flow", "pe-geo-004", "heave-exit-gradient", "groundwater-travel-time", "geotextile-aos", "dam-uplift-force"],
       },
       {
         n: 7,
@@ -380,7 +380,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Frost susceptibility",
           "Rock slopes and rockfalls",
         ],
-        skills: ["pe-geo-005", "pe-geo-006", "pe-geo-013", "pe-geo-014", "pe-geo-015", "pe-geo-016", "pe-geo-017", "secondary-compression"],
+        skills: ["pe-geo-005", "pe-geo-006", "pe-geo-013", "pe-geo-014", "pe-geo-015", "pe-geo-016", "pe-geo-017", "secondary-compression", "collapse-potential"],
       },
       {
         n: 8,
@@ -406,7 +406,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Bearing capacity",
           "Settlement, including induced stress distribution",
         ],
-        skills: ["strip-footing-bearing-wt", "clay-bearing-undrained", "nc-clay-settlement", "oc-clay-settlement", "consolidation-time", "stress-21-method", "pe-geo-001", "compression-index-oedometer", "preload-surcharge-time", "secondary-compression", "pile-group-settlement"],
+        skills: ["strip-footing-bearing-wt", "clay-bearing-undrained", "nc-clay-settlement", "oc-clay-settlement", "consolidation-time", "stress-21-method", "pe-geo-001", "compression-index-oedometer", "preload-surcharge-time", "secondary-compression", "pile-group-settlement", "plate-load-scaling"],
       },
       {
         n: 10,
@@ -420,7 +420,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Static and dynamic load testing",
           "Integrity testing methods",
         ],
-        skills: ["pile-alpha-capacity", "pile-group-efficiency", "drilled-shaft-beta", "pe-geo-011", "pile-elastic-shortening", "modified-gates-pile", "davisson-offset", "pe-geo-020", "pe-geo-021", "pe-geo-022", "rock-socket-side-resistance", "pile-group-settlement"],
+        skills: ["pile-alpha-capacity", "pile-group-efficiency", "drilled-shaft-beta", "pe-geo-011", "pile-elastic-shortening", "modified-gates-pile", "davisson-offset", "pe-geo-020", "pe-geo-021", "pe-geo-022", "rock-socket-side-resistance", "pile-group-settlement", "pile-downdrag-load"],
       },
     ],
   },
@@ -437,7 +437,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Project schedules (e.g., activity identification and sequencing)",
           "Economic analysis (e.g., present worth, lifecycle costs)",
         ],
-        skills: ["estimate-at-completion", "earned-value-index", "cpm-total-float", "average-end-area-volume", "benefit-cost-ratio", "euac-alternative", "pavement-marking-quantity", "cost-loaded-cumulative", "cost-index-capacity-scaling"],
+        skills: ["estimate-at-completion", "earned-value-index", "cpm-total-float", "average-end-area-volume", "benefit-cost-ratio", "euac-alternative", "pavement-marking-quantity", "cost-loaded-cumulative", "cost-index-capacity-scaling", "countermeasure-benefit-cost"],
       },
       {
         n: 2,
@@ -454,7 +454,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Traffic forecasts and monitoring",
           "Highway safety analysis (e.g., crash modification factors, Highway Safety Manual)",
         ],
-        skills: ["freeway-flow-rate", "critical-lane-vc", "incident-queue-delay", "pe-trans-006", "pe-trans-012", "pe-trans-013", "pe-trans-014", "pe-trans-015", "segment-crash-rate", "aadt-design-hour-volume", "roundabout-entry-capacity", "toll-booth-queue-wait", "epdo-crash-index", "parking-peak-accumulation", "walkway-pedestrian-space", "spot-speed-85th", "space-mean-speed", "signal-uniform-delay", "freeway-merge-flow", "gravity-model-trips", "trip-generation-regression", "detector-occupancy-density", "skid-mark-speed"],
+        skills: ["freeway-flow-rate", "critical-lane-vc", "incident-queue-delay", "pe-trans-006", "pe-trans-012", "pe-trans-013", "pe-trans-014", "pe-trans-015", "segment-crash-rate", "aadt-design-hour-volume", "roundabout-entry-capacity", "toll-booth-queue-wait", "epdo-crash-index", "parking-peak-accumulation", "walkway-pedestrian-space", "spot-speed-85th", "space-mean-speed", "signal-uniform-delay", "freeway-merge-flow", "gravity-model-trips", "trip-generation-regression", "detector-occupancy-density", "skid-mark-speed", "countermeasure-benefit-cost", "headway-density"],
       },
       {
         n: 3,
@@ -607,7 +607,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Engineering economic analysis (e.g., cost analysis for resource selection, break-even, net-present value, life-cycle costing)",
           "Work measurement and productivity (e.g., earned value)",
         ],
-        skills: ["earthwork-truck-loads", "average-end-area-volume", "earthwork-waste-shrinkage", "borrow-volume-compaction", "earned-value-index", "estimate-at-completion", "benefit-cost-ratio", "capitalized-cost", "pe-const-001", "euac-alternative", "equipment-owning-cost", "cost-loaded-cumulative", "learning-curve-unit-time", "cost-index-capacity-scaling", "earthwork-overhaul", "cost-plus-incentive-fee"],
+        skills: ["earthwork-truck-loads", "average-end-area-volume", "earthwork-waste-shrinkage", "borrow-volume-compaction", "earned-value-index", "estimate-at-completion", "benefit-cost-ratio", "capitalized-cost", "pe-const-001", "euac-alternative", "equipment-owning-cost", "cost-loaded-cumulative", "learning-curve-unit-time", "cost-index-capacity-scaling", "earthwork-overhaul", "cost-plus-incentive-fee", "footing-concrete-takeoff", "crew-unit-cost"],
       },
       {
         n: 5,
@@ -621,7 +621,7 @@ export const PE_MODULE_SPECS: Record<string, { effective: string; areas: Knowled
           "Resource scheduling and leveling",
           "Time–cost trade-off",
         ],
-        skills: ["cpm-total-float", "least-cost-crashing", "linear-schedule-lag", "pe-const-010", "pe-const-017", "pe-const-018", "pe-const-019", "cost-loaded-cumulative"],
+        skills: ["cpm-total-float", "least-cost-crashing", "linear-schedule-lag", "pe-const-010", "pe-const-017", "pe-const-018", "pe-const-019", "cost-loaded-cumulative", "pert-completion-probability"],
       },
       {
         n: 6,
