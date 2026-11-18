@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSession, destroySession, requireUser } from "@/lib/auth";
 import { changePassword, deleteAccount, updateName } from "@/lib/account";
+import { db } from "@/lib/db";
 
 export type FormState = { error?: string; done?: string } | undefined;
 
@@ -30,4 +31,10 @@ export async function removeAccount(_: FormState, form: FormData): Promise<FormS
   if (!r.ok) return { error: r.error };
   await destroySession();
   redirect("/?deleted=1");
+}
+
+export async function setWeeklyEmail(form: FormData) {
+  const user = await requireUser();
+  await db.user.update({ where: { id: user.id }, data: { weeklyEmail: form.get("weeklyEmail") === "on" } });
+  revalidatePath("/account");
 }

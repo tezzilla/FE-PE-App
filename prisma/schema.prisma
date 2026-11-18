@@ -31,6 +31,9 @@ model User {
   reviewerCredential   String?
   // PE depth module the student is taking (topic slug). Shapes PE readiness weights.
   peDepth              String?
+  // Weekly progress email (lib/weekly.ts): opt-out flag and when the last one went out.
+  weeklyEmail          Boolean   @default(true)
+  weeklyEmailSentAt    DateTime?
   attempts             Attempt[]
   mockExams            MockExam[]
   reviews              TemplateReview[]

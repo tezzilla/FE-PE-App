@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { accessSummary } from "@/lib/access";
 import { DeleteForm, NameForm, PasswordForm } from "@/components/AccountForms";
+import { setWeeklyEmail } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,20 @@ export default async function AccountPage() {
         ) : (
           <Link href="/pricing" className="btn-ghost">See plans</Link>
         )}
+      </section>
+
+      <section className="card p-5 space-y-3">
+        <h2 className="font-semibold">Email</h2>
+        <form action={setWeeklyEmail} className="space-y-3">
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" name="weeklyEmail" defaultChecked={user.weeklyEmail} className="mt-1" />
+            <span>
+              <span className="font-medium">Weekly progress email</span>
+              <span className="block muted">Monday summary: questions answered, readiness change, and what to focus on next.</span>
+            </span>
+          </label>
+          <button className="btn-ghost">Save</button>
+        </form>
       </section>
 
       <section className="card p-5 space-y-3">

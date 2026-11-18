@@ -10,6 +10,10 @@ export interface Email {
   subject: string;
   text: string;
   html: string;
+  /** Extra headers, e.g. List-Unsubscribe for recurring email. */
+  headers?: Record<string, string>;
+  /** Postmark message stream. Recurring digests use POSTMARK_DIGEST_STREAM when it is set. */
+  stream?: string;
 }
 
 export function emailEnabled() {
@@ -45,7 +49,8 @@ export async function sendEmailDetailed(email: Email): Promise<{ ok: boolean; co
         Subject: email.subject,
         TextBody: email.text,
         HtmlBody: email.html,
-        MessageStream: "outbound",
+        MessageStream: email.stream ?? "outbound",
+        ...(email.headers ? { Headers: Object.entries(email.headers).map(([Name, Value]) => ({ Name, Value })) } : {}),
       }),
     });
     if (!res.ok) {
@@ -63,16 +68,16 @@ export async function sendEmailDetailed(email: Email): Promise<{ ok: boolean; co
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 /** Minimal branded layout. Inline styles because email clients ignore stylesheets. */
-function layout(title: string, paragraphs: string[], button?: { label: string; url: string }) {
+function layout(title: string, paragraphs: string[], button?: { label: string; url: string }, footer?: string) {
   const html = `<!doctype html><html><body style="margin:0;background:#f8fafc;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#0f172a">
 <div style="max-width:520px;margin:0 auto;padding:32px 20px">
 <p style="font-size:20px;font-weight:700;margin:0 0 24px">Civil<span style="color:#ea580c">Prep</span></p>
 <h1 style="font-size:20px;margin:0 0 16px">${esc(title)}</h1>
 ${paragraphs.map((p) => `<p style="font-size:15px;line-height:1.6;margin:0 0 14px">${esc(p)}</p>`).join("\n")}
 ${button ? `<p style="margin:24px 0"><a href="${esc(button.url)}" style="background:#ea580c;color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;display:inline-block">${esc(button.label)}</a></p><p style="font-size:13px;color:#64748b;word-break:break-all">Or paste this link into your browser: ${esc(button.url)}</p>` : ""}
-<p style="font-size:12px;color:#64748b;margin-top:32px">CivilPrep is not affiliated with NCEES.</p>
+<p style="font-size:12px;color:#64748b;margin-top:32px">CivilPrep is not affiliated with NCEES.${footer ? ` ${footer}` : ""}</p>
 </div></body></html>`;
-  const text = [title, "", ...paragraphs, ...(button ? ["", `${button.label}: ${button.url}`] : [])].join("\n");
+  const text = [title, "", ...paragraphs, ...(button ? ["", `${button.label}: ${button.url}`] : []), ...(footer ? ["", footer.replace(/<[^>]+>/g, "")] : [])].join("\n");
   return { html, text };
 }
 
@@ -161,3 +166,23 @@ export function welcomeEmail(to: string): Email {
     ], { label: "Open your dashboard", url: `${appUrl()}/dashboard` }),
   };
 }
+
+/** Weekly progress digest. `lines` are plain sentences; the footer carries the unsubscribe link. */
+export function weeklyProgressEmail(to: string, name: string | null, lines: string[], unsubscribeUrl: string, oneClickUrl: string): Email {
+  const footer = `You get this weekly summary because you're studying on CivilPrep. <a href="${esc(unsubscribeUrl)}" style="color:#64748b">Unsubscribe</a> or change it on your Account page.`;
+  return {
+    to,
+    subject: "Your CivilPrep week",
+    stream: process.env.POSTMARK_DIGEST_STREAM || "outbound",
+    headers: {
+      "List-Unsubscribe": `<${oneClickUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
+    ...withTextLink(
+      layout(name ? `${name.split(" ")[0]}, here's your week` : "Here's your week", lines, { label: "Start this week's practice", url: `${appUrl()}/dashboard` }, footer),
+      `Unsubscribe: ${unsubscribeUrl}`,
+    ),
+  };
+}
+
+const withTextLink = (m: { html: string; text: string }, line: string) => ({ html: m.html, text: `${m.text}\n${line}` });
