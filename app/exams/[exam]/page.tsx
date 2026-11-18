@@ -41,7 +41,7 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
 
       <div className="flex flex-wrap gap-3">
         <Link href={`/exams/${exam}/practice`} className="btn-ghost">Mixed practice</Link>
-        <Link href={`/exams/${exam}/mock`} className="btn-ghost">Timed mock exam {access ? "" : "🔒"}</Link>
+        <Link href={`/exams/${exam}/mock`} className="btn-ghost">Full exam (timed) {access ? "" : "🔒"}</Link>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">

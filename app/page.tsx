@@ -14,7 +14,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
           without the $1,000 course.
         </h1>
         <p className="muted text-lg max-w-2xl mx-auto">
-          Exam-style practice problems with full worked solutions, timed mock exams, and topic-by-topic
+          Exam-style practice problems with full worked solutions, full-length timed exams, and topic-by-topic
           progress tracking. From ${cheapest}/month. Cancel anytime.
         </p>
         <div className="flex gap-3 justify-center">

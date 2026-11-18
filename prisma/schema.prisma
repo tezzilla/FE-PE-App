@@ -62,6 +62,16 @@ model MockExam {
   correct    Int
   durationS  Int
   createdAt  DateTime @default(now())
+  // Full exams are saved while in progress so a refresh or crash doesn't lose a 5-hour attempt.
+  // in_progress | completed
+  status     String   @default("completed")
+  // JSON: string[][] question ids per session, fixed at start (grading uses these, not the client's list).
+  sessions   String?
+  // JSON: { [topic]: [correct, total] }
+  breakdown  String?
+  // JSON: { [questionId]: choiceIndex } and flagged ids, saved at submission for later review.
+  answers    String?
+  completedAt DateTime?
 
   @@index([userId, exam])
 }

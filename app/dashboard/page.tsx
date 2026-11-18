@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function Dashboard({ searchParams }: { searchParams: Promise<{ subscribed?: string; reset?: string }> }) {
   const user = await requireUser();
   const { subscribed, reset } = await searchParams;
-  const mocks = await db.mockExam.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 5 });
+  const mocks = await db.mockExam.findMany({ where: { userId: user.id, status: "completed" }, orderBy: { createdAt: "desc" }, take: 5 });
 
   return (
     <div className="space-y-8">
