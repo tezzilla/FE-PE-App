@@ -5,7 +5,7 @@ import { questionsFor } from "@/lib/content";
 import { getCurrentUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
 import { topicStats } from "@/lib/progress";
-import { approvedTemplateCount } from "@/lib/questions";
+import { approvedTemplateCount, bankStats } from "@/lib/questions";
 import { ReadinessCard } from "@/components/ReadinessCard";
 
 export default async function ExamPage({ params }: { params: Promise<{ exam: string }> }) {
@@ -21,6 +21,14 @@ export default async function ExamPage({ params }: { params: Promise<{ exam: str
       <div>
         <h1 className="text-3xl font-bold">{def.name}</h1>
         <p className="muted mt-1">{def.realExam}</p>
+        {(async () => {
+          const b = await bankStats(exam);
+          return (
+            <p className="text-sm mt-1" style={{ color: "var(--brand)" }}>
+              {b.fixed} worked problems{b.generators ? ` + ${b.generators} problem types with unlimited variations` : ""}
+            </p>
+          );
+        })()}
       </div>
 
       {!access && (

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { EXAMS } from "@/lib/content/exams";
 import { SOLD_PLANS } from "@/lib/plans";
+import { bankStats } from "@/lib/questions";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
   const { deleted } = await searchParams;
+  const bank = await bankStats();
   const cheapest = Math.min(...SOLD_PLANS.filter((p) => p.kind === "subscription").map((p) => p.price));
   return (
     <div className="space-y-16">
@@ -16,6 +18,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
         <p className="muted text-lg max-w-2xl mx-auto">
           Exam-style practice problems with full worked solutions, full-length timed exams, and topic-by-topic
           progress tracking. From ${cheapest}/month. Cancel anytime.
+        </p>
+        <p className="text-sm font-semibold" style={{ color: "var(--brand)" }}>
+          {bank.fixed} worked problems{bank.generators > 0 ? ` + ${bank.generators} engineer-reviewed problem types with unlimited variations` : ""}
         </p>
         <div className="flex gap-3 justify-center">
           <Link href="/signup" className="btn">Start free</Link>

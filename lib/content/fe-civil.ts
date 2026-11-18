@@ -71,6 +71,102 @@ export const FE_CIVIL: Question[] = [
       "Licensees shall not accept gifts or valuable consideration from parties dealing with their client or employer in connection with work for which they are responsible. Decline.",
     reference: "FE Reference Handbook: Ethics, NCEES Model Rules",
   }),
+  q({
+    id: "fe-ethics-003",
+    topic: "ethics",
+    prompt:
+      "A licensed engineer is asked by a developer to seal a set of drainage plans prepared by an unlicensed designer the engineer has never supervised. The developer offers a fee for the seal alone. What should the engineer do?",
+    choices: [
+      "Seal the plans after a quick check of the calculations",
+      "Seal the plans, since the designer is experienced",
+      "Decline unless the work was prepared under the engineer's responsible charge, or the engineer redoes it fully",
+      "Seal the plans but add a note that someone else prepared them",
+    ],
+    answer: 2,
+    explanation:
+      "Engineers may only seal work they prepared or that was prepared under their direct supervision (responsible charge). Sealing others' unsupervised work for a fee is \"plan stamping\" and is prohibited, no matter how competent the designer is.",
+    reference: "FE Reference Handbook: Ethics (licensee obligations)",
+  }),
+  q({
+    id: "fe-ethics-004",
+    topic: "ethics",
+    prompt:
+      "A structural engineer is asked to design a complex wastewater treatment process, which is outside their training and experience. What is the appropriate response?",
+    choices: [
+      "Accept, because any licensed engineer may practice in any discipline",
+      "Accept and learn on the job without telling the client",
+      "Decline, or accept only if qualified engineers handle the parts outside their competence",
+      "Accept, but charge less to reflect the risk",
+    ],
+    answer: 2,
+    explanation:
+      "Engineers undertake assignments only when qualified by education or experience in the specific technical field. They may coordinate a project and use qualified associates for the parts outside their competence, but they shouldn't perform or seal that work themselves.",
+    reference: "FE Reference Handbook: Ethics (competence)",
+  }),
+  q({
+    id: "fe-ethics-005",
+    topic: "ethics",
+    prompt:
+      "While reviewing bids for a city, an engineer learns that a firm owned by their spouse has submitted a bid. What should the engineer do first?",
+    choices: [
+      "Evaluate the bids normally, since they will be fair",
+      "Disclose the relationship to the city promptly and follow its direction, such as stepping back from the evaluation",
+      "Withdraw quietly without telling anyone",
+      "Ask the spouse's firm to withdraw its bid",
+    ],
+    answer: 1,
+    explanation:
+      "A conflict of interest that could influence, or appear to influence, the engineer's judgment must be disclosed promptly to the employer or client. The client then decides how to handle it; recusal is common.",
+    reference: "FE Reference Handbook: Ethics (conflicts of interest)",
+  }),
+  q({
+    id: "fe-ethics-006",
+    topic: "ethics",
+    prompt:
+      "An engineer's client asks them to keep a design report confidential. Later, the engineer learns the client plans to build in a way that will clearly endanger the public, and the client refuses to change course. What should the engineer do?",
+    choices: [
+      "Keep the information confidential, since the client asked",
+      "Notify the appropriate authorities, because public safety outweighs the client's confidentiality",
+      "Publish the report online so the public can decide",
+      "Resign and say nothing further",
+    ],
+    answer: 1,
+    explanation:
+      "Engineers keep client information confidential except where disclosure is needed to protect public health, safety and welfare, or is required by law. When overruled on a public-safety issue, they notify the employer or client and the appropriate authority.",
+    reference: "FE Reference Handbook: Ethics (public safety, confidentiality)",
+  }),
+  q({
+    id: "fe-ethics-007",
+    topic: "ethics",
+    prompt:
+      "An engineer leaves a firm and prepares a marketing brochure for their new company. Which statement can they include?",
+    choices: [
+      "That they personally designed every project their former firm completed while they were employed there",
+      "Their actual role on specific past projects, described accurately",
+      "That their old firm's designs were unsafe, to win clients",
+      "A guarantee that their designs will pass any review without changes",
+    ],
+    answer: 1,
+    explanation:
+      "Engineers may advertise truthfully, giving an accurate account of their own role. They may not misrepresent their qualifications or responsibility for past work, and they shouldn't make false or malicious statements about other engineers.",
+    reference: "FE Reference Handbook: Ethics (truthfulness, professional conduct)",
+  }),
+  q({
+    id: "fe-ethics-008",
+    topic: "ethics",
+    prompt:
+      "An engineer has good reason to believe another licensee is practicing while impaired and making errors in signed designs. What is the engineer's obligation?",
+    choices: [
+      "None, since it's the other engineer's license",
+      "Report what they know to the state licensing board",
+      "Discuss it on social media to warn the public",
+      "Correct the other engineer's designs without telling anyone",
+    ],
+    answer: 1,
+    explanation:
+      "Licensees who know of a violation of the licensing rules by another licensee are expected to report it to the board and cooperate with its investigation. Boards exist to protect the public; quietly fixing designs or public accusations aren't appropriate substitutes.",
+    reference: "FE Reference Handbook: Ethics (licensee obligations to the board)",
+  }),
 
   // Engineering Economics
   q({

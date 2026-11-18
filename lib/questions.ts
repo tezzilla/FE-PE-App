@@ -1,6 +1,6 @@
 import "server-only";
 import type { ExamId, Question } from "./content/types";
-import { getQuestion, shuffle } from "./content";
+import { getQuestion, questionsFor, shuffle } from "./content";
 import { isExamId } from "./content/exams";
 import { getTemplate, templatesFor } from "./templates";
 import { parseTemplateQuestionId, randomSeed, templateToQuestion } from "./templates/engine";
@@ -40,4 +40,13 @@ export async function generatedQuestions(exam: ExamId, perTemplate: number, topi
 export async function approvedTemplateCount(exam: ExamId, topic?: string) {
   const approved = await approvedTemplates();
   return templatesFor(exam, topic).filter((t) => approved.has(t.id)).length;
+}
+
+/** What students can practice: fixed questions plus approved problem types (each unlimited). */
+export async function bankStats(exam?: ExamId) {
+  const approved = await approvedTemplates();
+  const exams: ExamId[] = exam ? [exam] : ["fe-civil", "pe-civil"];
+  const fixed = new Set(exams.flatMap((e) => questionsFor(e).map((q) => q.id))).size;
+  const generators = new Set(exams.flatMap((e) => templatesFor(e).filter((t) => approved.has(t.id)).map((t) => t.id))).size;
+  return { fixed, generators };
 }
