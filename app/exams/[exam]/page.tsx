@@ -77,6 +77,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
           </>
         )}
         <Link href={`/exams/${exam}/mock`} className="btn-ghost">Full exam (timed) {access ? "" : "🔒"}</Link>
+        <Link href={`/exams/${exam}/resources`} className="btn-ghost">Exam documents {access ? "" : "🔒"}</Link>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
