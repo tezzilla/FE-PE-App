@@ -27,12 +27,17 @@ export function makeRng(seed: number) {
 export type Rng = ReturnType<typeof makeRng>;
 
 /** Format to 3 significant figures with thousands separators. */
+const FORMATTERS = new Map<number, Intl.NumberFormat>();
+const INPUT_FORMAT = new Intl.NumberFormat("en-US", { maximumFractionDigits: 6 });
 export function f(x: number, sig = 3): string {
-  return new Intl.NumberFormat("en-US", { maximumSignificantDigits: sig }).format(x);
+  // Building an Intl.NumberFormat is slow; reuse one per precision.
+  let fmt = FORMATTERS.get(sig);
+  if (!fmt) FORMATTERS.set(sig, (fmt = new Intl.NumberFormat("en-US", { maximumSignificantDigits: sig })));
+  return fmt.format(x);
 }
 /** Format an input value exactly as generated. */
 export function n(x: number): string {
-  return x.toLocaleString("en-US", { maximumFractionDigits: 6 });
+  return INPUT_FORMAT.format(x);
 }
 
 export interface Generated {

@@ -208,10 +208,17 @@ flat plate minimum thickness, lime softening dose, sludge thickening volume, chl
 volume, gravity thickener diameter, spiral curve length, roundabout entry v/c, M/M/1 toll queue wait,
 geotextile AOS retention, equipment ownership cost.
 
+## Twelfth batch (November 2026)
+
+Problem types (11): shear wall hold-down uplift, base plate bearing (AISC J8), tension development length,
+web local yielding, filter backwash share, ion exchange run volume, landfill leachate balance, trickling
+filter organic loading, EPDO crash index, concrete pump placement time, rock socket side resistance.
+
 ## Next batch
 
-1. Structural: shear wall overturning, base plate bearing, development length calculation.
-2. WRE: rapid sand filter backwash rate, ion exchange capacity, landfill leachate (HELP-style balance).
-3. Transportation: weaving segment basics, crash severity indices, sight triangle legs.
-4. Construction: resource histogram moments, concrete placement rate for pumps.
-5. Geotechnical: Broms lateral capacity (short pile in clay), rock socket side resistance.
+1. Structural: column base plate thickness, slender column moment magnification, wood connection
+   capacity with adjustment factors.
+2. WRE: reservoir yield (mass curve), pipe network pressure at a node, sediment basin sizing.
+3. Transportation: weaving segment basics, parking demand, pedestrian LOS (space per person).
+4. Construction: resource histogram moments, cost-loaded schedule cash flow.
+5. Geotechnical: Broms short pile in clay, consolidation with surcharge removal (preloading).

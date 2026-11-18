@@ -665,6 +665,47 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const aai = (P * (N + 1) + S * (N - 1)) / (2 * N);
     return ((P - S) / N + rate * aai) / hrs;
   },
+
+  // ---- Twelfth batch (batch-twelve.ts)
+  "shear-wall-uplift": (p) => {
+    const L = at(p, "A"), V = at(p, "force of"), h = at(p, "kips applied"), W = at(p, "wall is");
+    // moments about the compression end: T·L + 0.6W·L/2 = V·h
+    return (V * h - 0.3 * W * L) / L;
+  },
+  "base-plate-bearing": (p) => {
+    const [B, N, B2, N2] = nums(p), fc = at(p, "f'c =");
+    const ratio = Math.min(2, Math.sqrt((B2 * N2) / (B * N)));
+    return 0.5525 * fc * B * N * ratio; // 0.65 × 0.85 = 0.5525
+  },
+  "development-length-tension": (p) => {
+    const bar = at(p, "#"), db = at(p, "db ="), fc = at(p, "f'c =");
+    const pt = p.includes("is a top bar") ? 1.3 : 1, pe = p.includes("epoxy-coated") ? 1.5 : 1;
+    const ld = (60000 * Math.min(1.7, pt * pe) * db) / ((bar <= 6 ? 25 : 20) * Math.sqrt(fc));
+    return ld < 12 ? 12 : ld;
+  },
+  "web-local-yielding": (p) => { const tw = at(p, "tw ="), k = at(p, "k ="), lb = at(p, "length is"); return 50 * tw * 5 * k + 50 * tw * lb; },
+  "filter-backwash-percent": (p) => {
+    const run = at(p, "runs"), fr = at(p, "hours at"), bw = at(p, "backwashed at"), tb = at(p, "m/h for");
+    return (bw * tb) / (fr * run * 60) * 100;
+  },
+  "ion-exchange-run-volume": (p) => { const V = at(p, "holds"), cap = at(p, "capacity of"), H = at(p, "hardness is"); return (V * cap * 1000 * 50) / H; },
+  "landfill-leachate-balance": (p) => {
+    const A = at(p, "A"), P = at(p, "receives"), R = at(p, "runoff is"), ET = at(p, "evapotranspiration is"), dS = at(p, "changes by");
+    return A * 1e4 * ((P - R - ET - dS) / 1000);
+  },
+  "trickling-filter-organic-loading": (p) => {
+    const [D, H, Q, BOD] = nums(p.replace("BOD₅", "BOD"));
+    return (Q * BOD) / 1000 / (Math.PI * (D / 2) ** 2 * H);
+  },
+  "epdo-crash-index": (p) => {
+    const F = at(p, "had"), I = at(p, "fatal,"), PDO = at(p, "injury and"), wF = at(p, "weights of"), wI = at(p, "fatal and");
+    return F * wF + I * wI + PDO;
+  },
+  "concrete-pump-time": (p) => { const V = at(p, "needs"), rate = at(p, "rated at"), E = at(p, "pump to"); return V / rate / (E / 100); },
+  "rock-socket-side-resistance": (p) => {
+    const D = at(p, "A"), L = at(p, "has a"), qu = at(p, "strength of"), aE = at(p, "αE is");
+    return 0.65 * aE * Math.sqrt(2.12 * qu) * Math.PI * D * L; // pa(qu/pa)^0.5 = √(pa·qu)
+  },
 };
 
 
