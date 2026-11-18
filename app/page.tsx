@@ -6,10 +6,11 @@ import { Icon } from "@/components/Icon";
 import { FAQ } from "@/components/FAQ";
 import { ProductPreview } from "@/components/ProductPreview";
 import { tutorEnabled } from "@/lib/tutor";
+import { FOUNDER } from "@/lib/content/about";
 
 const FEATURES = [
   { icon: "target", title: "Smart practice", text: "Learns which topics you're weak in, weighted by how much they count on the exam, and serves those first. Spaced reviews keep old topics from slipping." },
-  { icon: "infinity", title: "Problems that don't run out", text: "Problem generators create fresh numbers every time, so you practice the method instead of memorizing answers. Each type is solved by hand by a reviewer first." },
+  { icon: "infinity", title: "Problems that don't run out", text: "Problem generators create fresh numbers every time, so you practice the method instead of memorizing answers. Each type is checked in a review queue before it goes live." },
   { icon: "timer", title: "Full-length timed exams", text: "110-question FE and 80-question PE simulations at real pacing, with a question navigator, flags, a break, and a by-topic score report." },
   { icon: "chat", title: "AI tutor on every solution", text: "Stuck on why you missed one? Ask follow-up questions after you answer. Explanations stay tied to the verified solution." },
   { icon: "cards", title: "Formula flashcards", text: "The formulas that show up again and again, each with where to find it in the handbook, scheduled so you review right before you'd forget." },
@@ -46,7 +47,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
     },
     {
       q: "Who writes the problems?",
-      a: "Every problem is original. Problem generators are solved by hand by a civil engineer who has passed the FE and PE Civil before students ever see them, and you can report any problem you think is wrong.",
+      a: "Every problem is original, written for CivilPrep. Each problem type goes through a review queue before students see it, and you can report any problem you think is wrong from the question itself.",
     },
     { q: "Do I need the NCEES handbook?", a: "Yes, and it's free. Download it from your MyNCEES account and keep it open while you practice. Every solution tells you which section to look in, so you learn to find things fast on exam day." },
     { q: "Can I cancel anytime?", a: "Yes. Cancel online from your account and you keep access until the end of the period you paid for. Passes are a single payment and never renew." },
@@ -203,16 +204,35 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
         </div>
       </section>
 
-      {/* Trust */}
-      <section className="card p-6 sm:p-10 flex flex-col md:flex-row gap-6 items-start reveal">
-        <span className="icon-tile shrink-0" style={{ width: "3rem", height: "3rem" }}><Icon name="shield" size={24} /></span>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Checked by an engineer, not just a computer</h2>
-          <p className="muted leading-relaxed">
-            Every problem type is solved by hand by a civil engineer who has passed the FE and the PE Civil before it
-            reaches you. Problems are original, use both US and SI units like the real exam, and cite the handbook
-            section you&apos;d use. Spot a mistake? Report it from any question and a reviewer will look at it.
-          </p>
+      {/* Founder */}
+      <section className="card p-6 sm:p-10 grid md:grid-cols-[auto_1fr] gap-6 sm:gap-10 items-start reveal">
+        <div className="flex md:flex-col items-center gap-4 md:w-48 md:text-center">
+          <div
+            className="shrink-0 rounded-full flex items-center justify-center text-2xl font-extrabold"
+            style={{ width: "5.5rem", height: "5.5rem", background: "var(--brand-soft)", color: "var(--brand-text)" }}
+            aria-hidden
+          >
+            {FOUNDER.initials}
+          </div>
+          <div>
+            <p className="font-bold">{FOUNDER.name}</p>
+            <p className="muted text-sm">{FOUNDER.role}</p>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <p className="eyebrow">Why I built this</p>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Made by an engineer who just went through it</h2>
+          {FOUNDER.paragraphs.map((t) => (
+            <p key={t} className="muted leading-relaxed">{t}</p>
+          ))}
+          <ul className="flex flex-wrap gap-2 pt-1">
+            {FOUNDER.credentials.map((c) => (
+              <li key={c} className="inline-flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1" style={{ border: "1px solid var(--border)" }}>
+                <span style={{ color: "var(--good)" }}><Icon name="check" size={14} /></span>
+                {c}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

@@ -362,10 +362,10 @@ const TRANSPORT: Template[] = [
 const STRUCTURAL: Template[] = [
   {
     id: "rc-beam-design-moment",
-    version: 1,
+    version: 2,
     title: "Design flexural strength of a singly reinforced concrete beam",
     topics: { "pe-civil": "structural" },
-    reference: "ACI 318: Flexure (Whitney stress block)",
+    reference: "ACI 318-19: Flexure (Whitney stress block), Table 21.2.2",
     generate(r) {
       // Regenerate until the section is tension-controlled and meets minimum steel, so φ = 0.90.
       for (;;) {
@@ -378,8 +378,10 @@ const STRUCTURAL: Template[] = [
         const a = (As * fy) / (0.85 * fc * b);
         const c = a / beta1;
         const et = (0.003 * (d - c)) / c;
+        // ACI 318-19 Table 21.2.2: tension-controlled when εt ≥ εty + 0.003 (0.00507 for Grade 60).
+        const etLimit = 60 / 29000 + 0.003;
         const asMin = Math.max((3 * Math.sqrt(fc * 1000) * b * d) / (fy * 1000), (200 * b * d) / (fy * 1000));
-        if (et < 0.005 || As < asMin) continue;
+        if (et < etLimit || As < asMin) continue;
         const Mn = (As * fy * (d - a / 2)) / 12;
         const phiMn = 0.9 * Mn;
         return {
@@ -391,7 +393,7 @@ const STRUCTURAL: Template[] = [
             (0.9 * As * fy * d) / 12, // ignored the stress block (lever arm = d)
             (0.9 * As * fy * (d - a)) / 12, // used d − a instead of d − a/2
           ],
-          solution: `a = As fy/(0.85 f'c b) = (${n(As)})(60)/(0.85 × ${fc} × ${b}) = ${f(a)} in\nc = a/β₁ = ${f(a)}/${beta1} = ${f(c)} in; εt = 0.003(d − c)/c = ${f(et)} ≥ 0.005, tension-controlled, φ = 0.90\nMn = As fy (d − a/2) = (${n(As)})(60)(${d} − ${f(a / 2)}) = ${f(Mn * 12)} kip·in = ${f(Mn)} kip·ft\nφMn = 0.90 × ${f(Mn)} = ${f(phiMn)} kip·ft`,
+          solution: `a = As fy/(0.85 f'c b) = (${n(As)})(60)/(0.85 × ${fc} × ${b}) = ${f(a)} in\nc = a/β₁ = ${f(a)}/${beta1} = ${f(c)} in; εt = 0.003(d − c)/c = ${f(et)} ≥ εty + 0.003 = 0.00507, tension-controlled, φ = 0.90 (ACI 318-19)\nMn = As fy (d − a/2) = (${n(As)})(60)(${d} − ${f(a / 2)}) = ${f(Mn * 12)} kip·in = ${f(Mn)} kip·ft\nφMn = 0.90 × ${f(Mn)} = ${f(phiMn)} kip·ft`,
         };
       }
     },

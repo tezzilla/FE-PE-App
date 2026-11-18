@@ -185,7 +185,7 @@ const MATERIALS: Template[] = [
 const CONSTRUCTION: Template[] = [
   {
     id: "earthwork-truck-loads",
-    version: 1,
+    version: 2,
     title: "Truck loads to haul excavated soil (swell)",
     topics: { "fe-civil": "construction", "pe-civil": "construction" },
     reference: "Construction: Earthwork Quantities",
@@ -194,8 +194,9 @@ const CONSTRUCTION: Template[] = [
       const B = r.range(500, 5000, 50);
       const sw = r.range(10, 40, 5);
       const C = r.pick([10, 12, 14, 16, 18, 20]);
-      const loose = B * (1 + sw / 100);
-      const loads = Math.ceil(loose / C);
+      // Round away floating-point noise first: 800 × 1.10 is 880.0000000000001, which would ceil to one load too many.
+      const loose = Number((B * (1 + sw / 100)).toFixed(6));
+      const loads = Math.ceil(Number((loose / C).toFixed(6)));
       return {
         prompt: `An excavation removes ${n(B)} bank cubic yards of soil with ${sw}% swell. Trucks carry ${C} loose cubic yards each. How many truck loads are needed?`,
         answer: loads,
@@ -205,7 +206,7 @@ const CONSTRUCTION: Template[] = [
         distractors: [
           Math.ceil(B / C), // ignored swell
           Math.ceil((B * (1 - sw / 100)) / C), // applied swell as shrinkage
-          Math.floor(loose / C) === loads ? loads - 1 : Math.floor(loose / C), // rounded down
+          Math.floor(Number((loose / C).toFixed(6))) === loads ? loads - 1 : Math.floor(Number((loose / C).toFixed(6))), // rounded down
         ],
         solution: `Loose volume = ${n(B)} × (1 + ${sw / 100}) = ${f(loose, 5)} LCY\nLoads = ${f(loose, 5)}/${C} = ${f(loose / C, 4)}, round up to ${loads} loads`,
       };

@@ -289,7 +289,7 @@ export const WATER_RESOURCES: Template[] = [
   },
   {
     id: "froude-number-rect",
-    version: 1,
+    version: 2,
     title: "Froude number, rectangular channel",
     topics: { "fe-civil": "water-env", "pe-civil": "water-env" },
     reference: "Open-Channel Flow: Froude Number",
@@ -310,7 +310,7 @@ export const WATER_RESOURCES: Template[] = [
           V / (G_SI * y), // forgot the square root
           V / Math.sqrt(G_SI * b), // used width instead of hydraulic depth
         ],
-        solution: `V = Q/(by) = ${n(Q)}/(${n(b)} × ${n(y)}) = ${f(V)} m/s\nFr = V/√(gy) = ${f(V)}/√(9.81 × ${n(y)}) = ${f(Fr)}\n\n${Fr > 1 ? "Fr > 1: supercritical flow." : "Fr < 1: subcritical flow."}`,
+        solution: `V = Q/(by) = ${n(Q)}/(${n(b)} × ${n(y)}) = ${f(V)} m/s\nFr = V/√(gy) = ${f(V)}/√(9.81 × ${n(y)}) = ${f(Fr)}\n\n${Math.abs(Fr - 1) < 0.02 ? "Fr ≈ 1: near-critical flow, which is unstable in practice." : Fr > 1 ? "Fr > 1: supercritical flow." : "Fr < 1: subcritical flow."}`,
       };
     },
   },
