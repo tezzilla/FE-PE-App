@@ -118,12 +118,15 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
     side.push(v);
   };
 
+  // Whole-number problems (trucks, days) get whole-number fillers.
+  const integral = Number.isInteger(g.answer) && g.distractors.every((d) => Number.isInteger(d));
+  const fill = (v: number) => (integral ? Math.round(v) : v);
+
   // 1. Realistic wrong answers from named mistakes, in the order the template lists them.
   g.distractors.forEach(take);
   // 2. Fill whichever side is short with nearby values scaled to the problem's precision.
   if (below.length < want.below || above.length < want.above) {
     usedFallback = true;
-    const integral = Number.isInteger(g.answer) && g.distractors.every((d) => Number.isInteger(d));
     const step = Math.max(minGap * 4, 0.08);
     for (let k = 1; k <= 12 && (below.length < want.below || above.length < want.above); k++) {
       const lo = g.answer * (1 - step * k * 0.6);
@@ -135,7 +138,7 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
   }
   // 3. If one side still can't be filled (e.g. no positive values below a tiny answer), use the other.
   if (below.length + above.length < 3) {
-    for (const v of [...g.distractors, ...FALLBACK.map((m) => g.answer * m), ...[4, 5, 6, 8, 10].map((m) => g.answer * m)]) {
+    for (const v of [...g.distractors, ...[...FALLBACK, 4, 5, 6, 8, 10].map((m) => fill(g.answer * m))]) {
       if (below.length + above.length + extra.length >= 3) break;
       if (usable(v)) { seen.add(label(v)); extra.push(v); }
     }

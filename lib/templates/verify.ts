@@ -156,6 +156,100 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const V2 = Math.sqrt(2 * g * dh / (1 - (A2 / A1) ** 2)); return Cd * A2 * V2 * 1000;
   },
   "breakeven-volume": (p) => { const [F, pr, v] = nums(p); return F / (pr - v); },
+  // ---- Spec-gap batch (spec-gaps.ts)
+  "fillet-weld-strength": (p) => { const m = p.match(/are (\d+)\/(\d+) in fillets/)!; const w = Number(m[1]) / Number(m[2]); const te = w / Math.SQRT2; return 0.75 * 0.6 * at(p, "FEXX =") * te * at(p, "total length of"); },
+  "bolt-shear-bearing": (p) => {
+    const nb = at(p, "uses"), d = at(p, "bolts of"), Fnv = at(p, "Fnv ="), t = at(p, "plate is"), Fu = at(p, "Fu =");
+    return nb * Math.min(0.75 * Fnv * Math.PI * (d / 2) ** 2, 0.75 * 2.4 * d * t * Fu);
+  },
+  "tributary-girder-moment": (p) => { const s = at(p, "spaced"), L = at(p, "span"), D = at(p, "dead load is"), Lv = at(p, "live load is"); return (s * (1.2 * D + 1.6 * Lv) / 1000) * L * L / 8; },
+  "seismic-base-shear-elf": (p) => {
+    const W = at(p, "W ="), SDS = at(p, "SDS ="), SD1 = at(p, "SD1 ="), R = at(p, "R ="), Ie = at(p, "Ie ="), T = at(p, "T =");
+    const Cs = Math.min(SDS * Ie / R, SD1 * Ie / (T * R)); return Math.max(Cs, 0.044 * SDS * Ie, 0.01) * W;
+  },
+  "cpm-total-float": (p) => {
+    // longest path through the activity, by enumerating every start-to-finish path
+    const acts = [...p.matchAll(/([A-F]) (\d+), (?:no predecessor|after ([A-F](?: and [A-F])*))/g)].map((m) => ({ id: m[1], d: Number(m[2]), pre: m[3] ? m[3].split(" and ") : [] }));
+    const x = p.match(/total float of activity ([A-F])/)![1];
+    const succ = (id: string) => acts.filter((a) => a.pre.includes(id));
+    const paths: string[][] = [];
+    const walk = (id: string, path: string[]) => { const s = succ(id); if (!s.length) paths.push([...path, id]); else s.forEach((a) => walk(a.id, [...path, id])); };
+    acts.filter((a) => !a.pre.length).forEach((a) => walk(a.id, []));
+    const len = (ps: string[]) => ps.reduce((t, id) => t + acts.find((a) => a.id === id)!.d, 0);
+    const T = Math.max(...paths.map(len));
+    return T - Math.max(...paths.filter((ps) => ps.includes(x)).map(len));
+  },
+  "least-cost-crashing": (p) => {
+    const acts = [...p.matchAll(/([PQRS]): normal (\d+) days at \$([\d,]+), crash (\d+) days at \$([\d,]+)/g)].map((m) => {
+      const [dn, cn, dc, cc] = [m[2], m[3], m[4], m[5]].map((v) => Number(v.replace(/,/g, "")));
+      return { red: dn - dc, slope: (cc - cn) / (dn - dc) };
+    });
+    const N = at(p, "project by");
+    // brute force over every feasible split of the N days
+    let best = Infinity;
+    const go = (i: number, left: number, cost: number) => {
+      if (i === acts.length) { if (left === 0) best = Math.min(best, cost); return; }
+      for (let k = 0; k <= Math.min(acts[i].red, left); k++) go(i + 1, left - k, cost + k * acts[i].slope);
+    };
+    go(0, N, 0);
+    return best;
+  },
+  "average-end-area-volume": (p) => { const [L, A1, A2] = nums(p); return ((A1 + A2) / 2) * L / 27; },
+  "retaining-wall-sliding": (p) => {
+    const H = at(p, "is"), B = at(p, "tall and"), gm = at(p, "(γ ="), phi = at(p, "φ ="), mu = at(p, "coefficient is");
+    const Ka = (1 - Math.sin(rad(phi))) / (1 + Math.sin(rad(phi)));
+    return mu * at(p, "wall (") * B * H / (Ka * gm * H * H / 2);
+  },
+  "retaining-wall-overturning": (p) => {
+    const H = at(p, "is"), B = at(p, "tall and"), gm = at(p, "(γ ="), phi = at(p, "φ =");
+    const Ka = (1 - Math.sin(rad(phi))) / (1 + Math.sin(rad(phi)));
+    const W = at(p, "wall (") * B * H, Pa = Ka * gm * H * H / 2;
+    return (W * B / 2) / (Pa * H / 3);
+  },
+  "spt-n160": (p) => {
+    const z = at(p, "depth of"), N = at(p, "blow count of"), dw = at(p, "water table is"), gm = at(p, "soil weighs"), gs = at(p, "kN/m³ above it and");
+    const ER = at(p, "energy ratio is"), CR = at(p, "rod length correction is");
+    const u = gw * (z - dw), se = gm * dw + gs * (z - dw) - u;
+    return Math.min(1.7, 1 / Math.sqrt(se / 100)) * N * CR * (ER / 60);
+  },
+  "liquefaction-csr": (p) => {
+    const z = at(p, "depth of"), dw = at(p, "water table is"), gm = at(p, "soil weighs"), gs = at(p, "kN/m³ above it and"), a = at(p, "acceleration is");
+    const sv = gm * dw + gs * (z - dw); return 0.65 * a * (sv / (sv - gw * (z - dw))) * (1 - 0.00765 * z);
+  },
+  "flow-net-seepage": (p) => { const [Nf, Nd, H, k, L] = nums(p); return (k * H * Nf / Nd) * L; },
+  "activated-sludge-srt": (p) => {
+    const Q = at(p, "treats"), V = at(p, "holds"), X = at(p, "MLSS of"), Qw = at(p, "removed at"), Xw = at(p, "m³/d with"), Xe = at(p, "carries");
+    return V * X / (Qw * Xw + (Q - Qw) * Xe);
+  },
+  "food-to-microorganism": (p) => { const V = at(p, "basin of"), Q = at(p, "receives"), S0 = at(p, "BOD of"), Xv = at(p, "MLVSS of"); return Q * S0 / (V * Xv); },
+  "aeration-basin-volume": (p) => {
+    const Q = at(p, "basin for"), S0 = at(p, "influent soluble BOD of"), S = at(p, "effluent soluble BOD of"), th = at(p, "SRT of"), Y = at(p, "Y ="), kd = at(p, "kd ="), X = at(p, "MLVSS of");
+    return th * Q * Y * (S0 - S) / (X * (1 + kd * th));
+  },
+  "superelevation-min-radius": (p) => { const [V, e, fr] = nums(p); return V * V / (15 * (e / 100 + fr)); },
+  "middle-ordinate-clearance": (p) => {
+    const R = at(p, "radius of"), S = at(p, "distance is");
+    const half = S / (2 * R); // half the central angle subtended by the sight line, in radians
+    return R * (1 - Math.cos(half));
+  },
+  "design-lane-esals": (p) => {
+    const ADT = at(p, "ADT of"), T = at(p, "make up"), TF = at(p, "average"), LD = at(p, "factor of"), g = at(p, "grows") / 100, n = at(p, "over a");
+    let G = 0; for (let y = 0; y < n; y++) G += (1 + g) ** y; // sum of yearly traffic factors
+    return ADT * (T / 100) * TF * 0.5 * LD * 365 * G / 1e6;
+  },
+  "base-thickness-sn": (p) => { const SN = at(p, "number of"), D1 = at(p, "will have"), m2 = at(p, "drainage coefficient"); return (SN - 0.44 * D1) / (0.14 * m2); },
+  "tee-section-inertia": (p) => {
+    const [bf, tf, tw, hw] = nums(p);
+    // strips: integrate y² dA about the bottom, then shift to the centroid (I_c = I_base − A ȳ²)
+    const A = bf * tf + tw * hw, Q = bf * tf * (hw + tf / 2) + tw * hw * hw / 2, ybar = Q / A;
+    const Ibase = tw * hw ** 3 / 3 + bf * ((hw + tf) ** 3 - hw ** 3) / 3;
+    return (Ibase - A * ybar * ybar) / 1e6;
+  },
+  "benefit-cost-ratio": (p) => {
+    const P = at(p, "costs $"), B = at(p, "damage by $"), n = at(p, "per year for"), M = at(p, "will cost $"), i = at(p, "At") / 100;
+    let PA = 0; for (let y = 1; y <= n; y++) PA += 1 / (1 + i) ** y;
+    return B * PA / (P + M * PA);
+  },
 };
 
 
