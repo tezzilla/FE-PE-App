@@ -619,6 +619,52 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const MDD = at(p, "demand is"), eqp = at(p, "equalization of"), ff = at(p, "fire flow of"), hr = at(p, "gpm for"), emp = p.includes("emergency") ? at(p, "emergency storage of") : 0;
     const base = eqp / 100 * MDD + ff * hr * 60 / 1e6; return base * (1 + emp / 100);
   },
+
+  // ---- Eleventh batch (batch-eleven.ts)
+  "bolt-group-eccentric": (p) => {
+    const nb = at(p, "line of"), s = at(p, "bolts at"), P = at(p, "load of"), e = at(p, "kips acting");
+    // check every bolt; take the largest resultant
+    const ys = Array.from({ length: nb }, (_, i) => i * s - ((nb - 1) * s) / 2), J = ys.reduce((a, y) => a + y * y, 0);
+    return Math.max(...ys.map((y) => Math.hypot(P / nb, (P * e * y) / J)));
+  },
+  "prestress-elastic-shortening": (p) => {
+    const A = at(p, "A ="), I = at(p, "I ="), e = at(p, "eccentricity of"), Pi = at(p, "force is"), MD = at(p, "moment at midspan is"), Eci = at(p, "Eci =");
+    const top = Pi / A, ecc = ((Pi * e - MD * 12) * e) / I;
+    return (28500 / Eci) * (top + ecc);
+  },
+  "two-way-slab-thickness": (p) => {
+    const L = at(p, "has"), c = at(p, "with");
+    const k = p.slice(0, p.indexOf("using ACI")).includes("without edge beams") ? 30 : 33;
+    return Math.max((L * 12 - c) / k, 5);
+  },
+  "lime-softening-dose": (p) => {
+    const Q = at(p, "treated at"), CO2 = at(p, "CO₂ ="), alk = at(p, "alkalinity ="), Mg = at(p, "hardness ="), ex = at(p, "Mg²⁺ +");
+    return (((CO2 + alk + Mg + ex) / 50) * 28 * Q) / 1000; // meq/L × CaO equivalent weight
+  },
+  "sludge-thickening-volume": (p) => { const [V1, s1, s2] = nums(p); return V1 / (s2 / s1); },
+  "contact-basin-volume": (p) => {
+    const CT = at(p, "CT ="), Q = at(p, "flow of"), C = at(p, "residual of"), bf = at(p, "(T₁₀/T) of");
+    return (CT / C / bf / (24 * 60)) * Q;
+  },
+  "thickener-diameter": (p) => { const [Q, s] = nums(p), SLR = at(p, "rate is"); return 2 * Math.sqrt((Q * s * 10) / SLR / Math.PI); },
+  "spiral-curve-length": (p) => { const R = at(p, "radius"), V = at(p, "on a"), C = at(p, "C ="); return (3.15 * V * V * V) / R / C; },
+  "roundabout-entry-capacity": (p) => { const ve = at(p, "flow is"), vc = at(p, "circulating flow is"); return ve / (1380 / Math.exp(0.00102 * vc)); },
+  "toll-booth-queue-wait": (p) => {
+    const lam = at(p, "at"), mu = at(p, "rate of");
+    return ((lam / mu) / (mu - lam)) * 3600; // Wq = ρ/(μ − λ)
+  },
+  "geotextile-aos": (p) => {
+    const D85 = at(p, "D₈₅ ="), Cu = at(p, "and Cu =");
+    let B = 1;
+    if (Cu > 2 && Cu <= 4) B = Cu / 2;
+    else if (Cu > 4 && Cu < 8) B = 8 / Cu;
+    return B * D85;
+  },
+  "equipment-owning-cost": (p) => {
+    const P = at(p, "costs $"), S = at(p, "sold for $"), N = at(p, "after"), hrs = at(p, "works"), rate = at(p, "total") / 100;
+    const aai = (P * (N + 1) + S * (N - 1)) / (2 * N);
+    return ((P - S) / N + rate * aai) / hrs;
+  },
 };
 
 

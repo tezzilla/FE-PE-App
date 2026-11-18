@@ -201,10 +201,17 @@ Streeter-Phelps minimum DO, two-axle maximum moment, live load reduction, distri
 Conceptual (8): unconfined compression, pile setup, high-strain dynamic testing, crosshole sonic
 logging, sign mounting height, retroreflectivity, offset stakes, grade stake markings.
 
+## Eleventh batch (November 2026)
+
+Problem types (12): eccentric bolt group (elastic method), prestress elastic shortening loss, two-way
+flat plate minimum thickness, lime softening dose, sludge thickening volume, chlorine contact basin
+volume, gravity thickener diameter, spiral curve length, roundabout entry v/c, M/M/1 toll queue wait,
+geotextile AOS retention, equipment ownership cost.
+
 ## Next batch
 
-1. Structural: two-way slab and shear wall basics, bolt group eccentricity, prestress losses.
-2. WRE: lime-soda softening doses, sludge thickening and dewatering, chlorine contact basin sizing.
-3. Transportation: weaving segment, roundabout entry capacity, spiral curves.
-4. Construction: resource leveling, crane ground pressure with mats, trench box selection.
-5. Geotechnical: lateral pile capacity (Broms), rock bearing, geosynthetic filter criteria.
+1. Structural: shear wall overturning, base plate bearing, development length calculation.
+2. WRE: rapid sand filter backwash rate, ion exchange capacity, landfill leachate (HELP-style balance).
+3. Transportation: weaving segment basics, crash severity indices, sight triangle legs.
+4. Construction: resource histogram moments, concrete placement rate for pumps.
+5. Geotechnical: Broms lateral capacity (short pile in clay), rock socket side resistance.
