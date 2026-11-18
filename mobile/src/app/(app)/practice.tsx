@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { QuestionView } from '@/components/question-view';
 import { ThemedText } from '@/components/themed-text';
 import { Tutor } from '@/components/tutor';
-import { Button, Card, ErrorView, Loading, Screen } from '@/components/ui';
+import { Button, Card, ErrorView, Loading, ProgressBar, Screen } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useSession } from '@/ctx';
 import { useLoad } from '@/hooks/use-load';
@@ -133,6 +133,7 @@ export default function Practice() {
     <Screen>
       {header}
       <View style={{ gap: Spacing.one }}>
+        <ProgressBar value={(i + (feedback ? 1 : 0)) / Math.max(1, data.questions.length)} color={theme.brand} />
         <ThemedText type="small" themeColor="textSecondary" testID="progress">
           Question {i + 1} of {data.questions.length} · {data.topicNames[q.topic]} · Score {score.correct}/{score.done}
         </ThemedText>
