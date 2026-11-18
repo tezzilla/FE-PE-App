@@ -3,8 +3,10 @@ import type { Template } from "./engine";
 import { WATER_RESOURCES } from "./water-resources";
 import { CIVIL_CORE } from "./civil-core";
 import { EXPANDED } from "./expanded";
+import { PE_DEPTH } from "./pe-depth";
+import { FE_CORE_2 } from "./fe-core-2";
 
-export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE, ...EXPANDED];
+export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE, ...EXPANDED, ...PE_DEPTH, ...FE_CORE_2];
 
 const BY_ID = new Map(TEMPLATES.map((t) => [t.id, t]));
 

@@ -48,7 +48,7 @@ const FE: ResourceSection[] = [
     title: "Official exam documents",
     links: [
       { title: "NCEES FE exam page", url: "https://ncees.org/exams/fe-exam/", note: "Current specifications, fees and handbook version.", cost: "free" },
-      { title: "FE Civil exam specifications (PDF)", url: "https://ncees.org/wp-content/uploads/FE-Civil-CBT-specs.pdf", note: "The 14 knowledge areas and question ranges. Confirm it's the newest version on the FE exam page.", cost: "free" },
+      { title: "FE Civil exam specifications (PDF)", url: "https://ncees.org/wp-content/uploads/FE-Civil-CBT-specs-1.pdf", note: "The July 2020 specification: the 14 knowledge areas and question ranges.", cost: "free" },
       { title: "FE Reference Handbook", url: MYNCEES, note: "Free download from your MyNCEES dashboard. The same searchable PDF is on screen during the exam, so practice with it.", cost: "free" },
     ],
   },

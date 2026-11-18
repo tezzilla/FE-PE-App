@@ -7,6 +7,8 @@ import { buildVariant, type Template } from "./engine";
 const nums = (s: string) => (s.match(/-?\d[\d,]*\.?\d*/g) ?? []).map((x) => Number(x.replace(/,/g, "")));
 const rad = (d: number) => (d * Math.PI) / 180;
 const g = 9.81, gw = 9.81;
+/** First number after a label in the prompt. */
+const at = (p: string, label: string) => { const i = p.indexOf(label); return i < 0 ? NaN : nums(p.slice(i + label.length))[0]; };
 
 // Each solver gets the prompt and returns the expected answer.
 export const SOLVERS: Record<string, (p: string) => number> = {
@@ -69,6 +71,91 @@ export const SOLVERS: Record<string, (p: string) => number> = {
   "tr55-sheet-flow": (p) => { const [L, nn, s, , , P2] = nums(p); return ((0.007 * (nn * L) ** 0.8) / (Math.sqrt(P2) * s ** 0.4)) * 60; },
   "tr55-shallow-flow": (p) => { const [L, s] = nums(p); const k = p.includes("unpaved") ? 16.1345 : 20.3282; return L / (60 * k * Math.sqrt(s)); },
   "hec22-gutter-flow": (p) => { const [Sx, SL, nn, , , T] = nums(p); return (0.56 / nn) * Sx ** (5 / 3) * Math.sqrt(SL) * T ** (8 / 3); },
+  // ---- PE depth (pe-depth.ts) and FE core additions (fe-core-2.ts)
+  "pump-system-power": (p) => {
+    const [dz, L, D, Q, fr, K, eta] = nums(p); const V = Q / (Math.PI * D * D / 4); const hv = V * V / (2 * g);
+    return gw * Q * (dz + fr * (L / D) * hv + K * hv) / (eta / 100);
+  },
+  "hydraulic-jump-energy-loss": (p) => {
+    const [b, Q, y1] = nums(p); const Fr = Q / (b * y1) / Math.sqrt(g * y1); const y2 = 0.5 * y1 * (Math.sqrt(1 + 8 * Fr * Fr) - 1);
+    const E = (y: number) => y + (Q / (b * y)) ** 2 / (2 * g); return E(y1) - E(y2); // specific energy difference
+  },
+  "thiem-confined-drawdown": (p) => { const [b, K, Q, r2, s2, r1] = nums(p); return s2 + Q * Math.log(r2 / r1) / (2 * Math.PI * K * b); },
+  "streeter-phelps-do": (p) => {
+    const [Qr, DOr, Lr, Qw, DOw, Lw, DOs, kd, kr, t] = nums(p);
+    const L0 = (Qr * Lr + Qw * Lw) / (Qr + Qw), D0 = DOs - (Qr * DOr + Qw * DOw) / (Qr + Qw);
+    return DOs - (kd * L0 / (kr - kd) * (Math.exp(-kd * t) - Math.exp(-kr * t)) + D0 * Math.exp(-kr * t));
+  },
+  "chlorine-ct": (p) => { const [V, Q, bf, C] = nums(p); return C * bf * (V / Q) * 24 * 60; },
+  "hazen-williams-headloss-us": (p) => { const [Din, L, Q, C] = nums(p); return 4.73 * L * Q ** 1.852 / (C ** 1.852 * (Din / 12) ** 4.87); },
+  "contracted-weir-flow": (p) => { const [L, H] = nums(p); return 3.33 * (L - 2 * 0.1 * H) * H ** 1.5; },
+  "total-hardness": (p) => { const [Ca, Mg] = nums(p); return Ca * 2 * 50 / 40.08 + Mg * 2 * 50 / 24.305; }, // meq/L x 50, from atomic weights
+  "strip-footing-bearing-wt": (p) => {
+    const B = at(p, "footing"), Df = at(p, "founded"), gm = at(p, "weighs"), gs = at(p, "below it is"), Nq = at(p, "Nq ="), Ng = at(p, "Nγ ="), FS = at(p, "safety of");
+    return (gm * Df * Nq + 0.5 * (gs - gw) * B * Ng) / FS;
+  },
+  "consolidation-time": (p) => { const H = at(p, "A"), cv = at(p, "consolidation is"), Tv = at(p, "(Tv ="); const Hd = p.includes("both its top and bottom") ? H / 2 : H; return Tv * Hd * Hd / cv; },
+  "infinite-slope-seepage": (p) => { const phi = at(p, "φ' ="), beta = at(p, "inclined at"), gs = at(p, "unit weight is"); return ((gs - gw) / gs) * Math.tan(rad(phi)) / Math.tan(rad(beta)); },
+  "pile-alpha-capacity": (p) => {
+    const D = at(p, "A"), L = at(p, "driven"), cu = at(p, "strength"), a = at(p, "α ="), FS = at(p, "safety of");
+    return (a * cu * Math.PI * D * L + 9 * cu * Math.PI * D * D / 4) / FS;
+  },
+  "aisc-column-capacity": (p) => {
+    const A = at(p, "gross area"), r = at(p, "gyration"), KL = at(p, "about that axis is"), Fy = at(p, "Fy ="), E = at(p, "E =");
+    const sl = KL * 12 / r, Fe = Math.PI ** 2 * E / (sl * sl), Fcr = sl <= 4.71 * Math.sqrt(E / Fy) ? Fy * 0.658 ** (Fy / Fe) : 0.877 * Fe;
+    return 0.9 * Fcr * A;
+  },
+  "beam-column-interaction": (p) => {
+    const Pr = at(p, "Pr ="), Mr = at(p, "Mr ="), Pc = at(p, "φPn ="), Mc = at(p, "φMn =");
+    return Pr / Pc >= 0.2 ? Pr / Pc + (8 / 9) * (Mr / Mc) : Pr / (2 * Pc) + Mr / Mc;
+  },
+  "rc-beam-shear-vc": (p) => { const bw = at(p, "bw ="), d = at(p, "d ="), fc = at(p, "f'c ="); return 0.75 * 2 * Math.sqrt(fc) * bw * d / 1000; },
+  "ss-udl-deflection-us": (p) => { const E = at(p, "E ="), I = at(p, "I ="), L = at(p, "spans") * 12, w = at(p, "load of") / 12; return 5 * w * L ** 4 / (384 * E * I); },
+  "lrfd-governing-combination": (p) => { const D = at(p, "D ="), L = at(p, "L ="), S = at(p, "S ="); return Math.max(1.4 * D, 1.2 * D + 1.6 * L + 0.5 * S, 1.2 * D + 1.6 * S + L); },
+  "crest-curve-length-ssd": (p) => {
+    const [g1, g2, S] = nums(p); const A = Math.abs(g2 - g1);
+    const a = A * S * S / 2158, b = 2 * S - 2158 / A; return S < a ? a : b; // S<L case if consistent, else S>L
+  },
+  "freeway-flow-rate": (p) => { const [N, V, PHF, PT, ET] = nums(p); return V / (PHF * N * (1 / (1 + (PT / 100) * (ET - 1)))); },
+  "sag-curve-headlight": (p) => {
+    const [g1, g2, S] = nums(p); const A = Math.abs(g2 - g1);
+    const a = A * S * S / (400 + 3.5 * S), b = 2 * S - (400 + 3.5 * S) / A; return S < a ? a : b;
+  },
+  "wall-formwork-pressure": (p) => {
+    const h = at(p, "placed in"), R = at(p, "forms at"), T = at(p, "temperature of");
+    return Math.min(Math.max(150 + 9000 * R / T, 600), 150 * h);
+  },
+  "haul-fleet-size": (p) => { const [ld, hl, dp, rt] = nums(p); return Math.ceil((ld + hl + dp + rt) / ld - 1e-9); },
+  "estimate-at-completion": (p) => { const [BAC, EV, AC] = nums(p); return AC + (BAC - EV) / (EV / AC); }, // AC + ETC at current CPI
+  "truss-apex-member-force": (p) => { const [th, P] = nums(p); return P / 2 / Math.sin(rad(th)); },
+  "tee-section-centroid": (p) => {
+    const [bf, tf, tw, hw] = nums(p); const top = hw + tf;
+    // centroid from the top, then convert
+    const fromTop = (bf * tf * tf / 2 + tw * hw * (tf + hw / 2)) / (bf * tf + tw * hw); return top - fromTop;
+  },
+  "solid-shaft-torsion": (p) => { const [d, T] = nums(p); const J = Math.PI * d ** 4 / 32; return T * 1e6 * (d / 2) / J; },
+  "principal-stress-max": (p) => {
+    const sx = at(p, "σx ="), sy = at(p, "σy ="), t = at(p, "τxy =");
+    // largest eigenvalue of the 2x2 stress tensor
+    const tr = sx + sy, det = sx * sy - t * t; return tr / 2 + Math.sqrt(tr * tr / 4 - det);
+  },
+  "incline-push-force": (p) => { const [W, th, mu] = nums(p); return W * Math.sin(rad(th)) + mu * W * Math.cos(rad(th)); },
+  "drop-onto-spring": (p) => {
+    const [m, h, k] = nums(p); const K = k * 1000, W = m * g;
+    // solve ½Kx² − Wx − Wh = 0 by bisection
+    let lo = 0, hi = 10; for (let i = 0; i < 200; i++) { const x = (lo + hi) / 2; if (0.5 * K * x * x - W * x - W * h > 0) hi = x; else lo = x; }
+    return lo * 1000;
+  },
+  "curve-pt-station": (p) => {
+    const R = at(p, "radius"), I = at(p, "angle of"); const m = p.match(/PI is at station (\d+)\+(\d+\.\d+)/)!;
+    const pi = Number(m[1]) * 100 + Number(m[2]); return pi - R * Math.tan(rad(I / 2)) + R * rad(I);
+  },
+  "venturi-flow": (p) => {
+    const [D1, D2, dh, Cd] = nums(p); const A1 = Math.PI * D1 * D1 / 4, A2 = Math.PI * D2 * D2 / 4;
+    // continuity + Bernoulli: V2² − V1² = 2gΔh with V1 = V2·A2/A1
+    const V2 = Math.sqrt(2 * g * dh / (1 - (A2 / A1) ** 2)); return Cd * A2 * V2 * 1000;
+  },
+  "breakeven-volume": (p) => { const [F, pr, v] = nums(p); return F / (pr - v); },
 };
 
 
