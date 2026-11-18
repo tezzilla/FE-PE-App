@@ -1,8 +1,9 @@
 import type { ExamId } from "../content/types";
 import type { Template } from "./engine";
 import { WATER_RESOURCES } from "./water-resources";
+import { CIVIL_CORE } from "./civil-core";
 
-export const TEMPLATES: Template[] = [...WATER_RESOURCES];
+export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE];
 
 const BY_ID = new Map(TEMPLATES.map((t) => [t.id, t]));
 

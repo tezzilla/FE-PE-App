@@ -91,10 +91,11 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
 
   // Numeric choices are listed ascending, the way the computer-based exams present them.
   const values = [g.answer, ...picked].sort((a, b) => a - b);
-  const unit = g.unit ? ` ${g.unit}` : "";
+  // Currency goes in front ($61,500); other units after (61.4 kN).
+  const withUnit = (v: number) => (g.unit === "$" ? "$" + label(v) : g.unit ? `${label(v)} ${g.unit}` : label(v));
   return {
     prompt: g.prompt,
-    choices: values.map((v) => label(v) + unit),
+    choices: values.map(withUnit),
     answerIndex: values.indexOf(g.answer),
     answerValue: g.answer,
     unit: g.unit,
