@@ -4,6 +4,7 @@
 export const FOUNDER = {
   name: "Cortez Mora",
   initials: "CM",
+  photo: "/founder.jpg",
   role: "Founder of CivilPrep",
   credentials: ["Passed the FE Civil exam", "Passed the PE Civil: Water Resources & Environmental exam"],
   paragraphs: [

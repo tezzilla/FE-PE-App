@@ -8,6 +8,7 @@ import { ProductPreview } from "@/components/ProductPreview";
 import { PriceCompare } from "@/components/PriceCompare";
 import { tutorEnabled } from "@/lib/tutor";
 import { bankStats } from "@/lib/questions";
+import Image from "next/image";
 import { FOUNDER } from "@/lib/content/about";
 
 const FEATURES = [
@@ -191,13 +192,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       {/* Founder */}
       <section className="card p-6 sm:p-10 grid md:grid-cols-[auto_1fr] gap-6 sm:gap-10 items-start reveal">
         <div className="flex md:flex-col items-center gap-4 md:w-48 md:text-center">
-          <div
-            className="shrink-0 rounded-full flex items-center justify-center text-2xl font-extrabold"
-            style={{ width: "5.5rem", height: "5.5rem", background: "var(--brand-soft)", color: "var(--brand-text)" }}
-            aria-hidden
-          >
-            {FOUNDER.initials}
-          </div>
+          <Image
+            src={FOUNDER.photo}
+            alt={`Photo of ${FOUNDER.name}`}
+            width={240}
+            height={240}
+            className="shrink-0 rounded-full object-cover w-24 h-24 md:w-36 md:h-36"
+            style={{ border: "3px solid var(--brand-soft)" }}
+          />
           <div>
             <p className="font-bold">{FOUNDER.name}</p>
             <p className="muted text-sm">{FOUNDER.role}</p>
