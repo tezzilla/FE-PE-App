@@ -772,6 +772,60 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const Hdr = dbl ? H / 2 : H;
     return (Tv * Hdr * Hdr) / cv;
   },
+
+  // ---- Fourteenth batch (batch-fourteen.ts)
+  "sway-moment-magnification": (p) => {
+    const SPu = at(p, "ΣPu ="), SPc = at(p, "ΣPc ="), Mns = at(p, "(nonsway) loads is"), Ms = at(p, "(sway) loads is");
+    const ds = Math.max(1, 1 / (1 - SPu / (0.75 * SPc)));
+    return Mns + ds * Ms;
+  },
+  "timber-beam-stability-cl": (p) => {
+    const m = p.match(/A ([\d.]+) in × ([\d.]+) in/)!, b = Number(m[1]), d = Number(m[2]);
+    const le = at(p, "ℓe ="), Emin = at(p, "E'min ="), Fbs = at(p, "CV) =");
+    const FbE = (1.2 * Emin * b * b) / (le * d), a = FbE / Fbs;
+    // the NDS expression is the smaller root of 0.95·CL² − (1 + α)·CL + α = 0
+    const A = 0.95, B = -(1 + a), C = a;
+    return (-B - Math.sqrt(B * B - 4 * A * C)) / (2 * A);
+  },
+  "hardy-cross-correction": (p) => {
+    const pipes = [...p.matchAll(/pipe [A-D]: \+?(-?[\d.]+) cfs \(k = ([\d.]+)\)/g)].map((m) => ({ Q: Number(m[1]), k: Number(m[2]) }));
+    let num = 0, den = 0;
+    for (const { Q, k } of pipes) { const h = k * Math.sign(Q) * Math.pow(Math.abs(Q), 1.852); num += h; den += 1.852 * k * Math.pow(Math.abs(Q), 0.852); }
+    return -num / den;
+  },
+  "pump-operating-point": (p) => {
+    const pm = p.match(/H = (\d+) − ([\d.]+)Q²/)!, sm = p.match(/H = (\d+) \+ ([\d.]+)Q²/)!;
+    const H0 = Number(pm[1]), a = Number(pm[2]), Hs = Number(sm[1]), K = Number(sm[2]);
+    // bisection on pump head minus system head
+    let lo = 0, hi = 100; for (let i = 0; i < 200; i++) { const q = (lo + hi) / 2; if (H0 - a * q * q > Hs + K * q * q) lo = q; else hi = q; }
+    return lo;
+  },
+  "gumbel-flood-frequency": (p) => {
+    const mean = at(p, "mean of"), sd = at(p, "deviation of"), T = at(p, "what is the");
+    const yT = -Math.log(-Math.log(1 - 1 / T)); // reduced variate
+    const K = (Math.sqrt(6) / Math.PI) * (yT - 0.5772);
+    return mean + K * sd;
+  },
+  "signal-uniform-delay": (p) => {
+    const C = at(p, "has a"), g = at(p, "cycle with"), v = at(p, "uniform at") / 3600, s = 0.5;
+    // area of the queue triangle per cycle divided by vehicles per cycle
+    const r = C - g, Qmax = v * r, t0 = Qmax / (s - v);
+    return (0.5 * Qmax * (r + t0)) / (v * C);
+  },
+  "learning-curve-unit-time": (p) => { const T1 = at(p, "takes"), rate = at(p, "along a") / 100, N = at(p, "pier number"); return T1 * Math.pow(rate, Math.log2(N)); },
+  "cost-index-capacity-scaling": (p) => {
+    const S1 = at(p, "A"), I1 = at(p, "index was"), C1 = at(p, "cost $"), S2 = at(p, "cost of a"), I2 = at(p, "today (index");
+    return C1 * Math.exp(0.6 * Math.log(S2 / S1)) * (I2 / I1);
+  },
+  "crane-lift-percent-capacity": (p) => {
+    const load = at(p, "lift a"), rig = at(p, "weighs"), hook = at(p, "hook block"), jib = p.includes("jib requires") ? at(p, "requires a") : 0, cap = at(p, "planned radius is");
+    return ((load + rig + hook + jib) * 100) / cap;
+  },
+  "dynamic-compaction-depth": (p) => { const W = at(p, "drops a"), H = at(p, "weight from"), nn = at(p, "n ="); return nn * Math.sqrt(W * H); },
+  "mse-pullout-resistance": (p) => {
+    const z = at(p, "layer"), gm = at(p, "γ ="), Le = at(p, "extends"), Fs = at(p, "F* =");
+    return 2 * 0.8 * Fs * gm * z * Le;
+  },
 };
 
 

@@ -221,11 +221,18 @@ sequent peak reservoir storage, sediment basin area from Stokes' law, pressure a
 parking peak accumulation, walkway pedestrian space, 85th percentile speed, space-mean speed,
 cost-loaded cumulative planned value, preload surcharge time.
 
+## Fourteenth batch (November 2026)
+
+Problem types (11): sway frame moment magnification, timber beam stability factor CL, Hardy Cross loop
+correction, pump operating point, Gumbel flood frequency, signal uniform delay (D/D/1), learning curve
+unit time, cost index with capacity scaling, crane lift percent of capacity, dynamic compaction depth,
+MSE geogrid pullout.
+
 ## Next batch
 
-1. Structural: sway frame magnification, timber beam lateral stability (CL), masonry shear.
-2. WRE: Hardy Cross single-loop correction, pump curves and operating point, flood frequency (Gumbel).
-3. Transportation: queue length at a signal (D/D/1 per cycle), weaving segment ratio, design vehicle
-   turning paths (conceptual).
-4. Construction: learning curves, cost indexes (escalation), lift plans (crane percent capacity).
-5. Geotechnical: dynamic compaction depth, MSE pullout resistance.
+1. Structural: masonry shear, steel tension member block shear, composite deck shear studs.
+2. WRE: culvert inlet control (unsubmerged weir form), stormwater infiltration trench sizing, aerated
+   grit chamber detention.
+3. Transportation: freeway merge (on-ramp) capacity check, horizontal sight line offset with spirals.
+4. Construction: crane outrigger pad bearing with mats, earthwork mass haul average haul distance.
+5. Geotechnical: Coulomb active pressure with wall friction, seismic earth pressure (Mononobe-Okabe).
