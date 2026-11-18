@@ -7,6 +7,7 @@ import { FAQ } from "@/components/FAQ";
 import { ProductPreview } from "@/components/ProductPreview";
 import { PriceCompare } from "@/components/PriceCompare";
 import { tutorEnabled } from "@/lib/tutor";
+import { bankStats } from "@/lib/questions";
 import { FOUNDER } from "@/lib/content/about";
 
 const FEATURES = [
@@ -32,6 +33,7 @@ const STEPS = [
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
   const { deleted } = await searchParams;
+  const bank = await bankStats();
   const subs = SOLD_PLANS.filter((p) => p.kind === "subscription");
   const fePlan = subs.find((p) => p.exam === "fe-civil")!;
   const pePlan = subs.find((p) => p.exam === "pe-civil")!;
@@ -98,7 +100,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
           ["110 + 80", "question timed FE and PE exams"],
           [String(topicCount), "FE and PE topic areas covered"],
           [String(FLASHCARDS.length), "formula flashcards"],
-          tutor ? ["24/7", "AI tutor on every solution"] : ["Free", "sample questions in every topic"],
+          // The live bank size once there's a meaningful number of approved problem types.
+          bank.generators >= 5
+            ? [String(bank.generators), "problem types with unlimited fresh numbers"]
+            : tutor
+              ? ["24/7", "AI tutor on every solution"]
+              : ["Free", "sample questions in every topic"],
         ].map(([n, l]) => (
           <div key={l} className="card p-5 text-center">
             <p className="text-3xl font-extrabold tracking-tight">{n}</p>
