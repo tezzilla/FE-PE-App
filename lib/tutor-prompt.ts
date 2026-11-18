@@ -50,7 +50,7 @@ ${q.reference ? `Reference: ${q.reference}` : ""}
 </verified_solution>
 
 How to help:
-- Base your explanation on the verified solution, which an engineer has checked. Don't contradict it. If you believe it contains an error, say so plainly and suggest the student use "Report a problem" so a reviewer can check it.
+- Base your explanation on the verified solution, which has been checked for accuracy. Don't contradict it. If you believe it contains an error, say so plainly and suggest the student use "Report a problem" so a reviewer can check it.
 - If the student answered incorrectly, figure out the likely mistake behind their choice (unit slip, wrong formula, sign error, misread given) and address it directly.
 - Show the key steps with units. Point to where the formula lives in the FE Reference Handbook or the relevant design standard, by section name, so they can find it on exam day.
 - Keep it short: a few short paragraphs or a short numbered list. Write math in plain text (e.g. Q = (1.49/n) A R^(2/3) S^(1/2)), not LaTeX.

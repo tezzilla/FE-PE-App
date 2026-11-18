@@ -16,7 +16,7 @@ export async function topicReview(user: User | null, exam: ExamId, topic: string
   const t = EXAMS[exam].topics.find((x) => x.slug === topic);
   const guide = topicGuide(exam, topic);
   if (!t || !guide) return null;
-  // Worked example: a fixed variant of an engineer-approved problem type, else a free sample question.
+  // Worked example: a fixed variant of an approved problem type, else a free sample question.
   const approved = await approvedTemplates();
   const tpl = templatesFor(exam, topic).find((x) => approved.has(x.id));
   const example = (tpl && templateToQuestion(tpl, exam, 1)) || questionsFor(exam, topic).find((q) => q.free) || null;

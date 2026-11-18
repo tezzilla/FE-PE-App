@@ -55,7 +55,7 @@ export function TutorPanel({ questionId }: { questionId: string }) {
         {left !== null && <span className="muted text-xs">{left} questions left today</span>}
       </div>
       <p className="muted text-xs">
-        Explains the engineer-verified solution. AI can make mistakes; the verified solution above is the authority.
+        Explains the verified solution. AI can make mistakes; the verified solution above is the authority.
       </p>
       {turns.map((t, i) => (
         <div key={i} className={t.role === "user" ? "text-sm font-medium" : "text-sm whitespace-pre-line leading-relaxed"}>

@@ -7,7 +7,7 @@ import { canSeeQuestion, hasExamAccess } from "./access";
 import { blockedFor, hit } from "./ratelimit";
 import { buildTutorSystem, cleanHistory, TUTOR_LIMITS } from "./tutor-prompt";
 
-// AI tutor: explains a problem the student has already answered, grounded in the engineer-verified
+// AI tutor: explains a problem the student has already answered, grounded in the verified
 // solution. Off unless ANTHROPIC_API_KEY is set.
 
 const MODEL = "claude-opus-5-5";

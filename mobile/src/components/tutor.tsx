@@ -49,7 +49,7 @@ export function Tutor({ questionId }: { questionId: string }) {
     <Card>
       <ThemedText type="smallBold">AI tutor{left !== null ? ` · ${left} left today` : ''}</ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
-        Explains the engineer-verified solution. AI can make mistakes; the verified solution is the authority.
+        Explains the verified solution. AI can make mistakes; the verified solution is the authority.
       </ThemedText>
       {turns.map((t, i) => (
         <ThemedText key={i} type={t.role === 'user' ? 'smallBold' : 'default'}>

@@ -105,7 +105,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
               </p>
               {gens > 0 && (
                 <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
-                  + unlimited problems from {gens} engineer-reviewed generator{gens > 1 ? "s" : ""}{access ? "" : " 🔒"}
+                  + unlimited problems from {gens} verified problem type{gens > 1 ? "s" : ""}{access ? "" : " 🔒"}
                 </p>
               )}
               <div className="flex gap-4 mt-2 text-sm">
