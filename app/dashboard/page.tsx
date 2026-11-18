@@ -8,13 +8,14 @@ import { ReadinessCard } from "@/components/ReadinessCard";
 
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard({ searchParams }: { searchParams: Promise<{ subscribed?: string }> }) {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ subscribed?: string; reset?: string }> }) {
   const user = await requireUser();
-  const { subscribed } = await searchParams;
+  const { subscribed, reset } = await searchParams;
   const mocks = await db.mockExam.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 5 });
 
   return (
     <div className="space-y-8">
+      {reset && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Password updated. You&apos;re signed in, and other devices were signed out.</div>}
       {subscribed && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Payment received. Full question bank unlocked. (If it still says Free tier, refresh in a few seconds.)</div>}
 
       <div className="flex flex-wrap items-center justify-between gap-4">

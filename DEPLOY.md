@@ -27,6 +27,8 @@ In **Settings → Environment Variables**, add for all environments:
 | `APP_URL` | Your site address, e.g. `https://fe-pe-app.vercel.app` (no trailing slash) |
 | `REVIEWER_EMAILS` | Your email. Comma-separate to add more reviewers. |
 | `CONTACT_EMAIL` | Public address for legal and privacy requests, shown on the Terms and Privacy pages. |
+| `POSTMARK_SERVER_TOKEN` | Postmark > Servers > your server > API Tokens. Mark Sensitive. Sends password reset, welcome and password-changed emails. |
+| `EMAIL_FROM` | A sender you verified in Postmark (Sender Signatures or a verified domain), e.g. `CivilPrep <support@yourdomain.com>`. |
 
 Never commit these values to git. Changing `AUTH_SECRET` later signs everyone out.
 

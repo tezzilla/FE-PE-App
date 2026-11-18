@@ -2,6 +2,7 @@ import "server-only";
 import bcrypt from "bcryptjs";
 import type { User } from "@prisma/client";
 import { db } from "./db";
+import { sendEmail, welcomeEmail } from "./email";
 import { LIMITS, blockedFor, clear, clientIp, hit, tooMany } from "./ratelimit";
 
 export type AccountResult = { user: User } | { error: string; rateLimited?: boolean };
@@ -22,6 +23,7 @@ export async function createAccount(emailIn: unknown, passwordIn: unknown, nameI
   if (password.length < 8) return { error: "Password must be at least 8 characters." };
   if (await db.user.findUnique({ where: { email } })) return { error: "An account with that email already exists." };
   const user = await db.user.create({ data: { email, name, passwordHash: await bcrypt.hash(password, 12) } });
+  await sendEmail(welcomeEmail(user.email));
   return { user };
 }
 

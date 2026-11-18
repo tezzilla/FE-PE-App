@@ -99,6 +99,16 @@ export default function SignIn() {
               </ThemedText>
             )}
           </Card>
+          {mode === 'login' && (
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+              style={{ textAlign: 'center', textDecorationLine: 'underline' }}
+              onPress={() => WebBrowser.openBrowserAsync(siteUrl('/forgot-password'))}
+              testID="forgot-password">
+              Forgot password?
+            </ThemedText>
+          )}
           <Button
             variant="ghost"
             testID="toggle-mode"

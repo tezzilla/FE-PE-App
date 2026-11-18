@@ -36,6 +36,7 @@ model User {
   reviews              TemplateReview[]
   reports              ProblemReport[]
   passes               Pass[]
+  resetTokens          PasswordResetToken[]
 }
 
 model Attempt {
@@ -122,6 +123,19 @@ model Pass {
   expiresAt         DateTime
   revokedAt         DateTime?
   createdAt         DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// Password reset links. Only a SHA-256 hash of the token is stored; tokens are single-use and expire.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([userId])
 }

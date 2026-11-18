@@ -2,7 +2,9 @@ import "server-only";
 import bcrypt from "bcryptjs";
 import type { User } from "@prisma/client";
 import { db } from "./db";
-import { LIMITS, blockedFor, clear, hit, tooMany } from "./ratelimit";
+import { createHash, randomBytes } from "node:crypto";
+import { LIMITS, blockedFor, clear, clientIp, hit, tooMany } from "./ratelimit";
+import { passwordChangedEmail, resetEmail, sendEmail } from "./email";
 import { stripe, stripeEnabled } from "./stripe";
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string };
@@ -36,6 +38,7 @@ export async function changePassword(user: User, current: unknown, next: unknown
     where: { id: user.id },
     data: { passwordHash: await bcrypt.hash(password, 12), sessionVersion: { increment: 1 } },
   });
+  await sendEmail(passwordChangedEmail(updated.email));
   return { ok: true, user: updated };
 }
 
@@ -93,4 +96,61 @@ export async function exportData(user: User) {
     problemReports: reports,
     passes,
   };
+}
+
+// ---- Password reset -----------------------------------------------------------------------
+
+const RESET_TTL_MS = 60 * 60_000;
+const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
+
+/**
+ * Start a password reset. Always behaves the same whether or not the email has an account,
+ * so the form can't be used to discover who is registered.
+ */
+export async function requestPasswordReset(emailIn: unknown): Promise<{ ok: true } | { ok: false; error: string }> {
+  const email = String(emailIn ?? "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "Enter a valid email." };
+  const ipKey = `reset:ip:${await clientIp()}`;
+  const emailKey = `reset:email:${email}`;
+  const wait = Math.max(await blockedFor(ipKey, LIMITS.resetIp), await blockedFor(emailKey, LIMITS.resetEmail));
+  if (wait) return { ok: false, error: tooMany(wait) };
+  await hit(ipKey, LIMITS.resetIp);
+  await hit(emailKey, LIMITS.resetEmail);
+
+  const user = await db.user.findUnique({ where: { email } });
+  if (user) {
+    const token = randomBytes(32).toString("base64url");
+    await db.passwordResetToken.create({
+      data: { userId: user.id, tokenHash: sha256(token), expiresAt: new Date(Date.now() + RESET_TTL_MS) },
+    });
+    await sendEmail(resetEmail(user.email, token));
+  }
+  return { ok: true };
+}
+
+/** Check a reset token without using it (for showing the form). */
+export async function resetTokenValid(token: unknown) {
+  const row = await db.passwordResetToken.findUnique({ where: { tokenHash: sha256(String(token ?? "")) } });
+  return !!row && !row.usedAt && row.expiresAt.getTime() > Date.now();
+}
+
+/** Set a new password from a reset link. Signs out every existing session. Returns the user. */
+export async function completePasswordReset(token: unknown, passwordIn: unknown): Promise<{ ok: true; user: User } | { ok: false; error: string }> {
+  const password = String(passwordIn ?? "");
+  if (password.length < 8) return { ok: false, error: "Password must be at least 8 characters." };
+  const row = await db.passwordResetToken.findUnique({ where: { tokenHash: sha256(String(token ?? "")) } });
+  if (!row || row.usedAt || row.expiresAt.getTime() <= Date.now()) {
+    return { ok: false, error: "This reset link is invalid or has expired. Request a new one." };
+  }
+  // Claim the token atomically so a link can't be used twice, even concurrently.
+  const claimed = await db.passwordResetToken.updateMany({ where: { id: row.id, usedAt: null }, data: { usedAt: new Date() } });
+  if (claimed.count === 0) return { ok: false, error: "This reset link was already used." };
+  const user = await db.user.update({
+    where: { id: row.userId },
+    data: { passwordHash: await bcrypt.hash(password, 12), sessionVersion: { increment: 1 } },
+  });
+  await db.passwordResetToken.deleteMany({ where: { userId: user.id, usedAt: null } });
+  await clear(`login:email:${user.email}`); // a locked-out user can sign in right away
+  await sendEmail(passwordChangedEmail(user.email));
+  return { ok: true, user };
 }

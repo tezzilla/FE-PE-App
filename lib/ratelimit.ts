@@ -13,6 +13,9 @@ export const LIMITS = {
   signupIp: { max: 20, windowMs: 60 * 60_000 },
   // Password checks on account changes (change password, delete account) per user.
   accountUser: { max: 8, windowMs: 15 * 60_000 },
+  // Password reset emails per address and per IP.
+  resetEmail: { max: 3, windowMs: 60 * 60_000 },
+  resetIp: { max: 10, windowMs: 60 * 60_000 },
   // Problem reports per user.
   reportUser: { max: 20, windowMs: 60 * 60_000 },
 } as const;
