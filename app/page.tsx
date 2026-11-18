@@ -9,6 +9,9 @@ import { PriceCompare } from "@/components/PriceCompare";
 import { tutorEnabled } from "@/lib/tutor";
 import { bankStats } from "@/lib/questions";
 import Image from "next/image";
+import CountUp from "@/components/CountUp";
+import ContourBackground from "@/components/ContourBackground";
+import SpotlightCard from "@/components/SpotlightCard";
 import { FOUNDER } from "@/lib/content/about";
 
 const FEATURES = [
@@ -65,7 +68,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       {deleted && <div className="card p-4 text-center">Your account has been deleted.</div>}
 
       {/* Hero */}
-      <section className="hero-glow -mx-4 px-4 pt-4 sm:pt-10 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
+      <section className="hero-glow relative isolate -mx-4 px-4 pt-4 sm:pt-10 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
+        <ContourBackground />
         <div className="space-y-6 enter">
           <p className="eyebrow">FE &amp; PE Civil exam prep</p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05]">
@@ -109,7 +113,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
               : ["Free", "sample questions in every topic"],
         ].map(([n, l]) => (
           <div key={l} className="card p-5 text-center">
-            <p className="text-3xl font-extrabold tracking-tight">{n}</p>
+            <p className="text-3xl font-extrabold tracking-tight"><CountUp value={n} /></p>
             <p className="muted text-sm mt-1">{l}</p>
           </div>
         ))}
@@ -148,11 +152,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((f) => (
-            <div key={f.title} className="card p-6 space-y-3">
+            <SpotlightCard key={f.title} className="p-6 space-y-3">
               <span className="icon-tile"><Icon name={f.icon} /></span>
               <h3 className="font-semibold text-lg">{f.title}</h3>
               <p className="muted text-sm leading-relaxed">{f.text}</p>
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </section>

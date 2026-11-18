@@ -83,7 +83,7 @@ body {
   border-radius: 0.7rem; background: var(--brand-soft); color: var(--brand-text);
 }
 .hero-glow {
-  background: radial-gradient(60% 60% at 70% 20%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 70%);
+  background: radial-gradient(closest-side at 72% 46%, color-mix(in srgb, var(--brand) 14%, transparent), transparent);
 }
 .faq summary { cursor: pointer; list-style: none; }
 .faq summary::-webkit-details-marker { display: none; }
@@ -94,6 +94,29 @@ body {
 .navy-section { background: var(--navy); color: var(--navy-fg); border-color: transparent; }
 .navy-section .muted { color: #94a3b8; }
 .navy-section .eyebrow { color: #fdba74; }
+
+/* Hero: topographic contour lines (components/ContourBackground.tsx). Faded toward the edges and text. */
+.contour-bg {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  color: color-mix(in srgb, var(--brand) 32%, transparent);
+  -webkit-mask-image: radial-gradient(closest-side at 72% 46%, #000 25%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 72% 46%, #000 25%, transparent 100%);
+}
+.contour-bg svg { width: 100%; height: 100%; }
+@keyframes contour-drift { from { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); } to { transform: translate3d(-24px, 14px, 0) rotate(2.5deg) scale(1.04); } }
+.contour-drift { transform-origin: 72% 30%; animation: contour-drift 28s ease-in-out infinite alternate; will-change: transform; }
+
+/* Cards with a soft glow that follows the pointer (components/SpotlightCard.tsx). */
+.spotlight { position: relative; overflow: hidden; transition: border-color 0.2s; }
+.spotlight::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.25s;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--brand) 12%, transparent), transparent 70%);
+}
+.spotlight > * { position: relative; }
+@media (hover: hover) {
+  .spotlight:hover::before { opacity: 1; }
+  .spotlight:hover { border-color: color-mix(in srgb, var(--brand) 35%, var(--border)); }
+}
 
 /* ---------- Motion: short, subtle, and off for people who ask for reduced motion ---------- */
 @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
