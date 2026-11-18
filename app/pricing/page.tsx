@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { PLANS } from "@/lib/plans";
-import { billingReady } from "@/lib/stripe";
-import { getCurrentUser } from "@/lib/auth";
+import { billingStatus } from "@/lib/stripe";
+import { getCurrentUser, isReviewer } from "@/lib/auth";
 import { hasActiveSubscription } from "@/lib/access";
 
 export default async function PricingPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
   const user = await getCurrentUser();
   const subscribed = hasActiveSubscription(user);
-  const ready = await billingReady();
+  const status = await billingStatus();
+  const ready = status.ready;
 
   return (
     <div className="space-y-8">
@@ -19,6 +20,18 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
           Plans renew monthly until you cancel. See the <Link href="/terms" className="underline">Terms</Link>.
         </p>
       </div>
+      {isReviewer(user) && status.problems.length > 0 && (
+        <div className="card p-4 space-y-2 text-sm" style={{ borderColor: "#ca8a04" }}>
+          <p className="font-semibold">Billing setup (only reviewers see this)</p>
+          <ul className="list-disc pl-5 space-y-1">
+            {status.problems.map((p) => <li key={p}>{p}</li>)}
+          </ul>
+          <p className="muted">
+            Key mode: {status.keyMode ?? "none"} · Stripe variables present: {status.stripeEnvNames.join(", ") || "none"}.
+            After changing variables in Vercel, redeploy.
+          </p>
+        </div>
+      )}
       {error === "unavailable" && (
         <div className="card p-4 text-center">That plan isn&apos;t available right now. Please try again later.</div>
       )}

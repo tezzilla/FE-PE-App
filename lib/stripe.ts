@@ -74,14 +74,63 @@ export async function planFromPrice(price: Stripe.Price | undefined): Promise<Pl
 
 /** True when Subscribe can work: local fake billing, or Stripe with a price found for every plan. */
 export async function billingReady(): Promise<boolean> {
-  if (fakeBillingAllowed()) return true;
-  if (!stripeEnabled()) return false;
-  try {
-    return (await planPriceIds()).size === PLANS.length;
-  } catch (e) {
-    console.error("Stripe price lookup failed", e);
-    return false;
+  return (await billingStatus()).ready;
+}
+
+export interface BillingStatus {
+  ready: boolean;
+  /** Plain-language problems, for the site owner (shown to reviewers only). Never contains secrets. */
+  problems: string[];
+  /** test / live / restricted-test / restricted-live, from the key prefix only. */
+  keyMode: string | null;
+  /** Names (not values) of environment variables containing "STRIPE". */
+  stripeEnvNames: string[];
+}
+
+function keyMode(key: string | undefined) {
+  const m = /^(sk|rk)_(test|live)_/.exec(key ?? "");
+  return m ? `${m[1] === "rk" ? "restricted-" : ""}${m[2]}` : key ? "unrecognized" : null;
+}
+
+/** Why Subscribe is or isn't available, so the owner can fix configuration without reading logs. */
+export async function billingStatus(): Promise<BillingStatus> {
+  // Only variables that actually have a value; empty ones count as missing.
+  const stripeEnvNames = Object.keys(process.env).filter((k) => k.includes("STRIPE") && process.env[k]).sort();
+  const mode = keyMode(process.env.STRIPE_SECRET_KEY);
+  const base = { keyMode: mode, stripeEnvNames };
+  if (fakeBillingAllowed()) return { ready: true, problems: [], ...base };
+
+  const problems: string[] = [];
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    problems.push("STRIPE_WEBHOOK_SECRET is not set, so paid subscriptions won't unlock content. Copy the endpoint's signing secret (whsec_...) from Stripe > Developers > Webhooks.");
   }
+  if (!stripeEnabled()) {
+    problems.unshift(
+      "STRIPE_SECRET_KEY" in process.env
+        ? "STRIPE_SECRET_KEY exists but is empty. Paste your secret key (sk_test_... or sk_live_...) as its value, then redeploy."
+        : stripeEnvNames.length
+        ? `No variable named exactly STRIPE_SECRET_KEY. Stripe-related variables found: ${stripeEnvNames.join(", ")}. Add STRIPE_SECRET_KEY with your secret key (it may be under one of those names).`
+        : "No STRIPE_SECRET_KEY environment variable. Add it in Vercel > Settings > Environment Variables, then redeploy.",
+    );
+    return { ready: false, problems, ...base };
+  }
+  if (mode === "unrecognized") problems.unshift("STRIPE_SECRET_KEY doesn't look like a Stripe key (expected sk_test_, sk_live_, rk_test_ or rk_live_).");
+  try {
+    const ids = await planPriceIds();
+    const missing = PLANS.filter((p) => !ids.has(p.id)).map((p) => p.lookupKey);
+    if (missing.length) {
+      problems.unshift(
+        `This Stripe account (${mode} mode) has no active price with lookup key ${missing.join(", ")}. Run "npm run stripe:setup" with this same key, or the key belongs to a different Stripe account or sandbox than the one set up.`,
+      );
+      return { ready: false, problems, ...base };
+    }
+  } catch (e) {
+    const msg = e instanceof Stripe.errors.StripeError ? e.message : String(e);
+    console.error("Stripe price lookup failed", e);
+    problems.unshift(`Stripe rejected the request: ${msg.replace(/(sk|rk)_(test|live)_\w+/g, "[key]")}`);
+    return { ready: false, problems, ...base };
+  }
+  return { ready: true, problems, ...base };
 }
 
 let portalConfig: { at: number; id: string | null } | null = null;
