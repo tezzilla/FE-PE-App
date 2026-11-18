@@ -42,6 +42,13 @@ export default function Home() {
           <Button variant="ghost" title="Manage plan on the website" onPress={() => WebBrowser.openBrowserAsync(data.accountUrl)} />
         )}
         <Button variant="ghost" title="Log out" onPress={signOut} testID="logout" />
+        <ThemedText
+          type="small"
+          style={{ color: theme.bad, textAlign: 'center', marginTop: Spacing.two }}
+          onPress={() => router.push('/delete-account')}
+          testID="delete-account">
+          Delete account
+        </ThemedText>
       </Card>
       {error && <ThemedText type="small" style={{ color: theme.bad }}>{error}</ThemedText>}
     </Screen>

@@ -59,12 +59,15 @@ export default function Privacy() {
         We keep your account and study history while your account exists. Security records of sign-in attempts
         are deleted within about a day. If you ask us to delete your account, we delete your account and study
         history, except records we must keep for legal, tax, or fraud-prevention reasons (such as payment records
-        held by Stripe).
+        held by Stripe). Deleting your account cancels any subscription immediately.
       </p>
 
       <h2>Your choices and rights</h2>
       <ul>
-        <li>You can ask for a copy of your data, a correction, or deletion of your account by contacting us.</li>
+        <li>
+          On the <Link href="/account">Account</Link> page (or in the app) you can download a copy of your data, change your
+          details, and delete your account yourself. You can also contact us for any of these.
+        </li>
         <li>You can cancel a subscription anytime from your dashboard.</li>
         <li>Depending on where you live (for example, California or the EU), you may have additional rights. We&apos;ll honor them when they apply.</li>
       </ul>

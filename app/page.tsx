@@ -2,10 +2,12 @@ import Link from "next/link";
 import { EXAMS } from "@/lib/content/exams";
 import { PLANS } from "@/lib/plans";
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
+  const { deleted } = await searchParams;
   const cheapest = Math.min(...PLANS.map((p) => p.priceMonthly));
   return (
     <div className="space-y-16">
+      {deleted && <div className="card p-4 text-center">Your account has been deleted.</div>}
       <section className="text-center py-10 space-y-5">
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
           Pass the FE and PE Civil <br className="hidden sm:block" />

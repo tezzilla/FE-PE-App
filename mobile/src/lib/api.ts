@@ -116,6 +116,8 @@ export const api = {
   smart: (token: string, exam: ExamId) => request<QuestionSet>(`/api/mobile/smart?exam=${exam}`, token),
   practice: (token: string, exam: ExamId, topic?: string) =>
     request<QuestionSet>(`/api/mobile/practice?exam=${exam}${topic ? `&topic=${encodeURIComponent(topic)}` : ''}`, token),
+  deleteAccount: (token: string, password: string) =>
+    request<{ ok: true }>('/api/mobile/account', token, { method: 'DELETE', body: JSON.stringify({ password }) }),
   report: (token: string, questionId: string, selected: number | null, message: string) =>
     request<{ ok: true }>('/api/mobile/report', token, {
       method: 'POST',

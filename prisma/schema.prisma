@@ -12,6 +12,8 @@ model User {
   email                String    @unique
   name                 String?
   passwordHash         String
+  // Bumped on password change; tokens carry it, so older sessions stop working everywhere.
+  sessionVersion       Int       @default(0)
   createdAt            DateTime  @default(now())
   stripeCustomerId     String?   @unique
   stripeSubscriptionId String?   @unique

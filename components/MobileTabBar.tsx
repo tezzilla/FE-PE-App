@@ -10,7 +10,7 @@ export function MobileTabBar({ signedIn }: { signedIn: boolean }) {
     { href: signedIn ? "/dashboard" : "/", label: "Home", icon: "⌂" },
     { href: "/exams/fe-civil", label: "FE Civil", icon: "◧" },
     { href: "/exams/pe-civil", label: "PE Civil", icon: "◨" },
-    { href: signedIn ? "/pricing" : "/login", label: signedIn ? "Plans" : "Log in", icon: "☰" },
+    { href: signedIn ? "/account" : "/login", label: signedIn ? "Account" : "Log in", icon: "☰" },
   ];
   return (
     <nav

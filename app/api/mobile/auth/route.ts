@@ -14,5 +14,5 @@ export async function POST(req: Request) {
     const status = r.rateLimited ? 429 : body.mode === "signup" ? 400 : 401;
     return NextResponse.json({ error: r.error }, { status });
   }
-  return NextResponse.json({ token: await createToken(r.user.id), user: publicUser(r.user) });
+  return NextResponse.json({ token: await createToken(r.user), user: publicUser(r.user) });
 }

@@ -13,17 +13,22 @@ function secret() {
   return new TextEncoder().encode(s);
 }
 
-/** Signed session token. Used as the web cookie value and as the mobile app's bearer token. */
-export async function createToken(userId: string) {
-  return new SignJWT({ sub: userId })
+type TokenUser = { id: string; sessionVersion: number };
+
+/**
+ * Signed session token. Used as the web cookie value and as the mobile app's bearer token.
+ * Carries the user's sessionVersion ("sv"), so bumping it signs out every existing session.
+ */
+export async function createToken(user: TokenUser) {
+  return new SignJWT({ sub: user.id, sv: user.sessionVersion })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${MAX_AGE}s`)
     .sign(secret());
 }
 
-export async function createSession(userId: string) {
-  const token = await createToken(userId);
+export async function createSession(user: TokenUser) {
+  const token = await createToken(user);
   (await cookies()).set(COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -56,7 +61,10 @@ async function userFromToken(token: string | undefined) {
   try {
     const { payload } = await jwtVerify(token, secret());
     if (!payload.sub) return null;
-    return await db.user.findUnique({ where: { id: payload.sub } });
+    const user = await db.user.findUnique({ where: { id: payload.sub } });
+    // Tokens from before the last password change (or sign-out-everywhere) are no longer valid.
+    if (!user || (Number(payload.sv) || 0) !== user.sessionVersion) return null;
+    return user;
   } catch {
     return null;
   }
