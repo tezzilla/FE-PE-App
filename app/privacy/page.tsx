@@ -20,7 +20,7 @@ export default function Privacy() {
       <h2>What we collect</h2>
       <ul>
         <li><strong>Account details:</strong> your email address, an optional display name, and your password, stored only as a one-way hash we can&apos;t reverse.</li>
-        <li><strong>Study activity:</strong> which questions you answer, your choices, whether they were correct, mock exam scores, and when. If you&apos;re a PE candidate you may also choose your depth module.</li>
+        <li><strong>Study activity:</strong> which questions you answer, your choices, whether they were correct, mock exam scores, and when. If you&apos;re a PE candidate you may also choose your PE module.</li>
         <li><strong>Subscription status:</strong> your plan, its status, and renewal date, plus the customer and subscription IDs Stripe gives us. Stripe collects and stores your payment details; we never receive your full card number.</li>
         <li><strong>Security data:</strong> your IP address and recent failed sign-in attempts, kept briefly to block password guessing.</li>
         <li><strong>Hosting logs:</strong> our hosting provider records standard request logs (such as IP address and browser type) to run and protect the service.</li>

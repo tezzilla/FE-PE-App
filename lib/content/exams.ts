@@ -31,15 +31,15 @@ export const EXAMS: Record<ExamId, ExamDef> = {
     name: "PE Civil",
     shortName: "PE",
     description:
-      "Principles and Practice of Engineering, Civil. Breadth plus one depth module, taken after qualifying experience.",
+      "Principles and Practice of Engineering, Civil. Five separate module exams; you take the one for your discipline, usually after qualifying experience.",
     minutesPerQuestion: 6,
-    realExam: "80 questions, computer-based, one depth module of your choice, PE Civil Reference Handbook plus design standards.",
+    realExam: "80 questions in 9 hours, computer-based, all from the module you choose, with the PE Civil Reference Handbook plus that module's design standards.",
     topics: [
-      { slug: "structural", name: "Structural", examQuestions: "depth module" },
-      { slug: "geotechnical", name: "Geotechnical", examQuestions: "depth module" },
-      { slug: "transportation", name: "Transportation", examQuestions: "depth module" },
-      { slug: "water-env", name: "Water Resources & Environmental", examQuestions: "depth module" },
-      { slug: "construction", name: "Construction", examQuestions: "depth module" },
+      { slug: "structural", name: "Structural", examQuestions: "separate exam" },
+      { slug: "geotechnical", name: "Geotechnical", examQuestions: "separate exam" },
+      { slug: "transportation", name: "Transportation", examQuestions: "separate exam" },
+      { slug: "water-env", name: "Water Resources & Environmental", examQuestions: "separate exam" },
+      { slug: "construction", name: "Construction", examQuestions: "separate exam" },
     ],
   },
 };

@@ -8,6 +8,10 @@ import { approvedTemplates } from "./reviews";
 import { templatesFor } from "./templates";
 import { randomSeed, templateToQuestion } from "./templates/engine";
 import { resolveQuestion } from "./questions";
+import { getQuestion } from "./content";
+import { getTemplate } from "./templates";
+import { midQuestions, peModuleSpec } from "./content/pe-spec";
+import type { Template } from "./templates/engine";
 
 /** Real exam sizes and seat time (exam time, excluding the break), split into two sessions. */
 export const FULL_EXAM = {
@@ -34,30 +38,72 @@ export interface Blueprint {
   actual: number;
 }
 
+/** One row of a full exam's blueprint: what it should hold and the content that can fill it. */
+export interface PlanRow {
+  key: string;
+  name: string;
+  target: number;
+  fixed: Question[];
+  gens: Template[];
+}
+
 /**
- * Pick a full-length exam: questions per topic follow the NCEES weights (PE: the chosen depth module
- * counts for 60%). Each topic uses its fixed questions, then fresh variants of approved problem types.
- * If a topic doesn't have enough content yet, the exam is shorter and the blueprint says so.
+ * The blueprint for a full exam. FE: NCEES topic weights. PE with a chosen module: that module's NCEES
+ * knowledge areas, each filled from the content mapped to it in lib/content/pe-spec.ts. PE without a
+ * module: the five modules weighted equally.
+ */
+export async function examPlan(user: User, exam: ExamId): Promise<PlanRow[]> {
+  const def = EXAMS[exam];
+  const approved = await approvedTemplates();
+  const spec = exam === "pe-civil" ? peModuleSpec(user.peDepth) : undefined;
+  if (spec) {
+    const sum = spec.areas.reduce((t, a) => t + midQuestions(a.questions), 0);
+    const targets = allocate(new Map(spec.areas.map((a) => [String(a.n), midQuestions(a.questions) / sum])), FULL_EXAM[exam].questions);
+    return spec.areas.map((a) => ({
+      key: `area-${a.n}`,
+      name: `${a.n}. ${a.name}`,
+      target: targets.get(String(a.n)) ?? 0,
+      fixed: a.skills.flatMap((k) => (k.startsWith("pe-") ? (getQuestion(k) ?? []) : [])),
+      gens: a.skills.flatMap((k) => {
+        const t = k.startsWith("pe-") ? undefined : getTemplate(k);
+        return t && approved.has(t.id) ? [t] : [];
+      }),
+    }));
+  }
+  const targets = allocate(topicWeights(def, null), FULL_EXAM[exam].questions);
+  return def.topics.map((t) => ({
+    key: t.slug,
+    name: t.name,
+    target: targets.get(t.slug) ?? 0,
+    fixed: questionsFor(exam, t.slug),
+    gens: templatesFor(exam, t.slug).filter((tpl) => approved.has(tpl.id)),
+  }));
+}
+
+/**
+ * Pick a full-length exam from the blueprint. Each row uses its fixed questions, then fresh variants of
+ * approved calculation problems. If a row doesn't have enough content yet, the exam is shorter and the
+ * blueprint says so. A fixed question is used at most once even if it serves several areas.
  */
 export async function buildFullExam(user: User, exam: ExamId) {
-  const def = EXAMS[exam];
-  const targets = allocate(topicWeights(def, exam === "pe-civil" ? user.peDepth : null), FULL_EXAM[exam].questions);
-  const approved = await approvedTemplates();
+  const plan = await examPlan(user, exam);
   const picked: Question[] = [];
   const blueprint: Blueprint[] = [];
+  const used = new Set<string>();
 
-  for (const t of def.topics) {
-    const target = targets.get(t.slug) ?? 0;
-    const fixed = shuffle(questionsFor(exam, t.slug));
-    const gens = shuffle(templatesFor(exam, t.slug).filter((tpl) => approved.has(tpl.id)));
+  for (const row of plan) {
+    const target = row.target;
+    const fixed = shuffle(row.fixed.filter((q) => !used.has(q.id)));
+    const gens = shuffle(row.gens);
     const chosen: Question[] = fixed.slice(0, target);
+    chosen.forEach((q) => used.add(q.id));
     // Spread generated variants evenly across problem types.
     for (let i = 0; chosen.length < target && gens.length; i++) {
       const q = templateToQuestion(gens[i % gens.length], exam, randomSeed());
       if (q) chosen.push(q);
     }
     picked.push(...chosen);
-    blueprint.push({ topic: t.slug, name: t.name, target, actual: chosen.length });
+    blueprint.push({ topic: row.key, name: row.name, target, actual: chosen.length });
   }
 
   const order = shuffle(picked);

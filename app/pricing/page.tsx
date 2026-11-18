@@ -93,7 +93,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
             <section key={exam} className="card p-6 space-y-5">
               <div>
                 <h2 className="text-2xl font-bold">{EXAMS[exam].name}</h2>
-                <p className="muted text-sm">{exam === "pe-civil" ? "All 5 depth modules. FE Civil content included." : "All 14 FE Civil topic areas."}</p>
+                <p className="muted text-sm">{exam === "pe-civil" ? "All 5 PE Civil module exams. FE Civil content included." : "All 14 FE Civil topic areas."}</p>
                 {pass && <p className="text-sm mt-1" style={{ color: "#16a34a" }}>You have a pass until {pass.toLocaleDateString("en-US")}.</p>}
               </div>
               {plans.map((p) => (

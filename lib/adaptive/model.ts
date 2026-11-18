@@ -7,6 +7,7 @@
 // 3. Session planning: due reviews first, then topics ranked by (exam weight × how weak you are),
 //    so study time goes where it moves the score most.
 
+import { peModuleTopicWeights } from "../content/pe-spec";
 import type { ExamDef } from "../content/types";
 import { parseTemplateQuestionId } from "../templates/engine";
 
@@ -114,8 +115,8 @@ export function topicMastery(state: LearnerState, topic: string): TopicState {
 
 /**
  * Share of the exam each topic represents, summing to 1.
- * FE: midpoint of the NCEES question range. PE: breadth is spread across all areas and the
- * chosen depth module counts for the other half of the exam.
+ * FE: midpoint of the NCEES question range. PE with a chosen module: that module's knowledge areas
+ * (lib/content/pe-spec.ts), summed by CivilPrep topic. PE without one: the five modules equally.
  */
 export function topicWeights(exam: ExamDef, peDepth?: string | null): Map<string, number> {
   const raw = new Map<string, number>();
@@ -123,9 +124,11 @@ export function topicWeights(exam: ExamDef, peDepth?: string | null): Map<string
     const m = /^(\d+)-(\d+)$/.exec(t.examQuestions);
     raw.set(t.slug, m ? (Number(m[1]) + Number(m[2])) / 2 : 1);
   }
-  if (exam.id === "pe-civil" && peDepth && raw.has(peDepth)) {
-    const breadth = 0.5 / raw.size;
-    for (const k of raw.keys()) raw.set(k, breadth + (k === peDepth ? 0.5 : 0));
+  // PE Civil: since April 2024 each module is its own exam. Weight topics by that module's NCEES
+  // knowledge areas (e.g. Water Resources also tests soil mechanics and project planning).
+  const mod = exam.id === "pe-civil" && peDepth ? peModuleTopicWeights(peDepth) : null;
+  if (mod) {
+    for (const k of raw.keys()) raw.set(k, mod.get(k) ?? 0);
   }
   const total = [...raw.values()].reduce((a, b) => a + b, 0);
   return new Map([...raw].map(([k, v]) => [k, v / total]));

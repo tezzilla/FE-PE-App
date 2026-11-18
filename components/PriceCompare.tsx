@@ -60,8 +60,8 @@ export function PriceCompare({ fe, fePass, pe, pePass }: { fe: number; fePass?: 
       heading: pePass
         ? `The PE Civil for ${usd(pe)}/month, or ${usd(pePass)} for 6 months.`
         : `The PE Civil for ${usd(pe)}/month.`,
-      text: `About ${pct(pePass ?? pe * 6)} of a typical course for six months of prep, with all five depth modules and FE content included for refreshing fundamentals.`,
-      points: ["All 5 depth modules", "Full 80-question timed exams", "Design standards guide: free vs. paid"],
+      text: `About ${pct(pePass ?? pe * 6)} of a typical course for six months of prep, with all five PE module exams and FE content included for refreshing fundamentals.`,
+      points: ["All 5 PE module exams", "Full 80-question timed exams", "Design standards guide: free vs. paid"],
       cta: { href: "/signup", label: "Start PE prep free" },
     },
   ];

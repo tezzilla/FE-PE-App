@@ -26,7 +26,9 @@ const feW = topicWeights(EXAMS["fe-civil"]);
 check(Math.abs([...feW.values()].reduce((a, b) => a + b, 0) - 1) < 1e-9, "FE weights sum to 1");
 check(feW.get("water-env")! > feW.get("ethics")!, "FE water/env outweighs ethics");
 const peW = topicWeights(EXAMS["pe-civil"], "water-env");
-check(Math.abs(peW.get("water-env")! - 0.6) < 1e-9 && Math.abs(peW.get("structural")! - 0.1) < 1e-9, "PE depth module = 60%, others 10%");
+check(Math.abs([...peW.values()].reduce((x, y) => x + y, 0) - 1) < 1e-9, "PE module weights sum to 1");
+check(peW.get("water-env")! > 0.7 && peW.get("geotechnical")! > 0.05 && peW.get("construction")! > 0.1 && peW.get("structural") === 0,
+  "PE Water Resources module: mostly water/env, plus its soil mechanics and planning/sitework areas, no structural");
 
 {
   const now = new Date();

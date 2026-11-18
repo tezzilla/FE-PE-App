@@ -14,7 +14,7 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
   const user = await getCurrentUser();
   const access = hasExamAccess(user, exam);
   const sections = resourcesFor(exam);
-  // On the PE page, show the student's own depth module first.
+  // On the PE page, show the student's own PE module first.
   const depth = exam === "pe-civil" ? user?.peDepth : null;
   const ordered = depth ? [...sections].sort((a, b) => Number(b.id === depth) - Number(a.id === depth)) : sections;
   const total = sections.reduce((n, s) => n + s.links.length, 0);
@@ -25,7 +25,7 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
         <Link href={`/exams/${exam}`} className="muted text-sm hover:underline">{def.name}</Link>
         <h1 className="text-2xl sm:text-3xl font-bold">Exam documents and resources</h1>
         <p className="muted mt-1">
-          Every official document you need for the {def.shortName}, plus {exam === "pe-civil" ? "each depth module's design standards, marked free or paid" : "registration and exam-day rules"}. Links go to NCEES, publishers and government sites; we don&apos;t host these documents.
+          Every official document you need for the {def.shortName}, plus {exam === "pe-civil" ? "each PE module's design standards, marked free or paid" : "registration and exam-day rules"}. Links go to NCEES, publishers and government sites; we don&apos;t host these documents.
         </p>
       </div>
 
@@ -51,7 +51,7 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
             <section key={s.id} className="space-y-2">
               <h2 className="text-xl font-semibold">
                 {s.title}
-                {s.id === depth && <span className="text-sm font-normal" style={{ color: "var(--brand-text)" }}> · your depth module</span>}
+                {s.id === depth && <span className="text-sm font-normal" style={{ color: "var(--brand-text)" }}> · your PE module</span>}
               </h2>
               {s.intro && <p className="muted text-sm">{s.intro}</p>}
               <ul className="card divide-y" style={{ borderColor: "var(--border)" }}>

@@ -40,7 +40,7 @@ export async function ReadinessCard({ user, exam, back }: { user: User; exam: Ex
       {exam === "pe-civil" && (
         <form action={setPeDepth} className="flex flex-wrap items-center gap-2 text-sm">
           <input type="hidden" name="back" value={back} />
-          <span className="muted">Your depth module:</span>
+          <span className="muted">Your PE module:</span>
           <select name="peDepth" defaultValue={user.peDepth ?? ""} className="input !w-auto !py-1">
             <option value="">Not chosen (equal weights)</option>
             {EXAMS["pe-civil"].topics.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}

@@ -479,6 +479,44 @@ export const SOLVERS: Record<string, (p: string) => number> = {
   },
   "two-leg-sling-tension": (p) => { const [W, Ls, d] = nums(p); const ang = Math.acos(d / 2 / Ls); return W / (2 * Math.sin(ang)); },
   "excavator-production-bcy": (p) => { const [bucket, fill, ct, E, sw] = nums(p); return bucket * fill * (E * 60 / ct) / (1 + sw / 100); },
+
+  // ---- Eighth batch (batch-eight.ts)
+  "segment-crash-rate": (p) => { const L = at(p, "A"), V = at(p, "ADT of"), C = at(p, "had"), N = at(p, "over"); return C / (N * 365 * V * L / 1e8); },
+  "aadt-design-hour-volume": (p) => {
+    const A0 = at(p, "AADT of"), g = at(p, "growing") / 100, n = at(p, "design year"), K = at(p, "K ="), D = at(p, "D =");
+    let A = A0; for (let y = 0; y < n; y++) A *= 1 + g; return A * K * D;
+  },
+  "work-zone-taper-length": (p) => {
+    const S = at(p, "speed of"), W = at(p, "traffic by"), kind = p.match(/needs a (\w+) taper/)![1];
+    const L = S >= 45 ? W * S : W * S * S / 60; return L * ({ merging: 1, shifting: 1 / 2, shoulder: 1 / 3 } as Record<string, number>)[kind];
+  },
+  "triaxial-friction-angle": (p) => {
+    const dev = at(p, "deviator stress of"), s3 = at(p, "cell pressure of");
+    // Mohr circle tangent: radius = (center) sin φ
+    const center = s3 + dev / 2, radius = dev / 2; return Math.asin(radius / center) * 180 / Math.PI;
+  },
+  "sand-cone-relative-compaction": (p) => {
+    const Ms = at(p, "test,"), rs = at(p, "density"), Mw = at(p, "weighs"), w = at(p, "moisture content of"), rmax = at(p, "dry density is");
+    return (Mw / (1 + w / 100)) / (Ms / rs) / rmax * 100;
+  },
+  "rqd-from-core-run": (p) => {
+    const run = at(p, "A"), pieces = nums(p.slice(p.indexOf("pieces of") + 9, p.lastIndexOf(" in.")));
+    return pieces.reduce((a, x) => a + (x >= 4 ? x : 0), 0) / run * 100;
+  },
+  "flat-roof-snow-load": (p) => { const pg = at(p, "pg ="), Ce = at(p, "Ce ="), Ct = at(p, "Ct ="); return 0.7 * Ce * Ct * pg; },
+  "rusle-soil-loss": (p) => {
+    const ac = at(p, "A"), R = at(p, "R ="), K = at(p, "K ="), LS = at(p, "LS ="), C = at(p, "C ="), P = at(p, "P =");
+    return [R, K, LS, C, P, ac].reduce((a, b) => a * b, 1);
+  },
+  "maturity-nurse-saul": (p) => {
+    const temps = nums(p.slice(p.indexOf("temperatures of") + 15, p.indexOf("°C over"))), dt = at(p, "consecutive"), T0 = at(p, "datum temperature of");
+    return temps.reduce((a, t) => a + Math.max(0, t - T0) * dt, 0);
+  },
+  "grade-stake-cut": (p) => {
+    const BS = at(p, "backsight of"), BM = at(p, "elevation"), rod = at(p, "stake is"), E0 = at(p, "starts at elevation"), g = at(p, "runs at"), x = at(p, "the stake is");
+    return (BM + BS - rod) - (E0 + g / 100 * x);
+  },
+  "pressure-pipe-wall-thickness": (p) => { const D = at(p, "A"), P = at(p, "pressure of"), S = at(p, "stress is"), ca = at(p, "allowance of"); return P * (D / 2) / S + ca; },
 };
 
 

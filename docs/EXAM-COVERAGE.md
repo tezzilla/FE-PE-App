@@ -171,11 +171,22 @@ storm sewer sizing to standard pipe sizes, cantilever sheet pile embedment, pass
 cohesion, undrained bearing on clay, critical v/c (Xc), incident queue delay, two-leg sling tension,
 excavator production in BCY.
 
+## PE module structure (November 2026)
+
+`lib/content/pe-spec.ts` holds every knowledge area of the five PE Civil module exams (April 2024 spec):
+question range, NCEES sub-topics, and the CivilPrep questions and calculation problems mapped to each.
+It drives the module pages (/exams/pe-civil/modules/[module]), practice by knowledge area, smart
+practice weights for a chosen module, and the area-by-area blueprint of the 80-question timed exam.
+Areas marked "more coming" on the module pages are the next content priority.
+
+Eighth batch (11): segment crash rate, design hourly volume, work zone taper length, triaxial friction
+angle, sand cone relative compaction, RQD from core pieces, flat roof snow load, RUSLE soil loss, concrete
+maturity, grade stake cut, pressure pipe wall thickness.
+
 ## Next batch
 
-1. Steel connection block shear (AISC J4.3) and base plate bearing (Structural 5D).
-2. Concrete beam deflection with effective moment of inertia (Structural 2F).
-3. Hardy Cross loop correction, one iteration (WRE 5D).
-4. Settlement of sand by elastic/Schmertmann methods (Geotechnical 9B).
-5. Weaving and ramp merge density (Transportation 2A).
-6. Formwork tie and stud spacing (Construction 10A).
+1. Geotechnical 7 (problematic soils) and Transportation 3 (roadside design): hand-written questions.
+2. Structural 3 (temporary structures): falsework and shoring loads.
+3. WRE 8 (groundwater): Cooper-Jacob drawdown with time.
+4. Construction 9: crane capacity checks, dewatering pump sizing.
+5. Transportation 6: roundabout and turn-lane geometry.

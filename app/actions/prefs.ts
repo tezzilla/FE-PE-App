@@ -11,5 +11,5 @@ export async function setPeDepth(form: FormData) {
   const valid = EXAMS["pe-civil"].topics.some((t) => t.slug === depth);
   await db.user.update({ where: { id: user.id }, data: { peDepth: valid ? depth : null } });
   const back = String(form.get("back") ?? "/exams/pe-civil");
-  redirect(back.startsWith("/") ? back : "/exams/pe-civil");
+  redirect(back.startsWith("/") && !back.startsWith("//") && !back.startsWith("/\\") ? back : "/exams/pe-civil");
 }

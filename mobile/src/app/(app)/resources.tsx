@@ -44,7 +44,7 @@ export default function Resources() {
         <View key={s.id} style={{ gap: Spacing.one }}>
           <ThemedText type="smallBold" style={{ marginTop: Spacing.two }}>
             {s.title}
-            {s.depth ? '  · your depth module' : ''}
+            {s.depth ? '  · your PE module' : ''}
           </ThemedText>
           {s.intro && <ThemedText type="small" themeColor="textSecondary">{s.intro}</ThemedText>}
           {s.links.map((l) => (

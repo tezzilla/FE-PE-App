@@ -1,3 +1,4 @@
+import { PE_MODULE_SPECS } from "@/lib/content/pe-spec";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EXAMS, isExamId } from "@/lib/content/exams";
@@ -95,9 +96,11 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
             <div key={t.slug} className="card p-4">
               <div className="flex justify-between gap-2">
                 <h2 className="font-semibold">
-                  <Link href={`/exams/${exam}/topics/${t.slug}`} className="hover:underline">{t.name}</Link>
+                  <Link href={exam === "pe-civil" ? `/exams/${exam}/modules/${t.slug}` : `/exams/${exam}/topics/${t.slug}`} className="hover:underline">
+                    {exam === "pe-civil" ? `PE Civil: ${t.name}` : t.name}
+                  </Link>
                 </h2>
-                <span className="muted text-sm whitespace-nowrap">{t.examQuestions}{/\d/.test(t.examQuestions) ? " on exam" : ""}</span>
+                {exam !== "pe-civil" && <span className="muted text-sm whitespace-nowrap">{t.examQuestions}{/\d/.test(t.examQuestions) ? " on exam" : ""}</span>}
               </div>
               <p className="muted text-sm mt-1">
                 {available} of {qs.length} questions available
@@ -108,7 +111,12 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
                   + {gens} calculation problem{gens > 1 ? "s" : ""} that never repeat{access ? "" : " 🔒"}
                 </p>
               )}
-              <div className="flex gap-4 mt-2 text-sm">
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm">
+                {exam === "pe-civil" && PE_MODULE_SPECS[t.slug] && (
+                  <Link href={`/exams/${exam}/modules/${t.slug}`} className="underline font-semibold">
+                    {PE_MODULE_SPECS[t.slug].areas.length} knowledge areas
+                  </Link>
+                )}
                 <Link href={`/exams/${exam}/topics/${t.slug}`} className="underline">Review</Link>
                 <Link href={`/exams/${exam}/practice?topic=${t.slug}`} className="underline">Practice</Link>
               </div>

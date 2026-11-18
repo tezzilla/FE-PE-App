@@ -1,15 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EXAMS, isExamId } from "@/lib/content/exams";
-import { toPublic, questionsFor } from "@/lib/content";
+import { toPublic } from "@/lib/content";
 import { requireUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
 import { db } from "@/lib/db";
 import { FullExam } from "@/components/FullExam";
-import { FULL_EXAM, allocate, loadSessions, sessionSeconds } from "@/lib/exam-builder";
-import { topicWeights } from "@/lib/adaptive/model";
-import { approvedTemplates } from "@/lib/reviews";
-import { templatesFor } from "@/lib/templates";
+import { FULL_EXAM, examPlan, loadSessions, sessionSeconds } from "@/lib/exam-builder";
 import { discardFullExam, startFullExam } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -61,13 +58,11 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
   }
 
   // Intro: show the blueprint and warn if some topics don't have enough content yet.
-  const targets = allocate(topicWeights(def, exam === "pe-civil" ? user.peDepth : null), FULL_EXAM[exam].questions);
-  const approved = await approvedTemplates();
-  const rows = def.topics.map((t) => {
-    const unlimited = templatesFor(exam, t.slug).some((tpl) => approved.has(tpl.id));
-    const available = unlimited ? Infinity : questionsFor(exam, t.slug).length;
-    return { name: t.name, target: targets.get(t.slug) ?? 0, available };
-  });
+  const rows = (await examPlan(user, exam)).map((r) => ({
+    name: r.name,
+    target: r.target,
+    available: r.gens.length ? Infinity : r.fixed.length,
+  }));
   const total = rows.reduce((a, r) => a + Math.min(r.target, r.available), 0);
   const past = await db.mockExam.findMany({
     where: { userId: user.id, exam, status: "completed" },
@@ -82,7 +77,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
         <p>
           {FULL_EXAM[exam].questions} questions weighted like the real exam, in two timed sessions
           ({Math.round(FULL_EXAM[exam].minutes / 60 * 10) / 10} hours of exam time) with an optional 25-minute break.
-          {exam === "pe-civil" && !user.peDepth && " Choose your depth module on the exam page to weight it like your real exam."}
+          {exam === "pe-civil" && !user.peDepth && " Choose your PE module on the exam page to build the exam from that module's NCEES knowledge areas."}
         </p>
         {total < FULL_EXAM[exam].questions && (
           <p className="text-sm" style={{ color: "#ca8a04" }}>
@@ -90,7 +85,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
           </p>
         )}
         <details className="text-sm">
-          <summary className="cursor-pointer">Questions per topic</summary>
+          <summary className="cursor-pointer">{exam === "pe-civil" && user.peDepth ? "Questions per knowledge area" : "Questions per topic"}</summary>
           <table className="w-full mt-2">
             <tbody>
               {rows.map((r) => (
