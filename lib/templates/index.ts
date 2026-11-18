@@ -10,8 +10,9 @@ import { OPS_DESIGN } from "./ops-design";
 import { NETWORKS_TIMBER } from "./networks-timber";
 import { BATCH_FIVE } from "./batch-five";
 import { BATCH_SIX } from "./batch-six";
+import { BATCH_SEVEN } from "./batch-seven";
 
-export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE, ...EXPANDED, ...PE_DEPTH, ...FE_CORE_2, ...SPEC_GAPS, ...OPS_DESIGN, ...NETWORKS_TIMBER, ...BATCH_FIVE, ...BATCH_SIX];
+export const TEMPLATES: Template[] = [...WATER_RESOURCES, ...CIVIL_CORE, ...EXPANDED, ...PE_DEPTH, ...FE_CORE_2, ...SPEC_GAPS, ...OPS_DESIGN, ...NETWORKS_TIMBER, ...BATCH_FIVE, ...BATCH_SIX, ...BATCH_SEVEN];
 
 const BY_ID = new Map(TEMPLATES.map((t) => [t.id, t]));
 

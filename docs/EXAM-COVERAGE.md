@@ -163,11 +163,19 @@ HSM CMFs, HCM LOS measures, Stage 2 DBP MCLs, digester gas, biological P removal
 hydrographs, downdrag, wick drains, seismic design category, lateral-torsional bracing, development
 length, free float, linear schedule slopes, crashing order.
 
+## Seventh batch (November 2026)
+
+Problem types (15): inelastic lateral-torsional buckling, tied column φPn,max, steel beam shear, one-way
+slab minimum thickness, unit hydrograph convolution, NRCS lag time of concentration, V-notch weir,
+storm sewer sizing to standard pipe sizes, cantilever sheet pile embedment, passive thrust with
+cohesion, undrained bearing on clay, critical v/c (Xc), incident queue delay, two-leg sling tension,
+excavator production in BCY.
+
 ## Next batch
 
-1. Steel beam lateral-torsional buckling strength between Lp and Lr (Structural 5A).
-2. Reinforced concrete column interaction (axial capacity with ties, ACI 22.4) (Structural 5B).
-3. Unit hydrograph convolution for a multi-period storm (WRE 7C).
-4. Sheet pile cantilever embedment (Geotechnical 8C).
-5. Signalized intersection critical lane analysis (Transportation 2C).
-6. Crane lifting: rigging sling tension with angle (Construction 9A).
+1. Steel connection block shear (AISC J4.3) and base plate bearing (Structural 5D).
+2. Concrete beam deflection with effective moment of inertia (Structural 2F).
+3. Hardy Cross loop correction, one iteration (WRE 5D).
+4. Settlement of sand by elastic/Schmertmann methods (Geotechnical 9B).
+5. Weaving and ramp merge density (Transportation 2A).
+6. Formwork tie and stud spacing (Construction 10A).

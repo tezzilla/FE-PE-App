@@ -429,6 +429,56 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     return C + M / i + R / ((1 + i) ** k - 1); // perpetual series of payments every k years
   },
   "impulse-average-force": (p) => { const [m, v1, v2, t] = nums(p); return m * (v2 - -v1) / t / 1000; },
+
+  // ---- Seventh batch (batch-seven.ts)
+  "steel-ltb-inelastic": (p) => {
+    const Zx = at(p, "Zx ="), Sx = at(p, "Sx ="), Lp = at(p, "Lp ="), Lr = at(p, "Lr ="), Lb = at(p, "Lb ="), Cb = at(p, "Cb =");
+    const Mp = 50 * Zx / 12, Mr = 35 * Sx / 12, frac = (Lb - Lp) / (Lr - Lp);
+    return 0.9 * Math.min(Mp, Cb * (Mp * (1 - frac) + Mr * frac)); // linear interpolation between Mp and 0.7FySx
+  },
+  "rc-tied-column-axial": (p) => { const [b, h, Ast, , fc] = nums(p); return 0.52 * (0.85 * fc * (b * h - Ast) + 60 * Ast); },
+  "steel-beam-shear": (p) => { const d = at(p, "d ="), tw = at(p, "tw ="); return 30 * d * tw; },
+  "one-way-slab-min-thickness": (p) => {
+    const L = at(p, "spans") * 12, cond = p.match(/ft and is (.+?)\. It/)![1];
+    const k = ({ "simply supported": 20, "continuous at one end": 24, "continuous at both ends": 28, "a cantilever": 10 } as Record<string, number>)[cond];
+    return L / k;
+  },
+  "unit-hydrograph-convolution": (p) => {
+    const U = nums(p.slice(p.indexOf("ordinates of") + 12, p.indexOf("cfs per inch")));
+    const P1 = at(p, "produces"), P2 = at(p, "first hour and");
+    let best = 0; for (let t = 0; t <= U.length; t++) best = Math.max(best, (U[t] ?? 0) * P1 + (U[t - 1] ?? 0) * P2);
+    return best;
+  },
+  "nrcs-lag-tc": (p) => { const L = at(p, "length of"), CN = at(p, "curve number of"), Y = at(p, "slope of"); const S = 1000 / CN - 10; return Math.exp(0.8 * Math.log(L) + 0.7 * Math.log(S + 1)) / (1900 * Math.sqrt(Y) * 0.6); },
+  "v-notch-weir": (p) => { const [th, Cd, H] = nums(p); return 8 / 15 * Cd * Math.sqrt(2 * 9.81) * Math.tan(rad(th / 2)) * Math.pow(H, 2.5) * 1000; },
+  "storm-sewer-size": (p) => {
+    const S = at(p, "slope of"), Q = at(p, "carry"); const sizes = [12, 15, 18, 21, 24, 27, 30, 36, 42, 48, 54, 60, 66, 72];
+    // capacity of each size flowing full; pick the first that carries Q
+    return sizes.find((d) => { const D = d / 12, A = Math.PI * D * D / 4; return 1.486 / 0.013 * A * (D / 4) ** (2 / 3) * Math.sqrt(S) >= Q * 1.0005; }) ?? NaN;
+  },
+  "cantilever-sheet-pile-depth": (p) => {
+    const H = at(p, "retains"), phi = at(p, "φ ="); const Ka = (1 - Math.sin(rad(phi))) / (1 + Math.sin(rad(phi))), Kp = 1 / Ka;
+    // solve Kp D³ = Ka (H + D)³ by bisection
+    let lo = 0, hi = 50 * H; for (let i = 0; i < 200; i++) { const D = (lo + hi) / 2; if (Kp * D ** 3 - Ka * (H + D) ** 3 > 0) hi = D; else lo = D; }
+    return 1.2 * lo;
+  },
+  "passive-thrust-cohesion": (p) => {
+    const c = at(p, "c ="), phi = at(p, "φ ="), gm = at(p, "γ ="), H = at(p, "depth of"); const Kp = (1 + Math.sin(rad(phi))) / (1 - Math.sin(rad(phi)));
+    return gm * H * H * Kp / 2 + 2 * c * H * Math.sqrt(Kp);
+  },
+  "clay-bearing-undrained": (p) => { const Df = at(p, "founded"), cu = at(p, "strength"), gm = at(p, "weighs"); return ((Math.PI + 2) * cu + gm * Df) / 3; },
+  "critical-lane-vc": (p) => {
+    const phases = at(p, "A"), C = at(p, "length of"), lost = at(p, "s and") * phases, s = at(p, "saturation flow is");
+    const vols = nums(p.slice(p.indexOf("volumes are") + 11, p.indexOf("veh/h/ln")));
+    return vols.reduce((a, v) => a + v, 0) / s * C / (C - lost);
+  },
+  "incident-queue-delay": (p) => {
+    const lam = at(p, "Demand on a freeway is"), mu = at(p, "capacity is"), mu2 = at(p, "capacity to"), t = at(p, "veh/h for");
+    // integrate queue length over time: rises linearly to (λ − μ′)t, then falls at (μ − λ)
+    const Qm = (lam - mu2) * t, T2 = Qm / (mu - lam); return Qm * t / 2 + Qm * T2 / 2;
+  },
+  "two-leg-sling-tension": (p) => { const [W, Ls, d] = nums(p); const ang = Math.acos(d / 2 / Ls); return W / (2 * Math.sin(ang)); },
+  "excavator-production-bcy": (p) => { const [bucket, fill, ct, E, sw] = nums(p); return bucket * fill * (E * 60 / ct) / (1 + sw / 100); },
 };
 
 
