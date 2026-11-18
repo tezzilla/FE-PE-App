@@ -240,6 +240,12 @@ Problem types (12): cracked beam deflection with Ie, retaining wall stem moment,
 water hammer, orifice outlet diameter, gravity model trips, crest curve available SSD, speed from skid
 marks, form tie spacing, cost-plus-incentive fee, braced cut in clay (Peck), pile group settlement.
 
+## Seventeenth batch (November 2026)
+
+Problem types (12): elastic LTB, concrete T-beam, spiral reinforcement ratio, timber beam shear, water
+main sizing, rational method with IDF equation, breakpoint chlorine feed, digester methane, trip
+generation regression, density from detector occupancy, required rimpull, roller production.
+
 ## Next batch
 
 1. Structural: masonry wall shear, concrete beam deflection with Ie, cantilever retaining wall stem moment.

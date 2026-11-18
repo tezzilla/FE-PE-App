@@ -915,6 +915,53 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     const ds = Q / ((Bg + z) * (Lg + z));
     return (Cc / (1 + e0)) * Hc * Math.log10(1 + ds / s0) * 1000;
   },
+
+  // ---- Seventeenth batch (batch-seventeen.ts)
+  "steel-ltb-elastic": (p) => {
+    const Sx = at(p, "Sx ="), Zx = at(p, "Zx ="), rts = at(p, "rts ="), J = at(p, "J ="), ho = at(p, "ho ="), Lb = at(p, "Lb =") * 12, Cb = at(p, "Cb =");
+    const s = Lb / rts, base = (Cb * Math.PI * Math.PI * 29000) / (s * s);
+    const Fcr = base * Math.sqrt(1 + (0.078 * J * s * s) / (Sx * ho));
+    return (0.9 * Math.min(Fcr * Sx, 50 * Zx)) / 12;
+  },
+  "rc-tbeam-flexure": (p) => {
+    const beff = at(p, "width of"), d = at(p, "d ="), As = at(p, "As ="), fc = at(p, "f'c =");
+    const C = As * 60, a = C / (0.85 * fc * beff);
+    return (0.9 * C * (d - a / 2)) / 12;
+  },
+  "spiral-reinforcement-ratio": (p) => {
+    const D = at(p, "A"), fc = at(p, "f'c ="), fyt = at(p, "fyt =");
+    const Ag = (Math.PI * D * D) / 4, Ach = (Math.PI * (D - 3) ** 2) / 4;
+    return 45 * (Ag / Ach - 1) * (fc / fyt);
+  },
+  "timber-beam-shear-capacity": (p) => {
+    const m = p.match(/A ([\d.]+) in × ([\d.]+) in/)!, b = Number(m[1]), d = Number(m[2]), Fv = at(p, "Fv ="), CD = at(p, "CD =");
+    return (Fv * CD * 2 * b * d) / 3 / 1000;
+  },
+  "water-main-size": (p) => {
+    const L = at(p, "main"), Q = at(p, "carry"), hf = at(p, "more than"), C = at(p, "C =");
+    const sizes = [6, 8, 10, 12, 16, 18, 20, 24, 30, 36, 42, 48];
+    return sizes.find((d) => (4.73 * L * Q ** 1.852) / (C ** 1.852 * (d / 12) ** 4.87) <= hf) ?? NaN;
+  },
+  "rational-method-idf": (p) => {
+    const m = p.match(/i = (\d+)\/\(t \+ (\d+)\)/)!, a = Number(m[1]), b = Number(m[2]);
+    const A = at(p, "A"), C = at(p, "has C ="), tc = at(p, "concentration of");
+    return C * A * (a / (tc + b));
+  },
+  "breakpoint-chlorine-dose": (p) => { const N = at(p, "containing"), res = at(p, "residual of"), Q = at(p, "day at"); return ((7.6 * N + res) * Q) / 1000; },
+  "digester-methane": (p) => {
+    const Q = at(p, "treats"), S0 = at(p, "with"), E = at(p, "removes"), Px = at(p, "produces");
+    return 0.35 * ((Q * S0 * E) / 100 / 1000 - 1.42 * Px);
+  },
+  "trip-generation-regression": (p) => {
+    const m = p.match(/ln\(T\) = ([\d.]+) ln\(X\) \+ ([\d.]+)/)!, a = Number(m[1]), b = Number(m[2]), X = at(p, "does a");
+    return Math.exp(a * Math.log(X) + b);
+  },
+  "detector-occupancy-density": (p) => { const Ld = at(p, "A"), occ = at(p, "reports"), Lv = at(p, "length is"); return (5280 * (occ / 100)) / (Lv + Ld); },
+  "required-rimpull": (p) => { const W = at(p, "weighs"), G = at(p, "climbs a"), RR = at(p, "resistance of"); return W * RR + W * G * 20; },
+  "roller-compaction-production": (p) => {
+    const W = at(p, "width of"), S = at(p, "ft at"), L = at(p, "placing"), P = at(p, "needs"), E = at(p, "efficiency is");
+    return (16.3 * W * S * L * E) / P;
+  },
 };
 
 
