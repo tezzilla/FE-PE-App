@@ -2,13 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { topicName } from "@/lib/content/exams";
-import { PE_MODULE_SPECS, midQuestions } from "@/lib/content/pe-spec";
-import { getQuestion } from "@/lib/content";
-import { getTemplate } from "@/lib/templates";
+import { PE_MODULE_SPECS } from "@/lib/content/pe-spec";
 import { getCurrentUser } from "@/lib/auth";
-import { canSeeQuestion, hasExamAccess } from "@/lib/access";
-import { approvedTemplates } from "@/lib/reviews";
-import { learnerState } from "@/lib/adaptive/server";
+import { moduleOverview } from "@/lib/pe-modules";
 import { setPeDepth } from "@/app/actions/prefs";
 
 export const dynamic = "force-dynamic";
@@ -28,32 +24,11 @@ export async function generateMetadata({ params }: { params: Promise<{ exam: str
 
 export default async function ModulePage({ params }: { params: Promise<{ exam: string; module: string }> }) {
   const { exam, module } = await params;
-  const spec = exam === "pe-civil" ? PE_MODULE_SPECS[module] : undefined;
-  if (!spec) notFound();
-  const name = topicName("pe-civil", module);
   const user = await getCurrentUser();
-  const access = hasExamAccess(user, "pe-civil");
-  const approved = await approvedTemplates();
-  const state = user ? await learnerState(user.id, "pe-civil") : null;
-  const isMine = user?.peDepth === module;
-
-  const areas = spec.areas.map((a) => {
-    const fixed = a.skills.flatMap((k) => (k.startsWith("pe-") ? (getQuestion(k) ?? []) : []));
-    const calc = a.skills.filter((k) => !k.startsWith("pe-") && approved.has(getTemplate(k)?.id ?? ""));
-    const keys = [...fixed.map((q) => q.id), ...calc.map((k) => `tpl:${k}`)];
-    const seen = state ? keys.filter((k) => state.skills.has(k)) : [];
-    const right = seen.filter((k) => state!.skills.get(k)!.lastCorrect).length;
-    return {
-      a,
-      fixed: fixed.length,
-      free: fixed.filter((q) => canSeeQuestion(user, q)).length,
-      calc: calc.length,
-      seen: seen.length,
-      total: keys.length,
-      right,
-    };
-  });
-  const totalMid = spec.areas.reduce((s, a) => s + midQuestions(a.questions), 0);
+  const o = exam === "pe-civil" ? await moduleOverview(user, module) : null;
+  if (!o) notFound();
+  const { name, access, isMine, areas } = o;
+  const spec = { effective: o.effective };
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -80,8 +55,8 @@ export default async function ModulePage({ params }: { params: Promise<{ exam: s
       </div>
 
       <ol className="space-y-3">
-        {areas.map(({ a, fixed, free, calc, seen, total, right }) => {
-          const share = Math.round((100 * midQuestions(a.questions)) / totalMid);
+        {areas.map((a) => {
+          const { fixed, free, calc, seen, total, right, share } = a;
           const thin = fixed + calc < 3;
           return (
             <li key={a.n} className="card p-4 sm:p-5 space-y-3">

@@ -23,7 +23,9 @@ export default function Topics() {
   return (
     <Screen refreshing={refreshing} onRefresh={reload}>
       <ThemedText type="small" themeColor="textSecondary">
-        Tap a topic for key formulas, common traps and a worked example, then practice it.
+        {exam.id === 'pe-civil'
+          ? 'Each PE module is its own 80-question exam. Tap one for every knowledge area NCEES tests, then practice area by area.'
+          : 'Tap a topic for key formulas, common traps and a worked example, then practice it.'}
       </ThemedText>
       <View style={[styles.group, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
         {exam.topics.map((t, i) => (
@@ -31,7 +33,11 @@ export default function Topics() {
             key={t.slug}
             testID={`topic-${t.slug}`}
             accessibilityRole="button"
-            onPress={() => router.push({ pathname: '/topic', params: { exam: exam.id, topic: t.slug } })}
+            onPress={() =>
+              exam.id === 'pe-civil'
+                ? router.push({ pathname: '/module', params: { module: t.slug } })
+                : router.push({ pathname: '/topic', params: { exam: exam.id, topic: t.slug } })
+            }
             style={({ pressed }) => [
               styles.row,
               i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.border },

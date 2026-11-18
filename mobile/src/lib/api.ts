@@ -79,6 +79,32 @@ export interface QuestionSet {
   topicNames: Record<string, string>;
   /** The AI tutor is switched on for this site. */
   tutor?: boolean;
+  /** Set for PE knowledge-area practice, e.g. "5. Hydraulics–Closed Conduit". */
+  areaName?: string;
+  /** Questions in this set that need full access. */
+  lockedCount?: number;
+}
+
+/** One PE Civil module exam with every NCEES knowledge area. */
+export interface PeModule {
+  module: string;
+  name: string;
+  effective: string;
+  isMine: boolean;
+  access: boolean;
+  areas: {
+    n: number;
+    name: string;
+    questions: string;
+    share: number;
+    items: string[];
+    fixed: number;
+    free: number;
+    calc: number;
+    seen: number;
+    total: number;
+    right: number;
+  }[];
 }
 
 export interface Feedback {
@@ -173,8 +199,14 @@ export const api = {
     }),
   home: (token: string) => request<Home>('/api/mobile/me', token),
   smart: (token: string, exam: ExamId) => request<QuestionSet>(`/api/mobile/smart?exam=${exam}`, token),
-  practice: (token: string, exam: ExamId, topic?: string) =>
-    request<QuestionSet>(`/api/mobile/practice?exam=${exam}${topic ? `&topic=${encodeURIComponent(topic)}` : ''}`, token),
+  practice: (token: string, exam: ExamId, topic?: string, area?: string) =>
+    request<QuestionSet>(
+      `/api/mobile/practice?exam=${exam}${topic ? `&topic=${encodeURIComponent(topic)}` : ''}${area ? `&area=${encodeURIComponent(area)}` : ''}`,
+      token,
+    ),
+  peModule: (token: string, module: string) => request<PeModule>(`/api/mobile/module?module=${encodeURIComponent(module)}`, token),
+  setPeModule: (token: string, module: string) =>
+    request<{ ok: true; peDepth: string }>('/api/mobile/module', token, { method: 'POST', body: JSON.stringify({ module }) }),
   deleteAccount: (token: string, password: string) =>
     request<{ ok: true }>('/api/mobile/account', token, { method: 'DELETE', body: JSON.stringify({ password }) }),
   report: (token: string, questionId: string, selected: number | null, message: string) =>

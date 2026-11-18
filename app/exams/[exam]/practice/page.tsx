@@ -5,11 +5,7 @@ import { questionsFor, shuffle, toPublic } from "@/lib/content";
 import { getCurrentUser } from "@/lib/auth";
 import { canSeeQuestion, hasExamAccess } from "@/lib/access";
 import { approvedTemplateCount, generatedQuestions } from "@/lib/questions";
-import { getQuestion } from "@/lib/content";
-import { getTemplate } from "@/lib/templates";
-import { approvedTemplates } from "@/lib/reviews";
-import { randomSeed, templateToQuestion } from "@/lib/templates/engine";
-import { PE_MODULE_SPECS } from "@/lib/content/pe-spec";
+import { areaPractice } from "@/lib/pe-modules";
 import type { Question } from "@/lib/content/types";
 import { Practice } from "@/components/Practice";
 import { tutorEnabled } from "@/lib/tutor";
@@ -29,21 +25,14 @@ export default async function PracticePage({
   if (topic && !EXAMS[exam].topics.some((t) => t.slug === topic)) notFound();
 
   // PE module knowledge area (e.g. ?topic=water-env&area=5): only the content mapped to that area.
-  const area = exam === "pe-civil" && topic && areaParam ? PE_MODULE_SPECS[topic]?.areas.find((a) => String(a.n) === areaParam) : undefined;
-  if (areaParam && !area) notFound();
-
   const user = await getCurrentUser();
+  const ap = exam === "pe-civil" && topic && areaParam ? await areaPractice(user, topic, Number(areaParam)) : null;
+  if (areaParam && !ap) notFound();
+  const area = ap?.area;
   const access = hasExamAccess(user, exam);
   let all: Question[], generated: Question[], generators: number;
-  if (area) {
-    const approved = await approvedTemplates();
-    all = area.skills.flatMap((k) => (k.startsWith("pe-") ? (getQuestion(k) ?? []) : []));
-    const tpls = area.skills.flatMap((k) => {
-      const t = k.startsWith("pe-") ? undefined : getTemplate(k);
-      return t && approved.has(t.id) ? [t] : [];
-    });
-    generators = tpls.length;
-    generated = access ? tpls.flatMap((t) => [0, 1, 2].flatMap(() => templateToQuestion(t, exam, randomSeed()) ?? [])) : [];
+  if (ap) {
+    ({ all, generated, generators } = ap);
   } else {
     all = questionsFor(exam, topic);
     // Subscribers also get fresh problems from every approved template, 3 per template per session.

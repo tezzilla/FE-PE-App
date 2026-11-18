@@ -15,8 +15,9 @@ import { api, type ExamId, type Feedback } from '@/lib/api';
 export default function Practice() {
   const params = useLocalSearchParams<{
     exam: ExamId;
-    mode: 'smart' | 'topic' | 'missed' | 'diagnostic' | 'quiz';
+    mode: 'smart' | 'topic' | 'missed' | 'diagnostic' | 'quiz' | 'area';
     topic?: string;
+    area?: string;
     count?: string;
   }>();
   const smart = params.mode === 'smart';
@@ -35,6 +36,8 @@ export default function Practice() {
           return api.diagnostic(t, params.exam);
         case 'quiz':
           return api.quiz(t, params.exam, 'all', count, params.topic ? [params.topic] : []);
+        case 'area':
+          return api.practice(t, params.exam, params.topic, params.area);
         default:
           return api.practice(t, params.exam, params.topic);
       }
@@ -62,7 +65,9 @@ export default function Practice() {
           ? 'Diagnostic'
           : params.mode === 'quiz'
             ? `Quiz${params.topic ? `: ${data?.topicNames[params.topic] ?? ''}` : ''}`
-            : (data?.topicNames[params.topic ?? ''] ?? 'Practice');
+            : params.mode === 'area'
+              ? (data?.areaName ?? 'Knowledge area')
+              : (data?.topicNames[params.topic ?? ''] ?? 'Practice');
   const header = <Stack.Screen options={{ title }} />;
 
   if (error && !data) return <ErrorView message={error} onRetry={reload} />;
@@ -113,7 +118,9 @@ export default function Practice() {
             <ThemedText themeColor="textSecondary">
               {params.mode === 'missed'
                 ? 'Nothing to review: your last answer on every problem was right.'
-                : 'Nothing new to practice right now. Reviews come back as they fall due.'}
+                : params.mode === 'area' && data.lockedCount
+                  ? `This knowledge area's ${data.lockedCount} questions are included with full access.`
+                  : 'Nothing new to practice right now. Reviews come back as they fall due.'}
             </ThemedText>
           )}
           {smart && score.done > 0 && (
