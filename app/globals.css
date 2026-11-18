@@ -124,3 +124,15 @@ body {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 .navy-section [data-inset] .muted { color: var(--muted); }
+
+/* ---------- Printing (free problem set "Download PDF") ---------- */
+@media print {
+  body > header, body > footer, nav, .no-print, [data-mobile-tabbar] { display: none !important; }
+  :root { --bg: #fff; --fg: #000; --card: #fff; --border: #ccc; --muted: #444; }
+  body { background: #fff; color: #000; }
+  main { padding: 0 !important; max-width: none !important; }
+  .card { box-shadow: none !important; }
+  .avoid-break { break-inside: avoid; }
+  .page-break-before { break-before: page; }
+  .reveal, .enter, .flip-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+}

@@ -102,6 +102,55 @@ export function passwordChangedEmail(to: string): Email {
   };
 }
 
+const longDate = (d: Date) => d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+export function passEndingEmail(to: string, examName: string, until: Date, extendPrice: number): Email {
+  return {
+    to,
+    subject: `Your ${examName} access ends ${longDate(until)}`,
+    ...layout(`Your ${examName} pass ends soon`, [
+      `Your ${examName} access ends on ${longDate(until)}.`,
+      `If your exam is later than that, you can add 30 more days for $${extendPrice}. Your progress, readiness score and study plan stay exactly where they are.`,
+      "If you've already taken your exam: good luck, and we'd love to hear how it went.",
+    ], { label: "Extend 30 days", url: `${appUrl()}/dashboard#extend` }),
+  };
+}
+
+export function sampleSetEmail(to: string, examName: string, url: string): Email {
+  return {
+    to,
+    subject: `Your free ${examName} practice problems`,
+    ...layout(`Your free ${examName} problem set`, [
+      "Here's your set of exam-style practice problems with worked solutions. Open it in your browser, or save it as a PDF to work offline.",
+      "Tip: work them with the NCEES reference handbook open, the same way you will on exam day.",
+    ], { label: "Open the problem set", url }),
+  };
+}
+
+export function giftReceivedEmail(to: string, planName: string, code: string, from: string, message: string | null): Email {
+  return {
+    to,
+    subject: `You've been given ${planName} on CivilPrep`,
+    ...layout(`A gift for your exam prep`, [
+      `${from} gave you a ${planName} on CivilPrep: practice problems with worked solutions, smart practice that targets your weak topics, and full-length timed exams.`,
+      ...(message ? [`Their message: "${message}"`] : []),
+      `Your gift code is ${code}. Create a free account (or log in), then redeem the code. Your access starts when you redeem it, so you can save it until you start studying.`,
+    ], { label: "Redeem your gift", url: `${appUrl()}/redeem?code=${encodeURIComponent(code)}` }),
+  };
+}
+
+export function giftPurchasedEmail(to: string, planName: string, code: string, recipient: string): Email {
+  return {
+    to,
+    subject: `Your CivilPrep gift is on its way`,
+    ...layout("Thanks for your gift", [
+      `We've emailed ${recipient} their ${planName} with redemption instructions.`,
+      `Keep this code in case they need it: ${code}. It can be redeemed once, on any CivilPrep account, and access starts when it's redeemed.`,
+      "Your receipt comes separately from Stripe.",
+    ]),
+  };
+}
+
 export function welcomeEmail(to: string): Email {
   return {
     to,

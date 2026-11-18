@@ -60,6 +60,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <MobileTabBar signedIn={!!user} />
         <footer className="muted text-sm text-center px-4 pt-2 pb-24 sm:py-6">
           <p>CivilPrep is not affiliated with or endorsed by NCEES. FE and PE are exams administered by NCEES.</p>
+          <p className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <Link href="/free/fe-civil" className="hover:underline">Free FE problems</Link>
+            <Link href="/free/pe-civil" className="hover:underline">Free PE problems</Link>
+            <Link href="/compare" className="hover:underline">Compare</Link>
+            <Link href="/gift" className="hover:underline">Gift a pass</Link>
+            <Link href="/redeem" className="hover:underline">Redeem a gift</Link>
+          </p>
           <p className="mt-2">
             <Link href="/terms" className="hover:underline">Terms</Link>
             {" · "}

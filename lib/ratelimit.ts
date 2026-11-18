@@ -16,6 +16,12 @@ export const LIMITS = {
   // Password reset emails per address and per IP.
   resetEmail: { max: 3, windowMs: 60 * 60_000 },
   resetIp: { max: 10, windowMs: 60 * 60_000 },
+  // Free sample problem set requests per IP.
+  leadIp: { max: 10, windowMs: 60 * 60_000 },
+  // Gift checkouts started per IP.
+  giftIp: { max: 10, windowMs: 60 * 60_000 },
+  // Gift code redemption attempts per user (stops guessing codes).
+  redeemUser: { max: 10, windowMs: 60 * 60_000 },
   // Problem reports per user.
   reportUser: { max: 20, windowMs: 60 * 60_000 },
 } as const;

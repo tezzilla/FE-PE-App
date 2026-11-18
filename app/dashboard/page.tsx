@@ -6,19 +6,23 @@ import { topicStats } from "@/lib/progress";
 import { db } from "@/lib/db";
 import { ReadinessCard } from "@/components/ReadinessCard";
 import { StudyPlanCard } from "@/components/StudyPlanCard";
+import { ExtendPassCard } from "@/components/ExtendPassCard";
 import { EXAM_PACE_S } from "@/lib/adaptive/quiz";
 
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard({ searchParams }: { searchParams: Promise<{ subscribed?: string; reset?: string }> }) {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ subscribed?: string; reset?: string; gift?: string }> }) {
   const user = await requireUser();
-  const { subscribed, reset } = await searchParams;
+  const { subscribed, reset, gift } = await searchParams;
   const mocks = await db.mockExam.findMany({ where: { userId: user.id, status: "completed" }, orderBy: { createdAt: "desc" }, take: 5 });
 
   return (
     <div className="space-y-8">
       {reset && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Password updated. You&apos;re signed in, and other devices were signed out.</div>}
+      {gift && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Gift redeemed: {gift} is now active on your account. Enjoy, and good luck on the exam!</div>}
       {subscribed && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Payment received. Full question bank unlocked. (If it still says Free tier, refresh in a few seconds.)</div>}
+
+      <ExtendPassCard user={user} />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>

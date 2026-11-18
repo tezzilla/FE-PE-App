@@ -6,13 +6,17 @@ import type { AuthState } from "@/app/actions/auth";
 export function AuthForm({
   action,
   mode,
+  next,
 }: {
   action: (s: AuthState, f: FormData) => Promise<AuthState>;
   mode: "login" | "signup";
+  /** Same-site path to go to after signing in (validated on the server). */
+  next?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
     <form action={formAction} className="space-y-4">
+      {next && <input type="hidden" name="next" value={next} />}
       {mode === "signup" && (
         <label className="block">
           <span className="text-sm">Name (optional)</span>

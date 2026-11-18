@@ -175,6 +175,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
         </div>
       </section>
 
+      <p className="text-center muted -mt-12 sm:-mt-20">
+        Prefer paper? Get free{" "}
+        <Link href="/free/fe-civil" className="underline font-medium" style={{ color: "var(--brand-text)" }}>FE Civil</Link> or{" "}
+        <Link href="/free/pe-civil" className="underline font-medium" style={{ color: "var(--brand-text)" }}>PE Civil</Link> practice problems as a PDF.
+      </p>
+
       {/* Founder */}
       <section className="card p-6 sm:p-10 grid md:grid-cols-[auto_1fr] gap-6 sm:gap-10 items-start reveal">
         <div className="flex md:flex-col items-center gap-4 md:w-48 md:text-center">

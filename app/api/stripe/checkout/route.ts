@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/plans";
 import { grantPass } from "@/lib/passes";
+import { hadPassFor } from "@/lib/extensions";
 import { automaticTaxEnabled, fakeBillingAllowed, planPriceIds, stripe } from "@/lib/stripe";
 
 const appUrl = () => process.env.APP_URL ?? "http://localhost:3000";
@@ -18,6 +19,10 @@ export async function POST(req: Request) {
   const form = await req.formData();
   const plan = getPlan(String(form.get("plan")));
   if (!plan || plan.legacy) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
+  // Discounted extensions are only for people who have bought a pass for that exam.
+  if (plan.extension && !(await hadPassFor(user.id, plan.exam))) {
+    return NextResponse.redirect(new URL("/pricing?error=extension", req.url), 303);
+  }
 
   if (fakeBillingAllowed()) {
     // Local dev only: activate instantly so paid features can be tested without Stripe.

@@ -29,6 +29,7 @@ In **Settings → Environment Variables**, add for all environments:
 | `CONTACT_EMAIL` | Public address for legal and privacy requests, shown on the Terms and Privacy pages. |
 | `POSTMARK_SERVER_TOKEN` | Postmark > Servers > your server > API Tokens. Mark Sensitive. Sends password reset, welcome and password-changed emails. |
 | `EMAIL_FROM` | A sender you verified in Postmark (Sender Signatures or a verified domain), e.g. `CivilPrep <support@yourdomain.com>`. |
+| `CRON_SECRET` | Random string (mark Sensitive). Lets Vercel Cron run the daily "your pass ends soon" email (`vercel.json`). Without it the job refuses to run. |
 | `ANTHROPIC_API_KEY` | Optional. Turns on the AI tutor. Create a key at console.anthropic.com > API Keys; mark Sensitive. Without it the tutor button is hidden. Each tutor answer costs roughly 1 to 3 cents; students get 30 a day (3 on the free tier). |
 
 Never commit these values to git. Changing `AUTH_SECRET` later signs everyone out.

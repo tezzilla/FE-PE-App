@@ -3,7 +3,7 @@ import type { ExamId } from "./content/types";
 // Launch pricing (see docs/PRICING-RESEARCH.md). Display prices live here; charged prices live in
 // Stripe and are created from this file by scripts/stripe-setup.ts.
 
-export type PlanId = "fe-civil" | "fe-pass-3mo" | "pe-civil" | "pe-pass-6mo" | "all-access";
+export type PlanId = "fe-civil" | "fe-pass-3mo" | "fe-extend-30" | "pe-civil" | "pe-pass-6mo" | "pe-extend-30" | "all-access";
 
 export interface Plan {
   id: PlanId;
@@ -27,6 +27,8 @@ export interface Plan {
   founding?: { code: string; price: number };
   /** No longer sold. Kept so existing subscribers keep their access. */
   legacy?: boolean;
+  /** Discounted 30-day add-on, only offered to people who have bought a pass for this exam. Not listed on the pricing page. */
+  extension?: boolean;
 }
 
 export const PLANS: Plan[] = [
@@ -77,6 +79,30 @@ export const PLANS: Plan[] = [
     lookupKey: "civilprep_pe_pass_6mo",
   },
   {
+    id: "fe-extend-30",
+    name: "FE Civil 30-day extension",
+    exam: "fe-civil",
+    kind: "pass",
+    price: 19,
+    days: 30,
+    exams: ["fe-civil"],
+    features: ["30 more days of FE Civil access", "For pass holders", "No renewal"],
+    lookupKey: "civilprep_fe_extend_30",
+    extension: true,
+  },
+  {
+    id: "pe-extend-30",
+    name: "PE Civil 30-day extension",
+    exam: "pe-civil",
+    kind: "pass",
+    price: 39,
+    days: 30,
+    exams: ["pe-civil", "fe-civil"],
+    features: ["30 more days of PE Civil access", "For pass holders", "No renewal"],
+    lookupKey: "civilprep_pe_extend_30",
+    extension: true,
+  },
+  {
     id: "all-access",
     name: "All Access",
     exam: "pe-civil",
@@ -90,8 +116,14 @@ export const PLANS: Plan[] = [
   },
 ];
 
-/** Plans currently for sale. */
-export const SOLD_PLANS = PLANS.filter((p) => !p.legacy);
+/** Plans currently for sale, as listed on the pricing page (extensions are offered separately). */
+export const SOLD_PLANS = PLANS.filter((p) => !p.legacy && !p.extension);
+/** Every plan that can be bought, including extensions. Stripe setup creates a price for each. */
+export const BUYABLE_PLANS = PLANS.filter((p) => !p.legacy);
+/** The discounted extension for an exam. */
+export const extensionFor = (exam: ExamId) => PLANS.find((p) => p.extension && p.exam === exam);
+/** One-time passes that can be bought as a gift. */
+export const GIFTABLE_PLANS = SOLD_PLANS.filter((p) => p.kind === "pass");
 
 export function getPlan(id: string | null | undefined): Plan | undefined {
   return PLANS.find((p) => p.id === id);

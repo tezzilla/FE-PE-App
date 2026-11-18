@@ -136,9 +136,12 @@ model Pass {
   startsAt          DateTime
   expiresAt         DateTime
   revokedAt         DateTime?
+  /** When we emailed "your pass ends soon" for this pass. */
+  remindedAt        DateTime?
   createdAt         DateTime  @default(now())
 
   @@index([userId])
+  @@index([expiresAt])
 }
 
 // Password reset links. Only a SHA-256 hash of the token is stored; tokens are single-use and expire.
@@ -184,4 +187,34 @@ model CardReview {
 
   @@unique([userId, cardId])
   @@index([userId, due])
+}
+
+// People who asked for a free sample problem set. Marketing email only if they opted in.
+model Lead {
+  id             String   @id @default(cuid())
+  email          String
+  exam           String
+  source         String   @default("sample-pdf")
+  marketingOptIn Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([email, exam])
+}
+
+// A pass bought as a gift. The recipient redeems the code on their own account.
+model GiftCode {
+  id                String    @id @default(cuid())
+  code              String    @unique
+  plan              String
+  purchaserEmail    String
+  recipientEmail    String
+  message           String?
+  checkoutSessionId String    @unique
+  paymentIntentId   String?   @unique
+  amountTotal       Int
+  redeemedById      String?
+  redeemedAt        DateTime?
+  voidedAt          DateTime?
+  createdAt         DateTime  @default(now())
 }

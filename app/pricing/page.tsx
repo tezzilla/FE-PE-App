@@ -62,6 +62,9 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
           </p>
         </div>
       )}
+      {error === "extension" && (
+        <div className="card p-4 text-center">Extensions are for people who already have a pass for that exam. Choose a plan below instead.</div>
+      )}
       {error === "unavailable" && (
         <div className="card p-4 text-center">That plan isn&apos;t available right now. Please try again later.</div>
       )}
@@ -129,7 +132,9 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
           );
         })}
       </div>
-      <p className="muted text-xs text-center">Prices in USD. Sales tax may apply.</p>
+      <p className="muted text-xs text-center">
+        Prices in USD. Sales tax may apply. Buying for someone else? <Link href="/gift" className="underline">Give a pass as a gift</Link>.
+      </p>
 
       {!user && (
         <div className="card p-6 flex flex-col sm:flex-row items-center gap-4">

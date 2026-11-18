@@ -10,7 +10,8 @@ const PERKS = [
   "Upgrade only if you like it. No card needed now.",
 ];
 
-export default function SignupPage() {
+export default async function SignupPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const { next } = await searchParams;
   return (
     <div className="grid md:grid-cols-2 gap-10 items-center max-w-4xl mx-auto md:pt-6">
       <div className="space-y-5 order-2 md:order-1">
@@ -28,13 +29,13 @@ export default function SignupPage() {
       <div className="card elevated p-6 sm:p-8 order-1 md:order-2">
         <h2 className="text-2xl font-bold mb-1">Create your account</h2>
         <p className="muted text-sm mb-4">Takes about a minute.</p>
-        <AuthForm action={signup} mode="signup" />
+        <AuthForm action={signup} mode="signup" next={next} />
         <p className="muted text-xs mt-3">
           By creating an account you agree to the <Link href="/terms" className="underline">Terms of Service</Link> and{" "}
           <Link href="/privacy" className="underline">Privacy Policy</Link>.
         </p>
         <p className="muted text-sm mt-4">
-          Have an account? <Link href="/login" className="underline">Log in</Link>
+          Have an account? <Link href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"} className="underline">Log in</Link>
         </p>
       </div>
     </div>

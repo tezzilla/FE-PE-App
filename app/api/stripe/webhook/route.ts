@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { planFromPrice, stripe } from "@/lib/stripe";
 import { getPlan } from "@/lib/plans";
 import { grantPass, revokePassByPaymentIntent } from "@/lib/passes";
+import { fulfillGift, voidGiftByPaymentIntent } from "@/lib/gifts";
 
 // Handles the events listed in lib/stripe-events.ts.
 
@@ -86,6 +87,11 @@ async function fulfillPass(sessionId: string) {
     console.error(`Paid session ${s.id} isn't for a pass plan (price maps to ${planId})`);
     return;
   }
+  // A gift: create a code and email it; the recipient redeems it on their own account.
+  if (s.metadata?.gift === "1") {
+    await fulfillGift(s, plan.id);
+    return;
+  }
   const customerId = idOf(s.customer);
   const user =
     (customerId && (await db.user.findUnique({ where: { stripeCustomerId: customerId } }))) ||
@@ -143,6 +149,7 @@ export async function POST(req: Request) {
         const c = event.data.object;
         // A fully refunded pass stops granting access. (Partial refunds keep the pass.)
         if (c.refunded && idOf(c.payment_intent)) {
+          await voidGiftByPaymentIntent(idOf(c.payment_intent)!); // unredeemed gift codes stop working
           const revoked = await revokePassByPaymentIntent(idOf(c.payment_intent)!);
           if (revoked) console.warn(JSON.stringify({ stripeEvent: "pass.revoked", pass: revoked.id, user: revoked.userId }));
         }
