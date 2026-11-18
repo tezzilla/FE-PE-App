@@ -72,11 +72,13 @@ export async function deleteAccount(user: User, password: unknown): Promise<Resu
 
 /** Everything we store about the user, for "download my data". */
 export async function exportData(user: User) {
-  const [attempts, mockExams, reports, passes] = await Promise.all([
+  const [attempts, mockExams, reports, passes, studyPlans, flashcards] = await Promise.all([
     db.attempt.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" }, omit: { userId: true } }),
     db.mockExam.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" }, omit: { userId: true } }),
     db.problemReport.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" }, omit: { userId: true } }),
     db.pass.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" }, omit: { userId: true } }),
+    db.studyPlan.findMany({ where: { userId: user.id }, omit: { userId: true } }),
+    db.cardReview.findMany({ where: { userId: user.id }, omit: { userId: true } }),
   ]);
   return {
     exportedAt: new Date().toISOString(),
@@ -95,6 +97,8 @@ export async function exportData(user: User) {
     mockExams,
     problemReports: reports,
     passes,
+    studyPlans,
+    flashcards,
   };
 }
 

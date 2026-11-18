@@ -16,7 +16,8 @@
     "stripe:setup": "tsx scripts/stripe-setup.ts",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "test:plan": "tsx scripts/test-plan.ts",
-    "test:quiz": "tsx scripts/test-quiz.ts"
+    "test:quiz": "tsx scripts/test-quiz.ts",
+    "test:cards": "tsx scripts/test-cards.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

@@ -38,6 +38,7 @@ model User {
   passes               Pass[]
   resetTokens          PasswordResetToken[]
   studyPlans           StudyPlan[]
+  cardReviews          CardReview[]
 }
 
 model Attempt {
@@ -165,4 +166,22 @@ model StudyPlan {
   updatedAt   DateTime @updatedAt
 
   @@unique([userId, exam])
+}
+
+// Spaced-repetition state for one flashcard (lib/content/flashcards.ts) for one user.
+model CardReview {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardId    String
+  /** Days until the next review after a successful answer. */
+  interval  Float    @default(0)
+  ease      Float    @default(2.5)
+  reps      Int      @default(0)
+  lapses    Int      @default(0)
+  due       DateTime
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, cardId])
+  @@index([userId, due])
 }

@@ -10,6 +10,7 @@ import { ReadinessCard } from "@/components/ReadinessCard";
 import { StudyPlanCard } from "@/components/StudyPlanCard";
 import { PacingCard } from "@/components/PacingCard";
 import { missedCount } from "@/lib/adaptive/server";
+import { dueCardCount } from "@/lib/cards";
 
 export default async function ExamPage({ params, searchParams }: { params: Promise<{ exam: string }>; searchParams: Promise<{ planError?: string }> }) {
   const { exam } = await params;
@@ -69,6 +70,10 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
               ) : null;
             })()}
             <Link href={`/exams/${exam}/diagnostic`} className="btn-ghost">Diagnostic</Link>
+            {(async () => {
+              const n = await dueCardCount(user, exam);
+              return <Link href={`/exams/${exam}/flashcards`} className="btn-ghost">Flashcards{n ? ` (${n} due)` : ""}</Link>;
+            })()}
           </>
         )}
         <Link href={`/exams/${exam}/mock`} className="btn-ghost">Full exam (timed) {access ? "" : "🔒"}</Link>

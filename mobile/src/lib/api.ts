@@ -79,6 +79,25 @@ export interface Feedback {
   reviewedBy?: string;
 }
 
+export interface DeckCard {
+  id: string;
+  topic: string;
+  topicName: string;
+  front: string;
+  back: string;
+  ref: string;
+  state: { interval: number; ease: number; reps: number; lapses: number; due: string } | null;
+}
+
+export interface CardDeck {
+  cards: DeckCard[];
+  dueCount: number;
+  newCount: number;
+  total: number;
+  visible: number;
+  learned: number;
+}
+
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
     super(message);
@@ -126,6 +145,12 @@ export const api = {
     request<{ ok: true }>('/api/mobile/report', token, {
       method: 'POST',
       body: JSON.stringify({ questionId, selected, message }),
+    }),
+  cards: (token: string, exam: ExamId) => request<CardDeck>(`/api/mobile/cards?exam=${exam}`, token),
+  gradeCard: (token: string, cardId: string, grade: 0 | 1 | 2 | 3) =>
+    request<{ due: string; interval: number }>('/api/mobile/cards', token, {
+      method: 'POST',
+      body: JSON.stringify({ cardId, grade }),
     }),
   answer: (token: string, questionId: string, selected: number, timeMs?: number) =>
     request<Feedback>('/api/mobile/answer', token, {

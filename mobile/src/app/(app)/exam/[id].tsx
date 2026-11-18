@@ -26,6 +26,12 @@ export default function ExamScreen() {
         title="Smart practice"
         onPress={() => router.push({ pathname: '/practice', params: { exam: exam.id, mode: 'smart' } })}
       />
+      <Button
+        variant="ghost"
+        title="Formula flashcards"
+        testID="flashcards"
+        onPress={() => router.push({ pathname: '/flashcards', params: { exam: exam.id } })}
+      />
       {!exam.access && (
         <ThemedText type="small" themeColor="textSecondary">
           Free tier: one sample question per topic. Subscribers get the full bank and unlimited generated problems.
