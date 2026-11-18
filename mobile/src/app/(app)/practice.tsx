@@ -13,13 +13,32 @@ import { useTheme } from '@/hooks/use-theme';
 import { api, type ExamId, type Feedback } from '@/lib/api';
 
 export default function Practice() {
-  const params = useLocalSearchParams<{ exam: ExamId; mode: 'smart' | 'topic'; topic?: string }>();
+  const params = useLocalSearchParams<{
+    exam: ExamId;
+    mode: 'smart' | 'topic' | 'missed' | 'diagnostic' | 'quiz';
+    topic?: string;
+    count?: string;
+  }>();
   const smart = params.mode === 'smart';
   const { token } = useSession();
   const theme = useTheme();
   // Load once per visit: reloading on focus would replace the set mid-session.
   const { data, error, reload } = useLoad(
-    (t) => (smart ? api.smart(t, params.exam) : api.practice(t, params.exam, params.topic)),
+    (t) => {
+      const count = params.count === '10' ? 10 : params.count === '40' ? 40 : 20;
+      switch (params.mode) {
+        case 'smart':
+          return api.smart(t, params.exam);
+        case 'missed':
+          return api.quiz(t, params.exam, 'missed', count);
+        case 'diagnostic':
+          return api.diagnostic(t, params.exam);
+        case 'quiz':
+          return api.quiz(t, params.exam, 'all', count, params.topic ? [params.topic] : []);
+        default:
+          return api.practice(t, params.exam, params.topic);
+      }
+    },
     { reloadOnFocus: false },
   );
   const [i, setI] = useState(0);
@@ -34,7 +53,16 @@ export default function Practice() {
     shownAt.current = Date.now();
   }, [i, data]);
 
-  const title = smart ? 'Smart practice' : (data?.topicNames[params.topic ?? ''] ?? 'Practice');
+  const title =
+    params.mode === 'smart'
+      ? 'Smart practice'
+      : params.mode === 'missed'
+        ? 'Review my misses'
+        : params.mode === 'diagnostic'
+          ? 'Diagnostic'
+          : params.mode === 'quiz'
+            ? `Quiz${params.topic ? `: ${data?.topicNames[params.topic] ?? ''}` : ''}`
+            : (data?.topicNames[params.topic ?? ''] ?? 'Practice');
   const header = <Stack.Screen options={{ title }} />;
 
   if (error && !data) return <ErrorView message={error} onRetry={reload} />;
@@ -83,7 +111,9 @@ export default function Practice() {
             </ThemedText>
           ) : (
             <ThemedText themeColor="textSecondary">
-              Nothing new to practice right now. Reviews come back as they fall due.
+              {params.mode === 'missed'
+                ? 'Nothing to review: your last answer on every problem was right.'
+                : 'Nothing new to practice right now. Reviews come back as they fall due.'}
             </ThemedText>
           )}
           {smart && score.done > 0 && (

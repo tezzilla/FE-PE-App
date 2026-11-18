@@ -16,6 +16,8 @@ export default function AppLayout() {
       <Stack.Screen name="exam/[id]" options={{ title: '' }} />
       <Stack.Screen name="practice" options={{ title: 'Practice' }} />
       <Stack.Screen name="flashcards" options={{ title: 'Flashcards' }} />
+      <Stack.Screen name="topic" options={{ title: 'Topic review' }} />
+      <Stack.Screen name="resources" options={{ title: 'Exam documents' }} />
       <Stack.Screen name="delete-account" options={{ title: 'Delete account' }} />
     </Stack>
   );

@@ -2,15 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EXAMS, isExamId } from "@/lib/content/exams";
-import { questionsFor } from "@/lib/content";
-import { flashcardsFor } from "@/lib/content/flashcards";
 import { topicGuide } from "@/lib/content/topic-guides";
 import { getCurrentUser } from "@/lib/auth";
-import { approvedTemplates } from "@/lib/reviews";
-import { templatesFor } from "@/lib/templates";
-import { templateToQuestion } from "@/lib/templates/engine";
-import { learnerState } from "@/lib/adaptive/server";
-import { topicMastery } from "@/lib/adaptive/model";
+import { topicReview } from "@/lib/topic-review";
 
 type Params = Promise<{ exam: string; topic: string }>;
 
@@ -33,17 +27,11 @@ export default async function TopicReview({ params }: { params: Params }) {
   const { exam: examIn, topic } = await params;
   const f = lookup(examIn, topic);
   if (!f) notFound();
-  const { exam, t, guide } = f;
+  const { exam } = f;
   const user = await getCurrentUser();
-  const cards = flashcardsFor(exam, topic);
-
-  // Worked example: a fixed variant of an engineer-approved problem type, else a free sample question.
-  const approved = await approvedTemplates();
-  const tpl = templatesFor(exam, topic).find((x) => approved.has(x.id));
-  const example = (tpl && templateToQuestion(tpl, exam, 1)) || questionsFor(exam, topic).find((q) => q.free) || null;
-  const review = tpl ? approved.get(tpl.id) : undefined;
-
-  const mastery = user ? topicMastery(await learnerState(user.id, exam), topic) : null;
+  const r = (await topicReview(user, exam, topic))!;
+  const { topic: t, guide, cards, example, mastery } = r;
+  const review = r.reviewedBy ? { reviewerName: r.reviewedBy, credential: null } : undefined;
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">

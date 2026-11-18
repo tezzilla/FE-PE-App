@@ -4,7 +4,9 @@ import type { User } from "@prisma/client";
 import { EXAMS, EXAM_IDS, topicName } from "./content/exams";
 import { accessSummary, hasActiveSubscription, hasExamAccess, hasPaidAccess } from "./access";
 import { getPlan } from "./plans";
-import { examReadiness, learnerState, studyPlanFor } from "./adaptive/server";
+import { examReadiness, learnerState, missedCount, pacing, studyPlanFor } from "./adaptive/server";
+import { EXAM_PACE_S } from "./adaptive/quiz";
+import { dueCardCount } from "./cards";
 import { topicMastery } from "./adaptive/model";
 
 export const unauthorized = () => NextResponse.json({ error: "Sign in required" }, { status: 401 });
@@ -28,12 +30,22 @@ export async function homePayload(user: User) {
   const exams = await Promise.all(
     EXAM_IDS.map(async (id) => {
       const def = EXAMS[id];
-      const [r, state, sp] = await Promise.all([examReadiness(user, id), learnerState(user.id, id), studyPlanFor(user, id)]);
+      const [r, state, sp, missed, dueCards, pace] = await Promise.all([
+        examReadiness(user, id),
+        learnerState(user.id, id),
+        studyPlanFor(user, id),
+        missedCount(user, id),
+        dueCardCount(user, id),
+        pacing(user, id),
+      ]);
       return {
         id,
         name: def.name,
         realExam: def.realExam,
         access: hasExamAccess(user, id),
+        missed,
+        dueCards,
+        pacing: pace.total >= 5 ? { averageS: pace.overallS, examPaceS: EXAM_PACE_S[id], answered: pace.total } : null,
         plan: sp
           ? {
               examDate: sp.saved.examDate.toISOString(),

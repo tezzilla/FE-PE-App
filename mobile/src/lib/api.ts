@@ -38,6 +38,12 @@ export interface ExamSummary {
   name: string;
   realExam: string;
   access: boolean;
+  /** Problems whose last answer was wrong. */
+  missed?: number;
+  /** Flashcards due for review now. */
+  dueCards?: number;
+  /** Average seconds per question vs. real exam pace (shown after 5+ timed answers). */
+  pacing?: { averageS: number; examPaceS: number; answered: number } | null;
   /** Study plan summary, if the student set an exam date on the website. */
   plan: { examDate: string; daysLeft: number; weeklyTarget: number; answeredLast7Days: number; status: 'ahead' | 'on-track' | 'behind' } | null;
   readiness: {
@@ -100,6 +106,31 @@ export interface CardDeck {
   learned: number;
 }
 
+export interface TopicReview {
+  name: string;
+  examQuestions: string;
+  summary: string;
+  handbook: string;
+  traps: string[];
+  formulas: { front: string; back: string; ref: string }[];
+  example: { prompt: string; choices: string[]; answer: number; explanation: string; reference: string | null } | null;
+  reviewedBy: string | null;
+  mastery: { value: number; answered: number } | null;
+}
+
+export interface ResourceLink {
+  title: string;
+  url: string;
+  note?: string;
+  cost?: 'free' | 'purchase';
+}
+
+export type Resources =
+  | { access: true; checked: string; sections: { id: string; title: string; intro?: string; depth: boolean; links: ResourceLink[] }[] }
+  | { access: false; checked: string; summary: { links: number; sections: string[] } };
+
+export type QuizSource = 'all' | 'missed' | 'unseen';
+
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
     super(message);
@@ -148,6 +179,15 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ questionId, selected, message }),
     }),
+  quiz: (token: string, exam: ExamId, source: QuizSource, count: 10 | 20 | 40, topics: string[] = []) =>
+    request<QuestionSet>(
+      `/api/mobile/quiz?exam=${exam}&source=${source}&count=${count}${topics.map((t) => `&topic=${encodeURIComponent(t)}`).join('')}`,
+      token,
+    ),
+  diagnostic: (token: string, exam: ExamId) => request<QuestionSet>(`/api/mobile/diagnostic?exam=${exam}`, token),
+  topic: (token: string, exam: ExamId, topic: string) =>
+    request<TopicReview>(`/api/mobile/topic?exam=${exam}&topic=${encodeURIComponent(topic)}`, token),
+  resources: (token: string, exam: ExamId) => request<Resources>(`/api/mobile/resources?exam=${exam}`, token),
   cards: (token: string, exam: ExamId) => request<CardDeck>(`/api/mobile/cards?exam=${exam}`, token),
   gradeCard: (token: string, cardId: string, grade: 0 | 1 | 2 | 3) =>
     request<{ due: string; interval: number }>('/api/mobile/cards', token, {
