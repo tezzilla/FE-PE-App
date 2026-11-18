@@ -30,7 +30,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
           const b = await bankStats(exam);
           return (
             <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
-              {b.fixed} worked problems{b.generators ? ` + ${b.generators} problem type${b.generators === 1 ? "" : "s"} with unlimited variations` : ""}
+              {b.fixed} written questions{b.generators ? ` + ${b.generators} calculation problem${b.generators === 1 ? "" : "s"} that never repeat` : ""}
             </p>
           );
         })()}
@@ -105,7 +105,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
               </p>
               {gens > 0 && (
                 <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
-                  + unlimited problems from {gens} verified problem type{gens > 1 ? "s" : ""}{access ? "" : " 🔒"}
+                  + {gens} calculation problem{gens > 1 ? "s" : ""} that never repeat{access ? "" : " 🔒"}
                 </p>
               )}
               <div className="flex gap-4 mt-2 text-sm">

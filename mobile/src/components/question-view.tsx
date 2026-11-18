@@ -65,7 +65,7 @@ export function QuestionView({
           )}
           {feedback.reviewedBy && (
             <ThemedText type="small" themeColor="textSecondary">
-              Problem type reviewed by {feedback.reviewedBy}
+              Checked by {feedback.reviewedBy}
             </ThemedText>
           )}
           <ReportProblem key={question.id} questionId={question.id} selected={selected} />

@@ -274,13 +274,13 @@ export function describeReason(r: PickReason, topicName: (slug: string) => strin
   };
   switch (r.kind) {
     case "review-missed":
-      return `Review: you missed this problem type ${ago(r.since)}`;
+      return `Review: you missed this kind of problem ${ago(r.since)}`;
     case "review-spaced":
       return `Spaced review: last answered correctly ${ago(r.since)}`;
     case "new-topic":
       return `New topic: ${topicName(r.topic)}`;
     case "new-skill":
-      return `New problem type in ${topicName(r.topic)}`;
+      return `New problem in ${topicName(r.topic)}`;
     case "focus":
       return `Focus area: ${topicName(r.topic)}, ${Math.round(r.mastery * 100)}% mastery`;
   }

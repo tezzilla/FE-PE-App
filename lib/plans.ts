@@ -39,7 +39,7 @@ export const PLANS: Plan[] = [
     kind: "subscription",
     price: 29,
     exams: ["fe-civil"],
-    features: ["Full FE Civil question bank", "Unlimited generated problems", "Smart practice and full-length timed exams", "Exam documents and resources page", "Cancel anytime"],
+    features: ["Full FE Civil question bank", "Calculation problems that never repeat", "Smart practice and full-length timed exams", "Exam documents and resources page", "Cancel anytime"],
     lookupKey: "civilprep_fe_civil_monthly",
     stripePriceEnv: "STRIPE_PRICE_FE_CIVIL",
     founding: { code: "FOUNDINGFE", price: 19 },

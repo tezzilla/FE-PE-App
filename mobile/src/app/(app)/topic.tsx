@@ -84,7 +84,7 @@ export default function Topic() {
                 </ThemedText>
                 <ThemedText>{data.example.explanation}</ThemedText>
                 {data.example.reference && <ThemedText type="small" themeColor="textSecondary">{data.example.reference}</ThemedText>}
-                {data.reviewedBy && <ThemedText type="small" themeColor="textSecondary">Problem type reviewed by {data.reviewedBy}</ThemedText>}
+                {data.reviewedBy && <ThemedText type="small" themeColor="textSecondary">Checked by {data.reviewedBy}</ThemedText>}
               </View>
             ) : (
               <Button variant="ghost" title="Show solution" testID="show-solution" onPress={() => setShowSolution(true)} />

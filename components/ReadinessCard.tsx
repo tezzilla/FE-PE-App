@@ -32,7 +32,7 @@ export async function ReadinessCard({ user, exam, back }: { user: User; exam: Ex
             <span className="muted">Focus next: </span>
             {r.weakest.map((w) => topicName(exam, w.topic)).join(", ")}
           </p>
-          {r.dueReviews > 0 && <p className="text-sm">{r.dueReviews} problem type{r.dueReviews > 1 ? "s" : ""} due for review</p>}
+          {r.dueReviews > 0 && <p className="text-sm">{r.dueReviews} problem{r.dueReviews > 1 ? "s" : ""} due for review</p>}
         </div>
         <Link href={`/exams/${exam}/smart`} className="btn self-center w-full sm:w-auto">Smart practice</Link>
       </div>

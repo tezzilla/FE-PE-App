@@ -33,7 +33,7 @@ export default function Study() {
         <ListRow
           icon="refresh"
           title="Review my misses"
-          subtitle={missed ? 'New numbers on problems you got wrong' : 'Nothing missed yet'}
+          subtitle={missed ? 'New versions of problems you got wrong' : 'Nothing missed yet'}
           badge={missed || null}
           disabled={!missed}
           testID="missed"

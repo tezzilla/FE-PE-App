@@ -23,7 +23,7 @@ export function nextStep(e: ExamSummary): NextStep {
   if (missed >= 3) {
     return {
       title: `Review ${missed} missed problems`,
-      why: 'Fresh numbers on problems you got wrong last time. Fixing misses is the fastest way to raise your score.',
+      why: 'New versions of problems you got wrong last time. Fixing misses is the fastest way to raise your score.',
       action: { screen: 'practice', params: { exam: e.id, mode: 'missed', count: missed > 10 ? '20' : '10' } },
       icon: 'refresh',
     };

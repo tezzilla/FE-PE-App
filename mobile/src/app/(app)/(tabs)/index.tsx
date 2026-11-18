@@ -136,7 +136,7 @@ export default function Home() {
         <Card>
           <ThemedText type="smallBold">Free tier</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            One sample question per topic. Subscribers get the full bank, unlimited generated problems, flashcards and exam documents.
+            One sample question per topic. Subscribers get the full bank, calculation problems that never repeat, flashcards and exam documents.
           </ThemedText>
         </Card>
       )}

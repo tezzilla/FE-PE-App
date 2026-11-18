@@ -38,7 +38,7 @@ export const CIVILPREP: Record<RowKey, string> = {
   feprice: "$29/month, or $69 for 3 months",
   peprice: "$59/month, or $249 for 6 months",
   exams: "Yes: 110-question FE and 80-question PE simulations",
-  bank: "Worked problems plus problem generators with unlimited fresh numbers",
+  bank: "Written questions plus calculation problems that never repeat",
   adaptive: "Yes: smart practice, spaced review and a readiness score",
   plan: "Yes: weekly targets, focus topics and scheduled practice exams",
   flashcards: "Yes, with spaced repetition and handbook references",

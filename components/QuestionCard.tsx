@@ -54,7 +54,7 @@ export function QuestionCard({
           <p className="font-semibold">{feedback.correct ? "Correct" : `Incorrect. Answer: ${"ABCD"[feedback.answer]}`}</p>
           <p className="mt-2 whitespace-pre-line">{feedback.explanation}</p>
           {feedback.reference && <p className="muted text-sm mt-2">Reference: {feedback.reference}</p>}
-          {feedback.reviewedBy && <p className="muted text-sm mt-1">Problem type reviewed by {feedback.reviewedBy}</p>}
+          {feedback.reviewedBy && <p className="muted text-sm mt-1">Checked by {feedback.reviewedBy}</p>}
           <ReportProblem key={question.id} questionId={question.id} selected={selected} />
         </div>
       )}

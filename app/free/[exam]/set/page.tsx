@@ -71,7 +71,7 @@ export default async function SampleSetPage({ params, searchParams }: { params: 
       <footer className="card p-6 text-center space-y-2 avoid-break">
         <p className="font-semibold text-lg">Want problems picked for your weak spots?</p>
         <p className="muted text-sm">
-          CivilPrep&apos;s smart practice finds your weakest topics, gives you unlimited fresh problems, and tracks your
+          CivilPrep&apos;s smart practice finds your weakest topics, gives you practice problems that never repeat, and tracks your
           readiness. Start free at getcivilprep.com.
         </p>
         <Link href="/signup" className="btn no-print">Start free</Link>

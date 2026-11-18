@@ -84,7 +84,7 @@ export default async function TopicReview({ params }: { params: Params }) {
                 <p className="whitespace-pre-line">{example.explanation}</p>
                 {example.reference && <p className="muted text-sm">{example.reference}</p>}
                 {review?.reviewerName && (
-                  <p className="muted text-xs">Problem type reviewed by {[review.reviewerName, review.credential].filter(Boolean).join(", ")}</p>
+                  <p className="muted text-xs">Checked by {[review.reviewerName, review.credential].filter(Boolean).join(", ")}</p>
                 )}
               </div>
             </details>

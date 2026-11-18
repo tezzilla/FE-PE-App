@@ -12,7 +12,7 @@ import { FOUNDER } from "@/lib/content/about";
 
 const FEATURES = [
   { icon: "target", title: "Smart practice", text: "Learns which topics you're weak in, weighted by how much they count on the exam, and serves those first. Spaced reviews keep old topics from slipping." },
-  { icon: "infinity", title: "Problems that don't run out", text: "Problem generators create fresh numbers every time, so you practice the method instead of memorizing answers. Each type is checked in a review queue before it goes live." },
+  { icon: "infinity", title: "Problems that don't run out", text: "Calculation problems get new values every time you see them, so you learn the method instead of memorizing answers. Every answer is checked independently before it goes live." },
   { icon: "timer", title: "Full-length timed exams", text: "110-question FE and 80-question PE simulations at real pacing, with a question navigator, flags, a break, and a by-topic score report." },
   { icon: "chat", title: "AI tutor on every solution", text: "Stuck on why you missed one? Ask follow-up questions after you answer. Explanations stay tied to the verified solution." },
   { icon: "cards", title: "Formula flashcards", text: "The formulas that show up again and again, each with where to find it in the handbook, scheduled so you review right before you'd forget." },
@@ -51,7 +51,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
     },
     {
       q: "Who writes the problems?",
-      a: "Every problem is original, written for CivilPrep. Each problem type goes through a review queue before students see it, and you can report any problem you think is wrong from the question itself.",
+      a: "Every problem is original, written for CivilPrep. Every calculation problem has its answer checked independently before students see it, and you can report any problem you think is wrong from the question itself.",
     },
     { q: "Do I need the NCEES handbook?", a: "Yes, and it's free. Download it from your MyNCEES account and keep it open while you practice. Every solution tells you which section to look in, so you learn to find things fast on exam day." },
     { q: "Can I cancel anytime?", a: "Yes. Cancel online from your account and you keep access until the end of the period you paid for. Passes are a single payment and never renew." },
@@ -102,7 +102,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
           [String(FLASHCARDS.length), "formula flashcards"],
           // The live bank size once there's a meaningful number of approved problem types.
           bank.generators >= 5
-            ? [String(bank.generators), "problem types with unlimited fresh numbers"]
+            ? [String(bank.generators), "calculation problems that never repeat"]
             : tutor
               ? ["24/7", "AI tutor on every solution"]
               : ["Free", "sample questions in every topic"],

@@ -23,13 +23,13 @@ export default async function SmartPractice({ params }: { params: Promise<{ exam
         <Link href={`/exams/${exam}`} className="muted text-sm hover:underline whitespace-nowrap">Exam overview</Link>
       </div>
       <p className="muted text-sm">
-        10 questions picked for you: problem types you missed, topics where you&apos;re weakest relative to how much
+        10 questions picked for you: problems you missed, topics where you&apos;re weakest relative to how much
         they count on the exam, and spaced reviews so you don&apos;t forget what you&apos;ve learned.
       </p>
       {!hasExamAccess(user, exam) && (
         <p className="text-sm">
           Free tier: smart practice draws from sample questions only.{" "}
-          <Link href="/pricing" className="underline">Subscribe</Link> for unlimited generated problems.
+          <Link href="/pricing" className="underline">Subscribe</Link> to practice every calculation problem, with new values each time.
         </p>
       )}
       <Practice
