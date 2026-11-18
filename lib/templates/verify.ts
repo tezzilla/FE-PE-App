@@ -384,6 +384,51 @@ export const SOLVERS: Record<string, (p: string) => number> = {
   },
   "stress-21-method": (p) => { const [B, L, P] = nums(p), z = at(p, "increase"); return P / ((B + z) * (L + z)); },
   "linear-schedule-lag": (p) => { const [a, Lt, b] = nums(p); return Lt * (b - a) / (a * b); },
+
+  // ---- Sixth batch (batch-six.ts)
+  "cmu-wall-axial-asd": (p) => { const h = at(p, "wall is"), An = at(p, "An ="), r = at(p, "and r ="), fm = at(p, "f'm ="); const hr = h * 12 / r; return 0.25 * fm * An * (1 - hr * hr / 19600) / 1000; },
+  "cantilever-tip-deflection": (p) => { const L = at(p, "A") * 1000, E = at(p, "E =") * 1000, I = at(p, "I =") * 1e6, P = at(p, "carries a") * 1000; return P * L ** 3 / (3 * E * I); },
+  "culvert-outlet-control-hw": (p) => {
+    const [Din, nn, L, S, Q, ke] = nums(p); const ho = at(p, "and ho =");
+    const D = Din / 12, A = Math.PI * D * D / 4, V = Q / A, R = A / (Math.PI * D);
+    return (1 + ke + 29 * nn * nn * L / R ** 1.33) * V * V / 64.4 + ho - L * S;
+  },
+  "muskingum-outflow": (p) => {
+    const K = at(p, "K ="), X = at(p, "X ="), dt = at(p, "Δt ="), I1 = at(p, "inflow is"), O1 = at(p, "outflow is"), I2 = at(p, "end of the step, inflow is");
+    // storage form: S = K[XI + (1 − X)O]; (S₂ − S₁)/Δt = (I₁ + I₂)/2 − (O₁ + O₂)/2, solved for O₂
+    const S1 = K * (X * I1 + (1 - X) * O1);
+    return (S1 + dt * ((I1 + I2) / 2 - O1 / 2) - K * X * I2) / (K * (1 - X) + dt / 2);
+  },
+  "rapid-mix-power": (p) => { const V = at(p, "basin of"), G = at(p, "G ="), mu = at(p, "viscosity is") * 1e-3; return mu * V * G * G / 1000; },
+  "filters-required": (p) => { const [Q, a, rate] = nums(p); return Math.ceil(Q / (24 * rate * a) - 1e-9) + 1; },
+  "drilled-shaft-beta": (p) => {
+    const [D, L, gm] = nums(p); const z = L / 2;
+    const b = Math.min(1.2, Math.max(0.25, 1.5 - 0.135 * Math.sqrt(z))); return b * gm * z / 1000 * Math.PI * D * L;
+  },
+  "degree-of-saturation": (p) => {
+    const [V, M, w, Gs] = nums(p); const rho = M / V, wd = w / 100;
+    const e = Gs * (1 + wd) / rho - 1; return wd * Gs / e * 100;
+  },
+  "falling-head-permeability": (p) => { const [a, L, A, h1, h2, t] = nums(p); return a * L * Math.log(h1 / h2) / (A * t) * 1e4; },
+  "axle-load-equivalency": (p) => { const [N, a1, a2] = nums(p); return N * (a1 ** 4 + a2 ** 4) / 18 ** 4; },
+  "pedestrian-phase-time": (p) => { const W = nums(p)[0], walk = at(p, "interval of"); return walk + W / 3.5; },
+  "curve-external-distance": (p) => { const [R, I] = nums(p); const T = R * Math.tan(rad(I / 2)); return Math.sqrt(R * R + T * T) - R; },
+  "mix-design-fine-aggregate": (p) => {
+    const C = at(p, "uses"), W = at(p, "(SG 3.15),"), CA = at(p, "water, and"), Gca = at(p, "SSD, SG"), air = at(p, "with"), Gfa = at(p, "fine aggregate (SSD, SG");
+    const g = 62.4; return (27 * (1 - air / 100) - C / (3.15 * g) - W / g - CA / (Gca * g)) * Gfa * g;
+  },
+  "rate-of-return-annuity": (p) => {
+    const P = at(p, "costs $"), A = at(p, "saves $"), n = at(p, "per year for");
+    // secant iteration on PW(i) = A(P/A) − P
+    const f = (i: number) => { let s = 0; for (let y = 1; y <= n; y++) s += A / (1 + i) ** y; return s - P; };
+    let a = 0.01, b = 0.3; for (let k = 0; k < 100; k++) { const fa = f(a), fb = f(b); if (Math.abs(fb - fa) < 1e-12) break; const c = b - fb * (b - a) / (fb - fa); a = b; b = c; }
+    return b * 100;
+  },
+  "capitalized-cost": (p) => {
+    const C = at(p, "costs $"), M = at(p, "Maintenance costs $"), R = at(p, "costing $"), k = at(p, "every"), i = at(p, "At") / 100;
+    return C + M / i + R / ((1 + i) ** k - 1); // perpetual series of payments every k years
+  },
+  "impulse-average-force": (p) => { const [m, v1, v2, t] = nums(p); return m * (v2 - -v1) / t / 1000; },
 };
 
 

@@ -150,11 +150,24 @@ composite beam φMn, bolted plate tension (yield vs. rupture), unconfined Thiem 
 superposition, clarifier solids loading, aeration oxygen demand, wall thrust with surcharge and water,
 overconsolidated clay settlement, 2:1 stress distribution, linear schedule crew lag.
 
+## Sixth batch (November 2026)
+
+Problem types (16): CMU wall axial capacity (ASD), cantilever deflection, culvert outlet control
+headwater, Muskingum routing, rapid mix power, filter count with redundancy, drilled shaft β method,
+degree of saturation, falling-head permeability, axle load equivalency, pedestrian phase time, curve
+external distance, concrete mix design (absolute volume), rate of return, capitalized cost, impulse.
+
+Conceptual questions (27): FE math (derivative, determinant, dot product, normal distribution, R²,
+distance), sunk cost, expected value, two-force members, impending friction, rigid body kinematics,
+HSM CMFs, HCM LOS measures, Stage 2 DBP MCLs, digester gas, biological P removal, urbanization and
+hydrographs, downdrag, wick drains, seismic design category, lateral-torsional bracing, development
+length, free float, linear schedule slopes, crashing order.
+
 ## Next batch
 
-1. Masonry (TMS 402) allowable stresses and CMU wall axial capacity (Structural 4E).
-2. Rigid pavement thickness and flexible pavement layer design checks (Transportation 9D).
-3. Culvert inlet and outlet control headwater (WRE 6C, Transportation 10B).
-4. Reservoir and channel routing (Muskingum, storage-indication) (WRE 7C).
-5. Drilled shaft side resistance in sand (β method) (Geotechnical 10A).
-6. Concrete mix design proportioning by absolute volume (Construction 3B, FE 7A).
+1. Steel beam lateral-torsional buckling strength between Lp and Lr (Structural 5A).
+2. Reinforced concrete column interaction (axial capacity with ties, ACI 22.4) (Structural 5B).
+3. Unit hydrograph convolution for a multi-period storm (WRE 7C).
+4. Sheet pile cantilever embedment (Geotechnical 8C).
+5. Signalized intersection critical lane analysis (Transportation 2C).
+6. Crane lifting: rigging sling tension with angle (Construction 9A).

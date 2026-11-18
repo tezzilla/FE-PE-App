@@ -146,8 +146,9 @@ export function buildVariant(t: Template, seed: number): BuiltVariant {
   const picked = [...below, ...above, ...extra];
 
   const values = [g.answer, ...picked].sort((a, b) => a - b);
-  // Currency goes in front ($61,500); other units after (61.4 kN).
-  const withUnit = (v: number) => (g.unit === "$" ? "$" + label(v) : g.unit ? `${label(v)} ${g.unit}` : label(v));
+  // Currency goes in front ($61,500), percent attaches (12.1%), other units after a space (61.4 kN).
+  const withUnit = (v: number) =>
+    g.unit === "$" ? "$" + label(v) : g.unit === "%" ? `${label(v)}%` : g.unit ? `${label(v)} ${g.unit}` : label(v);
   return {
     prompt: g.prompt,
     choices: values.map(withUnit),
