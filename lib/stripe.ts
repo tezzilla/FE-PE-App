@@ -3,8 +3,8 @@ import Stripe from "stripe";
 import { PLANS, SOLD_PLANS, stripePriceOverride, type PlanId } from "./plans";
 import { PORTAL_CONFIG_APP } from "./stripe-portal";
 
-/** Pinned API version. Upgrade deliberately (see .agents/skills/upgrade-stripe). */
-export const STRIPE_API_VERSION = "2026-10-28.endive";
+import { STRIPE_API_VERSION } from "./stripe-version";
+export { STRIPE_API_VERSION };
 
 export function stripeEnabled() {
   return !!process.env.STRIPE_SECRET_KEY;
@@ -38,6 +38,10 @@ export function automaticTaxEnabled() {
 
 let priceCache: { at: number; ids: Map<PlanId, string> } | null = null;
 const PRICE_CACHE_MS = 5 * 60_000;
+/** Forget cached price IDs, e.g. right after setup created new prices. */
+export function clearPriceCache() {
+  priceCache = null;
+}
 
 /** Price ID for every plan: env override, else the active Price with the plan's lookup key. */
 export async function planPriceIds(): Promise<Map<PlanId, string>> {
@@ -98,7 +102,7 @@ export interface BillingStatus {
   stripeEnvNames: string[];
 }
 
-function keyMode(key: string | undefined) {
+export function keyMode(key: string | undefined) {
   const m = /^(sk|rk)_(test|live)_/.exec(key ?? "");
   return m ? `${m[1] === "rk" ? "restricted-" : ""}${m[2]}` : key ? "unrecognized" : null;
 }
