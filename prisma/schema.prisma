@@ -224,3 +224,11 @@ model GiftCode {
   voidedAt          DateTime?
   createdAt         DateTime  @default(now())
 }
+
+/// Secrets the app creates for itself (e.g. a Stripe webhook signing secret made by the setup button),
+/// encrypted with a key derived from AUTH_SECRET. Never shown in the UI.
+model AppSecret {
+  name      String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

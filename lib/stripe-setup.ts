@@ -15,12 +15,15 @@ const TAX_CODE = "txcd_20060058";
 // Prices are shown before tax; Stripe adds tax at checkout where you're registered.
 const TAX_BEHAVIOR = "exclusive" as const;
 
-export type SetupResult = { livemode: boolean; log: string[]; webhookCreated: boolean };
+/** webhookSecret is set only when a new endpoint was created; it is never written to the log. */
+export type SetupResult = { livemode: boolean; log: string[]; webhookCreated: boolean; webhookId: string | null; webhookSecret: string | null };
 
 export async function runStripeSetup(stripe: Stripe, appUrl: string, opts: { allowLive: boolean }): Promise<SetupResult> {
   const lines: string[] = [];
   const log = (s: string) => lines.push(s);
   let webhookCreated = false;
+  let webhookId: string | null = null;
+  let webhookSecret: string | null = null;
   const balance = await stripe.balance.retrieve();
   log(`Mode: ${balance.livemode ? "LIVE" : "test/sandbox"}`);
   if (balance.livemode && !opts.allowLive) throw new Error("This is a live key. Confirm live mode to change it.");
@@ -110,6 +113,7 @@ export async function runStripeSetup(stripe: Stripe, appUrl: string, opts: { all
   const hook = endpoints.data.find((w) => w.url === url);
   if (hook) {
     await stripe.webhookEndpoints.update(hook.id, { enabled_events: [...HANDLED_EVENTS], disabled: false });
+    webhookId = hook.id;
     log(`Webhook ${hook.id} updated (API version ${hook.api_version}; to change it, create a new endpoint).`);
   } else {
     const created = await stripe.webhookEndpoints.create({
@@ -119,7 +123,9 @@ export async function runStripeSetup(stripe: Stripe, appUrl: string, opts: { all
       description: "CivilPrep subscriptions",
     });
     webhookCreated = true;
-    log(`Webhook ${created.id} created for ${url}. Reveal its signing secret in the Dashboard (Developers > Webhooks) and save it as STRIPE_WEBHOOK_SECRET.`);
+    webhookId = created.id;
+    webhookSecret = created.secret ?? null;
+    log(`Webhook ${created.id} created for ${url}.`);
   }
 
   // 3. Customer Portal: cancel at period end, switch plans, update card/address/tax ID, invoice history.
@@ -154,5 +160,5 @@ export async function runStripeSetup(stripe: Stripe, appUrl: string, opts: { all
   log(`Stripe Tax: settings ${tax.status}, ${regs.data.length} active registration(s).`);
   if (tax.status !== "active") log("  Set your head office address in Dashboard > Tax > Settings to activate Stripe Tax.");
   if (!regs.data.length) log("  No registrations: Stripe will collect no tax until you add one where you're registered.");
-  return { livemode: balance.livemode, log: lines, webhookCreated };
+  return { livemode: balance.livemode, log: lines, webhookCreated, webhookId, webhookSecret };
 }

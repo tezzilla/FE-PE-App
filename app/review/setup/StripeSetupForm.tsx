@@ -28,11 +28,14 @@ export function StripeSetupForm({ keyMode }: { keyMode: string | null }) {
       {state?.ok && (
         <div className="space-y-2" role="status">
           <p className="text-sm font-semibold" style={{ color: "var(--good)" }}>Done ({state.mode} mode).</p>
-          {state.webhookCreated && (
+          {state.secretSaved && (
+            <p className="text-sm">Webhook created and its signing secret saved securely on the server. Nothing to copy.</p>
+          )}
+          {state.needsManualSecret && (
             <p className="text-sm">
-              A new webhook endpoint was created. In Stripe, open Developers &gt; Webhooks &gt; the CivilPrep endpoint, reveal
-              its signing secret (whsec_...), save it as <code>STRIPE_WEBHOOK_SECRET</code> in Vercel for Production, and
-              redeploy. Payments won&apos;t unlock accounts until you do.
+              The webhook endpoint already existed, so its signing secret couldn&apos;t be saved automatically. In Stripe, open
+              Developers &gt; Webhooks &gt; the CivilPrep endpoint, reveal its signing secret (whsec_...), save it as{" "}
+              <code>STRIPE_WEBHOOK_SECRET</code> in Vercel for Production, and redeploy.
             </p>
           )}
           <pre className="text-xs whitespace-pre-wrap p-3 rounded" style={{ background: "var(--border)" }}>{state.log.join("\n")}</pre>

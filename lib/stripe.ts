@@ -2,6 +2,7 @@ import "server-only";
 import Stripe from "stripe";
 import { PLANS, SOLD_PLANS, stripePriceOverride, type PlanId } from "./plans";
 import { PORTAL_CONFIG_APP } from "./stripe-portal";
+import { db } from "./db";
 
 import { STRIPE_API_VERSION } from "./stripe-version";
 export { STRIPE_API_VERSION };
@@ -116,8 +117,9 @@ export async function billingStatus(): Promise<BillingStatus> {
   if (fakeBillingAllowed()) return { ready: true, problems: [], ...base };
 
   const problems: string[] = [];
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    problems.push("STRIPE_WEBHOOK_SECRET is not set, so paid subscriptions won't unlock content. Copy the endpoint's signing secret (whsec_...) from Stripe > Developers > Webhooks.");
+  const savedWebhook = await db.appSecret.count({ where: { name: { startsWith: `stripe_webhook_secret:${mode?.endsWith("live") ? "live" : "test"}:` } } }).catch(() => 0);
+  if (!process.env.STRIPE_WEBHOOK_SECRET && !savedWebhook) {
+    problems.push("No webhook signing secret, so paid subscriptions won't unlock content. Run \"Set up Stripe\" on this page (it saves the secret when it creates the endpoint), or copy it from Stripe > Developers > Webhooks into STRIPE_WEBHOOK_SECRET.");
   }
   if (!stripeEnabled()) {
     problems.unshift(

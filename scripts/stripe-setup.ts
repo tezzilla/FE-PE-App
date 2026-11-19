@@ -18,7 +18,10 @@ if (!key || !/^https:\/\//.test(appUrl)) {
 const stripe = new Stripe(key, { apiVersion: STRIPE_API_VERSION, httpClient: Stripe.createFetchHttpClient() });
 
 runStripeSetup(stripe, appUrl, { allowLive: process.argv.includes("--live") })
-  .then((r) => r.log.forEach((l) => console.log(l)))
+  .then((r) => {
+    r.log.forEach((l) => console.log(l));
+    if (r.webhookCreated) console.log("Reveal the new webhook's signing secret in the Dashboard (Developers > Webhooks) and save it as STRIPE_WEBHOOK_SECRET.");
+  })
   .catch((e) => {
     console.error(e instanceof Stripe.errors.StripeError ? `${e.type}: ${e.message}` : e instanceof Error ? e.message : e);
     process.exit(1);

@@ -4,8 +4,10 @@ import Stripe from "stripe";
 import { requireReviewer } from "@/lib/auth";
 import { clearPriceCache, stripe, stripeEnabled } from "@/lib/stripe";
 import { runStripeSetup } from "@/lib/stripe-setup";
+import { saveAppSecret, WEBHOOK_SECRET_PREFIX } from "@/lib/app-secrets";
+import { db } from "@/lib/db";
 
-export type StripeSetupState = { ok: boolean; mode?: "live" | "test"; log: string[]; error?: string; webhookCreated?: boolean } | null;
+export type StripeSetupState = { ok: boolean; mode?: "live" | "test"; log: string[]; error?: string; webhookCreated?: boolean; secretSaved?: boolean; needsManualSecret?: boolean } | null;
 
 /**
  * Run the Stripe setup on the server with this deployment's own STRIPE_SECRET_KEY, so the key never
@@ -24,7 +26,14 @@ export async function setupStripe(_prev: StripeSetupState, form: FormData): Prom
   try {
     const r = await runStripeSetup(stripe(), appUrl, { allowLive: live });
     clearPriceCache();
-    return { ok: true, mode: r.livemode ? "live" : "test", log: r.log, webhookCreated: r.webhookCreated };
+    const mode = r.livemode ? "live" : "test";
+    let secretSaved = false;
+    if (r.webhookSecret && r.webhookId) {
+      await saveAppSecret(`${WEBHOOK_SECRET_PREFIX}${mode}:${r.webhookId}`, r.webhookSecret);
+      secretSaved = true;
+    }
+    const savedForMode = secretSaved || (await db.appSecret.count({ where: { name: { startsWith: `${WEBHOOK_SECRET_PREFIX}${mode}:` } } })) > 0;
+    return { ok: true, mode, log: r.log, webhookCreated: r.webhookCreated, secretSaved, needsManualSecret: !savedForMode };
   } catch (e) {
     const msg = e instanceof Stripe.errors.StripeError ? `${e.type}: ${e.message}` : e instanceof Error ? e.message : String(e);
     return { ok: false, mode: live ? "live" : "test", log: [], error: msg };

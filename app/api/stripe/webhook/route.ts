@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
+import { appSecretsWithPrefix, WEBHOOK_SECRET_PREFIX } from "@/lib/app-secrets";
 import { planFromPrice, stripe } from "@/lib/stripe";
 import { getPlan } from "@/lib/plans";
 import { grantPass, revokePassByPaymentIntent } from "@/lib/passes";
@@ -110,16 +111,22 @@ async function fulfillPass(sessionId: string) {
 }
 
 export async function POST(req: Request) {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  // Signing secrets: the one the setup button saved (newest first), then STRIPE_WEBHOOK_SECRET.
+  const secrets = [...(await appSecretsWithPrefix(WEBHOOK_SECRET_PREFIX)), process.env.STRIPE_WEBHOOK_SECRET].filter((s): s is string => !!s);
   const sig = req.headers.get("stripe-signature");
-  if (!secret || !sig) return NextResponse.json({ error: "Webhook not configured" }, { status: 400 });
+  if (!secrets.length || !sig) return NextResponse.json({ error: "Webhook not configured" }, { status: 400 });
 
-  let event: Stripe.Event;
-  try {
-    event = stripe().webhooks.constructEvent(await req.text(), sig, secret);
-  } catch {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  const body = await req.text();
+  let event: Stripe.Event | null = null;
+  for (const secret of secrets) {
+    try {
+      event = stripe().webhooks.constructEvent(body, sig, secret);
+      break;
+    } catch {
+      // try the next secret
+    }
   }
+  if (!event) return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
 
   try {
     switch (event.type) {
