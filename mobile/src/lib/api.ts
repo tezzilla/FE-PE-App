@@ -143,6 +143,8 @@ export interface TopicReview {
   formulas: { front: string; back: string; ref: string }[];
   lockedFormulas?: number;
   example: { prompt: string; choices: string[]; answer: number; explanation: string; reference: string | null } | null;
+  /** Free accounts: the worked example's problem only; the answer and solution come with full access. */
+  lockedExample?: { prompt: string; choices: string[] } | null;
   reviewedBy: string | null;
   mastery: { value: number; answered: number } | null;
 }
@@ -274,7 +276,7 @@ export const api = {
   deletePlan: (token: string, exam: ExamId) => request<{ ok: true }>(`/api/mobile/plan?exam=${exam}`, token, { method: 'DELETE' }),
   guides: (token: string) => request<{ guides: GuideSummary[] }>('/api/mobile/learn', token),
   guide: (token: string, slug: string) => request<Guide>(`/api/mobile/learn?slug=${encodeURIComponent(slug)}`, token),
-  handbookDrill: (token: string, exam: ExamId) => request<{ items: DrillItem[] }>(`/api/mobile/handbook-drill?exam=${exam}`, token),
+  handbookDrill: (token: string, exam: ExamId) => request<{ items: DrillItem[]; sample?: boolean; totalCards?: number }>(`/api/mobile/handbook-drill?exam=${exam}`, token),
   answer: (token: string, questionId: string, selected: number, timeMs?: number) =>
     request<Feedback>('/api/mobile/answer', token, {
       method: 'POST',

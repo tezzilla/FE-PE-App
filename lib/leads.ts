@@ -11,7 +11,7 @@ import { sampleSetEmail, sendEmail } from "./email";
 import { LIMITS, blockedFor, clientIp, hit, tooMany } from "./ratelimit";
 
 const AUDIENCE = "civilprep-sample-set";
-const SET_SIZE = 10; // kept small: it's a taste, not a substitute for the paid bank
+const SET_SIZE = 6; // kept small: it's a taste, not a substitute for the paid bank
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function secret() {

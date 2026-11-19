@@ -55,6 +55,11 @@ export default function HandbookDrill() {
           <ThemedText themeColor="textSecondary" style={{ textAlign: 'center' }}>
             Average {avg.toFixed(1)} s per lookup {avg <= TARGET_S ? '(nice pace)' : `(aim for under ${TARGET_S} s)`}
           </ThemedText>
+          {data.sample && (
+            <ThemedText type="small" themeColor="textSecondary" style={{ textAlign: 'center' }}>
+              That was the free sample. Full access covers all {data.totalCards} formulas.
+            </ThemedText>
+          )}
           <Button title="New round" onPress={again} testID="drill-again" />
           <Button variant="ghost" title="Done" onPress={() => router.back()} />
         </Card>
@@ -81,6 +86,11 @@ export default function HandbookDrill() {
           </ThemedText>
         </View>
       </View>
+      {data.sample && i === 0 && picked === null && (
+        <ThemedText type="small" themeColor="textSecondary" testID="drill-sample">
+          A free {items.length}-question sample round. Full access drills all {data.totalCards} formulas, ten at a time.
+        </ThemedText>
+      )}
       <ThemedText type="small" themeColor="textSecondary">Which handbook chapter would you open for:</ThemedText>
       <ThemedText style={{ fontSize: 18, fontWeight: 700 }}>{q.prompt}</ThemedText>
       <View style={{ gap: Spacing.two }}>

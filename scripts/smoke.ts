@@ -53,6 +53,14 @@ async function main() {
     check(r.status === 200, `GET ${path} is 200`, String(r.status));
   }
 
+  // Free tier stays limited: sample drill round, worked-example solutions locked
+  const drill = (await (await get("/api/mobile/handbook-drill?exam=fe-civil", { headers: bearer })).json()) as { items?: unknown[]; sample?: boolean };
+  check(drill.sample === true && (drill.items?.length ?? 99) <= 4, "free accounts get a short sample drill round");
+  const topic = (await (await get("/api/mobile/topic?exam=fe-civil&topic=water-env", { headers: bearer })).json()) as { example?: unknown; lockedExample?: unknown };
+  check(topic.example === null, "free accounts don't receive worked-example solutions", JSON.stringify(topic.example)?.slice(0, 80));
+  const notes = await (await get("/exams/fe-civil/topics/water-env")).text();
+  check(!notes.includes("Show solution"), "public topic page hides the worked solution");
+
   // Checkout must always redirect (to Stripe, or back to Pricing with a message), never show a raw error
   const co = await get("/api/stripe/checkout", { method: "POST", headers: cookie, body: new URLSearchParams({ plan: "fe-civil" }) });
   const loc = co.headers.get("location") ?? "";

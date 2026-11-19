@@ -75,6 +75,24 @@ export default function Topic() {
         ))}
       </Card>
 
+      {data.lockedExample && (
+        <>
+          <ThemedText type="smallBold" style={{ marginTop: Spacing.two }}>Worked example</ThemedText>
+          <Card>
+            <ThemedText>{data.lockedExample.prompt}</ThemedText>
+            {data.lockedExample.choices.map((c, i) => (
+              <ThemedText key={i}>
+                <ThemedText type="smallBold">{letter(i)}. </ThemedText>
+                {c}
+              </ThemedText>
+            ))}
+            <ThemedText type="small" themeColor="textSecondary" testID="example-locked">
+              Try it yourself. The answer and full worked solution are included with full access.
+            </ThemedText>
+          </Card>
+        </>
+      )}
+
       {data.example && (
         <>
           <ThemedText type="smallBold" style={{ marginTop: Spacing.two }}>Worked example</ThemedText>

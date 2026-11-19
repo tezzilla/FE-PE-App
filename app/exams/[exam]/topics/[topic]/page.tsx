@@ -32,7 +32,7 @@ export default async function TopicReview({ params }: { params: Params }) {
   const { exam } = f;
   const user = await getCurrentUser();
   const r = (await topicReview(user, exam, topic))!;
-  const { topic: t, guide, cards, lockedCards, example, mastery } = r;
+  const { topic: t, guide, cards, lockedCards, example, mastery, solutionLocked } = r;
   const review = r.reviewedBy ? { reviewerName: r.reviewedBy, credential: null } : undefined;
 
   return (
@@ -92,6 +92,12 @@ export default async function TopicReview({ params }: { params: Params }) {
             <ol className="space-y-1">
               {example.choices.map((c, i) => <li key={i}><span className="font-semibold">{letter(i)}.</span> {c}</li>)}
             </ol>
+            {solutionLocked ? (
+              <div className="rounded p-3 text-sm flex flex-wrap items-center gap-3" style={{ background: "var(--border)" }}>
+                <p className="flex-1 min-w-48">Try it yourself. The answer and full worked solution come with full access, along with every practice problem for this topic.</p>
+                <Link href="/pricing" className="btn !py-1.5">See plans</Link>
+              </div>
+            ) : (
             <details>
               <summary className="cursor-pointer font-medium" style={{ color: "var(--brand-text)" }}>Show solution</summary>
               <div className="mt-2 space-y-2">
@@ -103,6 +109,7 @@ export default async function TopicReview({ params }: { params: Params }) {
                 )}
               </div>
             </details>
+            )}
           </div>
         </section>
       )}

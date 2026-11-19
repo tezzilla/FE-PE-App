@@ -30,6 +30,8 @@ export async function topicReview(user: User | null, exam: ExamId, topic: string
     cards: flashcardsFor(exam, topic).filter((c) => c.free || hasExamAccess(user, exam)),
     lockedCards: flashcardsFor(exam, topic).filter((c) => !(c.free || hasExamAccess(user, exam))).length,
     example,
+    // Free visitors see the worked example's problem; the answer and solution come with full access.
+    solutionLocked: !hasExamAccess(user, exam),
     reviewedBy: review?.reviewerName ? [review.reviewerName, review.credential].filter(Boolean).join(", ") : null,
     mastery,
   };

@@ -20,10 +20,12 @@ export async function GET(req: Request) {
     traps: r.guide.traps,
     formulas: r.cards.map((c) => ({ front: c.front, back: c.back, ref: c.ref })),
     lockedFormulas: r.lockedCards,
-    // The example is a public teaching sample, so its answer and solution are included.
-    example: r.example
+    // Full access: the example with its answer and solution. Otherwise only the problem, in its own field so
+    // older app versions (which expect an answer whenever `example` is set) just show no example.
+    example: r.example && !r.solutionLocked
       ? { prompt: r.example.prompt, choices: r.example.choices, answer: r.example.answer, explanation: r.example.explanation, reference: r.example.reference ?? null }
       : null,
+    lockedExample: r.example && r.solutionLocked ? { prompt: r.example.prompt, choices: r.example.choices } : null,
     reviewedBy: r.reviewedBy,
     mastery: r.mastery && r.mastery.evidence > 0 ? { value: r.mastery.mastery, answered: r.mastery.evidence } : null,
   });
