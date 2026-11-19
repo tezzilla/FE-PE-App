@@ -44,7 +44,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
     { href: `${base}/diagnostic`, icon: "compass", title: "Diagnostic", text: `About ${def.topics.length * 2} questions to find your weak topics.` },
     { href: `${base}/mock`, icon: "timer", title: "Full timed exam", text: "Exam-length, weighted like the real thing.", locked: !access },
     { href: `${base}/flashcards`, icon: "cards", title: "Formula flashcards", text: "Spaced repetition, with where each formula lives.", badge: due ? `${due} due` : undefined },
-    { href: `${base}/handbook-drill`, icon: "search", title: "Handbook hunt", text: "Timed drill: which chapter would you open?" },
+    { href: `${base}/handbook-drill`, icon: "search", title: "Handbook hunt", text: "Timed drill: which chapter would you open?", locked: !access },
     { href: "/learn", icon: "book", title: "Formula guides", text: "Free write-ups of the most-tested formulas." },
     { href: `${base}/resources`, icon: "doc", title: isPe ? "Documents and standards" : "Exam documents", text: isPe ? "Official links and each module's design standards." : "Official links: handbook, specs, exam-day rules.", locked: !access },
   ];

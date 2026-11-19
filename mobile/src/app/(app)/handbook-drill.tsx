@@ -35,6 +35,23 @@ export default function HandbookDrill() {
   const header = <Stack.Screen options={{ title: 'Handbook hunt' }} />;
   const items = data.items;
 
+  if (data.locked) {
+    // Store rules: no purchase links in the app. Subscriptions are managed on the website.
+    return (
+      <Screen>
+        {header}
+        <Card>
+          <ThemedText type="smallBold" testID="drill-locked">Handbook hunt is part of full access</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Drill all {data.totalCards} formulas against the clock, with a new set every round and your average lookup time at
+            the end. Full access is managed on the CivilPrep website and works here as soon as it&apos;s active.
+          </ThemedText>
+          <Button variant="ghost" title="Back" onPress={() => router.back()} />
+        </Card>
+      </Screen>
+    );
+  }
+
   if (i >= items.length) {
     const right = results.filter((r) => r.ok).length;
     const avg = results.reduce((a, r) => a + r.s, 0) / Math.max(1, results.length);
@@ -55,11 +72,6 @@ export default function HandbookDrill() {
           <ThemedText themeColor="textSecondary" style={{ textAlign: 'center' }}>
             Average {avg.toFixed(1)} s per lookup {avg <= TARGET_S ? '(nice pace)' : `(aim for under ${TARGET_S} s)`}
           </ThemedText>
-          {data.sample && (
-            <ThemedText type="small" themeColor="textSecondary" style={{ textAlign: 'center' }}>
-              That was the free sample. Full access covers all {data.totalCards} formulas.
-            </ThemedText>
-          )}
           <Button title="New round" onPress={again} testID="drill-again" />
           <Button variant="ghost" title="Done" onPress={() => router.back()} />
         </Card>
@@ -86,11 +98,6 @@ export default function HandbookDrill() {
           </ThemedText>
         </View>
       </View>
-      {data.sample && i === 0 && picked === null && (
-        <ThemedText type="small" themeColor="textSecondary" testID="drill-sample">
-          A free {items.length}-question sample round. Full access drills all {data.totalCards} formulas, ten at a time.
-        </ThemedText>
-      )}
       <ThemedText type="small" themeColor="textSecondary">Which handbook chapter would you open for:</ThemedText>
       <ThemedText style={{ fontSize: 18, fontWeight: 700 }}>{q.prompt}</ThemedText>
       <View style={{ gap: Spacing.two }}>

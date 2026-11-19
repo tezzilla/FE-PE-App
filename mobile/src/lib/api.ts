@@ -276,7 +276,7 @@ export const api = {
   deletePlan: (token: string, exam: ExamId) => request<{ ok: true }>(`/api/mobile/plan?exam=${exam}`, token, { method: 'DELETE' }),
   guides: (token: string) => request<{ guides: GuideSummary[] }>('/api/mobile/learn', token),
   guide: (token: string, slug: string) => request<Guide>(`/api/mobile/learn?slug=${encodeURIComponent(slug)}`, token),
-  handbookDrill: (token: string, exam: ExamId) => request<{ items: DrillItem[]; sample?: boolean; totalCards?: number }>(`/api/mobile/handbook-drill?exam=${exam}`, token),
+  handbookDrill: (token: string, exam: ExamId) => request<{ items: DrillItem[]; locked?: boolean; totalCards?: number }>(`/api/mobile/handbook-drill?exam=${exam}`, token),
   answer: (token: string, questionId: string, selected: number, timeMs?: number) =>
     request<Feedback>('/api/mobile/answer', token, {
       method: 'POST',

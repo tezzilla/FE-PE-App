@@ -54,8 +54,8 @@ async function main() {
   }
 
   // Free tier stays limited: sample drill round, worked-example solutions locked
-  const drill = (await (await get("/api/mobile/handbook-drill?exam=fe-civil", { headers: bearer })).json()) as { items?: unknown[]; sample?: boolean };
-  check(drill.sample === true && (drill.items?.length ?? 99) <= 4, "free accounts get a short sample drill round");
+  const drill = (await (await get("/api/mobile/handbook-drill?exam=fe-civil", { headers: bearer })).json()) as { items?: unknown[]; locked?: boolean };
+  check(drill.locked === true && drill.items?.length === 0, "handbook hunt is locked for free accounts");
   const topic = (await (await get("/api/mobile/topic?exam=fe-civil&topic=water-env", { headers: bearer })).json()) as { example?: unknown; lockedExample?: unknown };
   check(topic.example === null, "free accounts don't receive worked-example solutions", JSON.stringify(topic.example)?.slice(0, 80));
   const notes = await (await get("/exams/fe-civil/topics/water-env")).text();

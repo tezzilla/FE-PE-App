@@ -52,7 +52,9 @@ export async function welcomeContent(user: User, step: number): Promise<WelcomeC
       title: "Two habits that save time on exam day",
       lines: [
         "Formula flashcards: a few minutes a day keeps key formulas fresh, and every card says where it lives in the reference handbook.",
-        "Handbook hunt: a timed drill on which chapter you'd open. Knowing where to look saves minutes per problem.",
+        hasPaidAccess(user)
+          ? "Handbook hunt: a timed drill on which chapter you'd open. Knowing where to look saves minutes per problem."
+          : "With full access, Handbook hunt drills which chapter you'd open for each formula. Knowing where to look saves minutes per problem.",
         "Set your exam date too, and your study plan will give you a weekly target and focus topics.",
       ],
       button: { label: "Open your study tools", url: base },

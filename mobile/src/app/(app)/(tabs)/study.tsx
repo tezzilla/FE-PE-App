@@ -65,6 +65,7 @@ export default function Study() {
           title="Handbook hunt"
           subtitle="Timed drill: which chapter would you open?"
           testID="handbook-drill"
+          locked={!exam.access}
           onPress={() => router.push('/handbook-drill')}
         />
         <ListRow
