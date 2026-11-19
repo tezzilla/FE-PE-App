@@ -6,6 +6,7 @@ import { templateReviewStatus } from "@/lib/reviews";
 import { approveVerified, sendTestEmail } from "./actions";
 import { SubmitButton } from "./SubmitButton";
 import { StripeSetupForm } from "./StripeSetupForm";
+import { LeftoversForm } from "./LeftoversForm";
 import { keyMode } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +56,7 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
         ))}
       </div>
       <StripeSetupForm keyMode={keyMode(process.env.STRIPE_SECRET_KEY)} />
+      <LeftoversForm live={!!keyMode(process.env.STRIPE_SECRET_KEY)?.endsWith("live")} />
 
       <form id="auto-approve" action={approveVerified} className="card p-4 space-y-3">
         <div className="flex flex-wrap items-center gap-3">

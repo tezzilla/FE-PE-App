@@ -1,3 +1,4 @@
+import { FunnelBeacon } from "@/components/FunnelBeacon";
 import Link from "next/link";
 import { EXAMS } from "@/lib/content/exams";
 import type { ExamId } from "@/lib/content/types";
@@ -41,6 +42,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="space-y-8">
+      <FunnelBeacon name="pricing_view" />
       <div className="text-center space-y-2">
         <p className="eyebrow">Pricing</p>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">A full prep course for less than one exam fee</h1>

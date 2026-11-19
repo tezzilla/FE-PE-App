@@ -42,8 +42,8 @@ export default async function AccountPage() {
           <label className="flex items-start gap-3 text-sm">
             <input type="checkbox" name="weeklyEmail" defaultChecked={user.weeklyEmail} className="mt-1" />
             <span>
-              <span className="font-medium">Weekly progress email</span>
-              <span className="block muted">Monday summary: questions answered, readiness change, and what to focus on next.</span>
+              <span className="font-medium">Study emails</span>
+              <span className="block muted">A Monday progress summary, plus a few tips in your first week. Account emails, like password resets, always arrive.</span>
             </span>
           </label>
           <button className="btn-ghost">Save</button>

@@ -4,6 +4,7 @@ import { getPlan, extensionFor } from "@/lib/plans";
 import { EXAMS } from "@/lib/content/exams";
 import { emailEnabled, passEndingEmail, sendEmail } from "@/lib/email";
 import { hasActiveSubscription } from "@/lib/access";
+import { sendWelcomeSeries } from "@/lib/welcome";
 
 const DAY = 24 * 3600 * 1000;
 
@@ -37,5 +38,7 @@ export async function GET(req: Request) {
     if (!claimed.count || !ext || covered || !endsAccess) continue;
     if (await sendEmail(passEndingEmail(p.user.email, EXAMS[exam].name, until!, ext.price))) sent++;
   }
-  return NextResponse.json({ checked: passes.length, sent });
+  // The same daily run sends the welcome series (Hobby plans limit how many cron jobs a project has).
+  const welcome = await sendWelcomeSeries();
+  return NextResponse.json({ checked: passes.length, sent, welcome });
 }

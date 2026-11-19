@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
+import { track } from "@/lib/funnel";
 import { appSecretsWithPrefix, WEBHOOK_SECRET_PREFIX } from "@/lib/app-secrets";
 import { planFromPrice, stripe } from "@/lib/stripe";
 import { getPlan } from "@/lib/plans";
@@ -133,6 +134,9 @@ export async function POST(req: Request) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
         const s = event.data.object;
+        if (s.payment_status === "paid" || s.payment_status === "no_payment_required") {
+          await track("purchase", { userId: s.client_reference_id ?? s.metadata?.userId ?? null, plan: s.metadata?.gift ? `gift:${s.metadata?.plan}` : (s.metadata?.plan ?? null), dedupeId: s.id });
+        }
         if (s.mode === "subscription" && s.subscription) await syncSubscription(idOf(s.subscription)!);
         if (s.mode === "payment") await fulfillPass(s.id);
         break;

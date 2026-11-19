@@ -185,4 +185,25 @@ export function weeklyProgressEmail(to: string, name: string | null, lines: stri
   };
 }
 
+export function welcomeSeriesEmail(
+  to: string,
+  name: string | null,
+  c: { subject: string; title: string; lines: string[]; button: { label: string; url: string } },
+  unsubscribeUrl: string,
+  oneClickUrl: string,
+): Email {
+  const footer = `You get study tips because you signed up for CivilPrep. <a href="${esc(unsubscribeUrl)}" style="color:#64748b">Unsubscribe</a> or change it on your Account page.`;
+  const title = name ? `${name.split(" ")[0]}, ${c.title.charAt(0).toLowerCase()}${c.title.slice(1)}` : c.title;
+  return {
+    to,
+    subject: c.subject,
+    stream: process.env.POSTMARK_DIGEST_STREAM || "outbound",
+    headers: {
+      "List-Unsubscribe": `<${oneClickUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
+    ...withTextLink(layout(title, c.lines, c.button, footer), `Unsubscribe: ${unsubscribeUrl}`),
+  };
+}
+
 const withTextLink = (m: { html: string; text: string }, line: string) => ({ html: m.html, text: `${m.text}\n${line}` });

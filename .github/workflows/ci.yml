@@ -1,0 +1,73 @@
+name: CI
+
+# Runs on every push and pull request: type checks, content and answer tests, a production build,
+# and an end-to-end smoke test against the built site. Uses SQLite and no real Stripe or email keys.
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: file:./ci.db
+      AUTH_SECRET: ci-only-secret-not-used-anywhere-else-0123456789
+      APP_URL: http://localhost:3000
+      CRON_SECRET: ci-cron-secret
+      STRIPE_WEBHOOK_SECRET: whsec_ci_only
+      # A dummy key: Stripe API calls fail, which exercises the "send them back to Pricing" path.
+      STRIPE_SECRET_KEY: sk_test_ci_dummy
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma db push --skip-generate && npx prisma generate
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Content and logic tests
+        run: |
+          npm run test:content
+          npm run test:adaptive
+          npm run test:quiz
+          npm run test:plan
+          npm run test:cards
+      - name: Calculation problem answers
+        run: |
+          npm run test:answers
+          npm run test:templates
+      - run: npx next build
+      - name: Smoke test the built site
+        run: |
+          npx next start -p 3000 > server.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3000/ && break; sleep 2; done
+          BASE_URL=http://localhost:3000 npx tsx scripts/smoke.ts
+      - name: Server log on failure
+        if: failure()
+        run: tail -100 server.log || true
+
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx expo lint

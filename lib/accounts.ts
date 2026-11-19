@@ -1,4 +1,5 @@
 import "server-only";
+import { track } from "./funnel";
 import bcrypt from "bcryptjs";
 import type { User } from "@prisma/client";
 import { db } from "./db";
@@ -24,6 +25,7 @@ export async function createAccount(emailIn: unknown, passwordIn: unknown, nameI
   if (await db.user.findUnique({ where: { email } })) return { error: "An account with that email already exists." };
   const user = await db.user.create({ data: { email, name, passwordHash: await bcrypt.hash(password, 12) } });
   await sendEmail(welcomeEmail(user.email));
+  await track("signup", { userId: user.id });
   return { user };
 }
 

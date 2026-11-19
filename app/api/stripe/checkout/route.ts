@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/plans";
+import { track } from "@/lib/funnel";
 import { grantPass } from "@/lib/passes";
 import { hadPassFor } from "@/lib/extensions";
 import { automaticTaxEnabled, customerIdFor, fakeBillingAllowed, planPriceIds, stripe } from "@/lib/stripe";
@@ -75,6 +76,7 @@ async function startCheckout(req: Request) {
       : { ...common, mode: "subscription", subscription_data: { metadata: { userId: user.id } } };
 
   const session = await stripe().checkout.sessions.create(params);
+  await track("checkout_start", { userId: user.id, plan: plan.id });
   return NextResponse.redirect(session.url!, 303);
 }
 

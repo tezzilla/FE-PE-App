@@ -34,6 +34,8 @@ model User {
   // Weekly progress email (lib/weekly.ts): opt-out flag and when the last one went out.
   weeklyEmail          Boolean   @default(true)
   weeklyEmailSentAt    DateTime?
+  // Welcome series (lib/welcome.ts): how many of the day 1/3/7 emails have gone out.
+  welcomeStep          Int       @default(0)
   attempts             Attempt[]
   mockExams            MockExam[]
   reviews              TemplateReview[]
@@ -231,4 +233,16 @@ model AppSecret {
   name      String   @id
   value     String
   updatedAt DateTime @updatedAt
+}
+
+/// Anonymous funnel counts (signup, pricing view, checkout start, purchase). No cookies, IPs or
+/// user agents; userId only when the visitor is signed in, so steps can be matched per account.
+model FunnelEvent {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String?
+  plan      String?
+  createdAt DateTime @default(now())
+
+  @@index([name, createdAt])
 }
