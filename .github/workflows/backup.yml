@@ -1,0 +1,59 @@
+name: Database backup
+
+# Nightly encrypted backup of the production database, kept as a private workflow artifact for 30 days.
+# Independent of Neon's own point-in-time restore, so a deleted project or an expired restore window
+# can't take the data with it. Restore steps: docs/BACKUPS.md.
+#
+# Needs two repository secrets (Settings > Secrets and variables > Actions):
+#   BACKUP_DATABASE_URL  the production Postgres connection string (Vercel's DATABASE_URL_UNPOOLED)
+#   BACKUP_PASSPHRASE    a long random passphrase; keep a copy somewhere safe, it's needed to restore
+# Until both exist, the job skips with a notice instead of failing.
+
+on:
+  schedule:
+    - cron: "37 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DB_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+      PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Check secrets
+        id: check
+        run: |
+          if [ -z "$DB_URL" ] || [ -z "$PASSPHRASE" ]; then
+            echo "::notice::Backup skipped: add BACKUP_DATABASE_URL and BACKUP_PASSPHRASE repository secrets (see docs/BACKUPS.md)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dump and encrypt
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          stamp=$(date -u +%Y-%m-%dT%H%MZ)
+          echo "STAMP=$stamp" >> "$GITHUB_ENV"
+          # A newer pg_dump can read older servers, so use a recent one. Custom format, for pg_restore.
+          docker run --rm -e DB_URL postgres:18 sh -c 'pg_dump --format=custom --no-owner --no-privileges "$DB_URL"' > db.dump
+          test -s db.dump
+          printf '%s' "$PASSPHRASE" > pass.txt
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 200000 -pass file:pass.txt -in db.dump -out "civilprep-$stamp.dump.enc"
+          rm -f pass.txt db.dump
+          ls -l "civilprep-$stamp.dump.enc"
+
+      - name: Keep for 30 days
+        if: steps.check.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: civilprep-db-${{ env.STAMP }}
+          path: civilprep-*.dump.enc
+          retention-days: 30
+          if-no-files-found: error

@@ -4,7 +4,7 @@ import type { User } from "@prisma/client";
 import { EXAMS, EXAM_IDS, topicName } from "./content/exams";
 import { accessSummary, hasActiveSubscription, hasExamAccess, hasPaidAccess } from "./access";
 import { getPlan } from "./plans";
-import { examReadiness, learnerState, missedCount, pacing, studyPlanFor } from "./adaptive/server";
+import { examReadiness, learnerState, readinessHistory, missedCount, pacing, studyPlanFor } from "./adaptive/server";
 import { EXAM_PACE_S } from "./adaptive/quiz";
 import { dueCardCount } from "./cards";
 import { extensionOffer } from "./extensions";
@@ -31,13 +31,14 @@ export async function homePayload(user: User) {
   const exams = await Promise.all(
     EXAM_IDS.map(async (id) => {
       const def = EXAMS[id];
-      const [r, state, sp, missed, dueCards, pace] = await Promise.all([
+      const [r, state, sp, missed, dueCards, pace, history] = await Promise.all([
         examReadiness(user, id),
         learnerState(user.id, id),
         studyPlanFor(user, id),
         missedCount(user, id),
         dueCardCount(user, id),
         pacing(user, id),
+        readinessHistory(user, id),
       ]);
       const ext = await extensionOffer(user, id);
       return {
@@ -60,6 +61,8 @@ export async function homePayload(user: User) {
               status: sp.plan.status,
             }
           : null,
+        // Weekly readiness for the trend chart (oldest first), same as the website's.
+        history: history.map((h) => ({ date: h.date, score: h.score, answered: h.answered })),
         readiness: {
           score: r.score,
           coverage: r.coverage,

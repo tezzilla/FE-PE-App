@@ -59,13 +59,13 @@ export function ProductPreview() {
         Why this question: {ex.why}
       </p>
       <p key={`p${i}`} className="leading-relaxed flip-in">{ex.prompt}</p>
-      <ul className="space-y-1.5" role="radiogroup" aria-label="Answer choices">
+      <div className="space-y-1.5" role="radiogroup" aria-label="Answer choices">
         {ex.choices.map((c, k) => {
           const isAnswer = checked && k === ex.answer;
           const isWrongPick = checked && k === picked && k !== ex.answer;
           const border = isAnswer ? "var(--good)" : isWrongPick ? "#dc2626" : picked === k ? "var(--brand)" : "var(--border)";
           return (
-            <li key={`${i}-${k}`}>
+            <div key={`${i}-${k}`}>
               <button
                 type="button"
                 role="radio"
@@ -82,10 +82,10 @@ export function ProductPreview() {
                 <span className="flex-1">{c}</span>
                 {isAnswer && <span style={{ color: "var(--good)" }}><Icon name="check" size={16} /></span>}
               </button>
-            </li>
+            </div>
           );
         })}
-      </ul>
+      </div>
 
       {checked ? (
         <div className="enter space-y-3">

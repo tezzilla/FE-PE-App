@@ -19,6 +19,9 @@ export const Colors = {
     good: '#16a34a',
     warn: '#ca8a04',
     bad: '#dc2626',
+    // Chart tokens, the same validated values as the website's --chart-line / --chart-grid.
+    chartLine: '#c2410c',
+    chartGrid: '#e2e8f0',
   },
   dark: {
     text: '#e2e8f0',
@@ -32,6 +35,8 @@ export const Colors = {
     good: '#22c55e',
     warn: '#eab308',
     bad: '#f87171',
+    chartLine: '#ea580c',
+    chartGrid: '#1f2937',
   },
 } as const;
 

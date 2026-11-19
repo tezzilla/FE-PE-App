@@ -8,6 +8,8 @@ import { logout } from "./actions/auth";
 import { MobileTabBar } from "@/components/MobileTabBar";
 
 export const metadata: Metadata = {
+  // Makes canonical and Open Graph URLs absolute, as search engines expect.
+  metadataBase: new URL((process.env.APP_URL ?? "https://www.getcivilprep.com").replace(/\/$/, "")),
   title: "CivilPrep: FE & PE Civil exam prep",
   description: "FE and PE Civil exam prep that adapts to your weak spots: practice problems with worked solutions, full-length timed exams, formula flashcards and a study plan. From $29/month.",
   appleWebApp: { capable: true, title: "CivilPrep", statusBarStyle: "default" },

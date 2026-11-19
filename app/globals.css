@@ -108,7 +108,12 @@ body {
 }
 .contour-bg svg { width: 100%; height: 100%; }
 @keyframes contour-drift { from { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); } to { transform: translate3d(-24px, 14px, 0) rotate(2.5deg) scale(1.04); } }
-.contour-drift { transform-origin: 72% 30%; animation: contour-drift 28s ease-in-out infinite alternate; will-change: transform; }
+/* Drift only on wide screens with a mouse: on phones, repainting the masked SVG every frame blocked the
+   main thread for seconds (Lighthouse). Elsewhere the contours are static. */
+.contour-drift { transform-origin: 72% 30%; }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .contour-drift { animation: contour-drift 28s ease-in-out infinite alternate; will-change: transform; }
+}
 
 /* Cards with a soft glow that follows the pointer (components/SpotlightCard.tsx). */
 .spotlight { position: relative; overflow: hidden; transition: border-color 0.2s; }

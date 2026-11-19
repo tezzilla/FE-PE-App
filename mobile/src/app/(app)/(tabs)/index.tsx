@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
+import { ReadinessTrend } from '@/components/readiness-trend';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Card, ErrorView, Loading, ProgressBar, Screen } from '@/components/ui';
 import { masteryColor, Spacing } from '@/constants/theme';
@@ -149,6 +150,7 @@ export default function Home() {
             </View>
           </View>
         )}
+        {(exam.history?.length ?? 0) >= 2 && <ReadinessTrend points={exam.history!} />}
         <ThemedText type="small" style={{ color: theme.brand }} accessibilityRole="link" onPress={() => router.navigate('/topics')} testID="all-topics">
           {exam.id === 'pe-civil' ? 'See all modules ›' : 'See all topics ›'}
         </ThemedText>

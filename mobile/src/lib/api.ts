@@ -48,6 +48,8 @@ export interface ExamSummary {
   pacing?: { averageS: number; examPaceS: number; answered: number } | null;
   /** Study plan summary, if the student set an exam date. */
   plan: { examDate: string; weeklyHours?: number; daysLeft: number; weeklyTarget: number; answeredLast7Days: number; status: 'ahead' | 'on-track' | 'behind' } | null;
+  /** Weekly readiness for the trend chart, oldest first. Empty until the first answer. */
+  history?: { date: string; score: number; answered: number }[];
   readiness: {
     score: number;
     coverage: number;
