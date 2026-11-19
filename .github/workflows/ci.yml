@@ -69,5 +69,7 @@ jobs:
           cache: npm
           cache-dependency-path: mobile/package-lock.json
       - run: npm ci
+      # Expo generates this file (git-ignored) on first start; type checking needs it for CSS and asset imports.
+      - run: echo '/// <reference types="expo/types" />' > expo-env.d.ts
       - run: npx tsc --noEmit
       - run: npx expo lint
