@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { alertOwner, describeError } from "@/lib/alerts";
 import { customerIdFor, fakeBillingAllowed, portalConfigurationId, stripe } from "@/lib/stripe";
 
 const appUrl = () => process.env.APP_URL ?? "http://localhost:3000";
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
     return NextResponse.redirect(session.url, 303);
   } catch (e) {
     console.error("Billing portal failed", e);
+    await alertOwner("portal-failed", "Billing portal failed to open", ["A customer clicked Manage billing and was sent back to Pricing.", describeError(e)]);
     return NextResponse.redirect(new URL("/pricing?error=checkout", req.url), 303);
   }
 }

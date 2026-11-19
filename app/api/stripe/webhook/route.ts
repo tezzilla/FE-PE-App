@@ -3,38 +3,16 @@ import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { track } from "@/lib/funnel";
 import { appSecretsWithPrefix, WEBHOOK_SECRET_PREFIX } from "@/lib/app-secrets";
-import { planFromPrice, stripe } from "@/lib/stripe";
-import { getPlan } from "@/lib/plans";
-import { grantPass, revokePassByPaymentIntent } from "@/lib/passes";
-import { fulfillGift, voidGiftByPaymentIntent } from "@/lib/gifts";
+import { stripe } from "@/lib/stripe";
+import { revokePassByPaymentIntent } from "@/lib/passes";
+import { voidGiftByPaymentIntent } from "@/lib/gifts";
+import { fulfillPass, idOf, syncSubscription } from "@/lib/stripe-fulfill";
+import { alertOwner, describeError } from "@/lib/alerts";
 
 // Handles the events listed in lib/stripe-events.ts.
 
 
-const idOf = (x: string | { id: string } | null | undefined) => (typeof x === "string" ? x : x?.id ?? null);
 
-/**
- * Re-read the subscription from Stripe and mirror it onto the user.
- * Fetching (rather than trusting the event payload) keeps us correct when events arrive out of order.
- * The user is found through the Customer ID, Stripe's own ownership link, not through metadata.
- */
-async function syncSubscription(subscriptionId: string) {
-  const sub = await stripe().subscriptions.retrieve(subscriptionId);
-  const item = sub.items.data[0];
-  const periodEnd = item?.current_period_end;
-  const plan = await planFromPrice(item?.price);
-  if (!plan) console.error(`Subscription ${sub.id} has a price no plan maps to: ${item?.price.id}`);
-  const r = await db.user.updateMany({
-    where: { stripeCustomerId: idOf(sub.customer) ?? "" },
-    data: {
-      stripeSubscriptionId: sub.id,
-      subscriptionStatus: sub.status,
-      plan,
-      currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
-    },
-  });
-  if (r.count === 0) console.error(`No user for Stripe customer ${idOf(sub.customer)} (subscription ${sub.id})`);
-}
 
 function subscriptionIdOfInvoice(inv: Stripe.Invoice): string | null {
   return inv.parent?.type === "subscription_details" ? idOf(inv.parent.subscription_details?.subscription) : null;
@@ -76,40 +54,6 @@ async function flagRisk(kind: string, objectId: string, paymentIntentId: string 
   for (const s of subs) await syncSubscription(s); // e.g. a refund may come with a cancellation
 }
 
-/**
- * Grant a one-time pass once its Checkout Session is paid. The plan comes from the Price that was
- * actually paid (not from metadata), and the user from the Stripe Customer (fallback: our user id).
- */
-async function fulfillPass(sessionId: string) {
-  const s = await stripe().checkout.sessions.retrieve(sessionId, { expand: ["line_items"] });
-  if (s.mode !== "payment" || s.payment_status !== "paid") return; // async methods: wait for async_payment_succeeded
-  const planId = await planFromPrice(s.line_items?.data[0]?.price ?? undefined);
-  const plan = getPlan(planId);
-  if (!plan || plan.kind !== "pass") {
-    console.error(`Paid session ${s.id} isn't for a pass plan (price maps to ${planId})`);
-    return;
-  }
-  // A gift: create a code and email it; the recipient redeems it on their own account.
-  if (s.metadata?.gift === "1") {
-    await fulfillGift(s, plan.id);
-    return;
-  }
-  const customerId = idOf(s.customer);
-  const user =
-    (customerId && (await db.user.findUnique({ where: { stripeCustomerId: customerId } }))) ||
-    (s.client_reference_id && (await db.user.findUnique({ where: { id: s.client_reference_id } })));
-  if (!user) {
-    console.error(`No user for paid pass session ${s.id} (customer ${customerId})`);
-    return;
-  }
-  await grantPass({
-    userId: user.id,
-    planId: plan.id,
-    checkoutSessionId: s.id,
-    paymentIntentId: idOf(s.payment_intent),
-    amountTotal: s.amount_total ?? 0,
-  });
-}
 
 export async function POST(req: Request) {
   // Signing secrets: the one the setup button saved (newest first), then STRIPE_WEBHOOK_SECRET.
@@ -127,7 +71,14 @@ export async function POST(req: Request) {
       // try the next secret
     }
   }
-  if (!event) return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  if (!event) {
+    // Only headers shaped like Stripe's (timestamp + 64-hex signature) alert; random probes don't.
+    if (/(^|,)t=\d+,v1=[0-9a-f]{64}/.test(sig)) await alertOwner("webhook-signature", "Stripe webhook signature didn't verify", [
+      "A request to /api/stripe/webhook carried a Stripe signature that none of the saved signing secrets accept.",
+      "If this repeats, payments aren't unlocking accounts. Re-run \"Set up Stripe\" on the setup page, or update STRIPE_WEBHOOK_SECRET.",
+    ]);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  }
 
   try {
     switch (event.type) {
@@ -177,6 +128,10 @@ export async function POST(req: Request) {
   } catch (e) {
     // A 500 makes Stripe retry the event later, so a transient failure doesn't lose a payment update.
     console.error(`Stripe webhook ${event.type} ${event.id} failed`, e);
+    await alertOwner("webhook-failed", `Stripe webhook failed: ${event.type}`, [
+      `Event ${event.id} (${event.type}) failed. Stripe will retry it, and the daily reconciliation repairs missed payments.`,
+      describeError(e),
+    ]);
     return NextResponse.json({ error: "Handler failed" }, { status: 500 });
   }
   return NextResponse.json({ received: true });

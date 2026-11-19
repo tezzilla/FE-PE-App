@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { emailEnabled } from "@/lib/email";
 import { sendWeekly, weeklyRecipients } from "@/lib/weekly";
+import { alertOwner, describeError } from "@/lib/alerts";
 
 const DAY = 24 * 3600 * 1000;
 
@@ -13,6 +14,15 @@ export async function GET(req: Request) {
   }
   if (!emailEnabled()) return NextResponse.json({ skipped: "email not configured" });
 
+  try {
+    return await sendAll();
+  } catch (e) {
+    await alertOwner("cron-weekly", "Weekly progress email job failed", [describeError(e)]);
+    return NextResponse.json({ error: "failed" }, { status: 500 });
+  }
+}
+
+async function sendAll() {
   const now = new Date();
   const users = await weeklyRecipients(now);
   let sent = 0;

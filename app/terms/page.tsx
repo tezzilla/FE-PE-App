@@ -62,7 +62,8 @@ export default function Terms() {
         </li>
         <li>
           Except where the law requires otherwise, payments are not refundable for partial months or unused pass time. If you think
-          you were charged in error, contact us and we&apos;ll look into it.
+          you were charged in error, contact us and we&apos;ll look into it. A plain-language summary is on our{" "}
+          <Link href="/refunds">cancellations and refunds</Link> page.
         </li>
         <li>We may change prices. We&apos;ll tell you before a change applies to your subscription, and you can cancel before it does.</li>
       </ul>

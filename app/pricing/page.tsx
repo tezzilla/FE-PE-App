@@ -138,7 +138,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
         })}
       </div>
       <p className="muted text-xs text-center">
-        Prices in USD. Sales tax may apply. Buying for someone else? <Link href="/gift" className="underline">Give a pass as a gift</Link>.
+        Prices in USD. Sales tax may apply. Cancel monthly plans anytime; see <Link href="/refunds" className="underline">cancellations and refunds</Link>. Buying for someone else? <Link href="/gift" className="underline">Give a pass as a gift</Link>.
       </p>
 
       {!user && (

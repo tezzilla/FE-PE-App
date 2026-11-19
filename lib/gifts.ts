@@ -59,6 +59,7 @@ export async function startGiftCheckout(input: { plan: unknown; recipientEmail: 
     tax_id_collection: { enabled: true },
     ...(tax ? { automatic_tax: { enabled: true }, billing_address_collection: "required" as const } : {}),
     success_url: `${appUrl()}/gift/thanks`,
+    custom_text: { submit: { message: `One-time payment; the gift never renews. Refund policy: ${appUrl()}/refunds` } },
     cancel_url: `${appUrl()}/gift`,
   };
   const session = await stripe().checkout.sessions.create(params);

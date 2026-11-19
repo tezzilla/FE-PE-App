@@ -18,5 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     u("/compare", 0.5),
     ...COMPETITORS.map((c) => u(`/compare/${c.slug}`, 0.5)),
     u("/gift", 0.4),
+    u("/refunds", 0.3),
   ];
 }

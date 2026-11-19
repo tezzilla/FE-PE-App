@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/plans";
 import { track } from "@/lib/funnel";
+import { alertOwner, describeError } from "@/lib/alerts";
 import { grantPass } from "@/lib/passes";
 import { hadPassFor } from "@/lib/extensions";
 import { automaticTaxEnabled, customerIdFor, fakeBillingAllowed, planPriceIds, stripe } from "@/lib/stripe";
@@ -60,6 +61,14 @@ async function startCheckout(req: Request) {
     customer_update: { name: "auto", address: "auto" },
     ...(tax ? { automatic_tax: { enabled: true }, billing_address_collection: "required" as const } : {}),
     integration_identifier: INTEGRATION_ID,
+    custom_text: {
+      submit: {
+        message:
+          plan.kind === "pass"
+            ? `One-time payment for ${plan.days} days of access; it doesn't renew. Refund policy: ${appUrl()}/refunds`
+            : `Renews monthly until you cancel. Cancel anytime from your dashboard and keep access through the paid month. Refund policy: ${appUrl()}/refunds`,
+      },
+    },
     success_url: `${appUrl()}/dashboard?subscribed=1`,
     cancel_url: `${appUrl()}/pricing`,
   } satisfies Partial<Stripe.Checkout.SessionCreateParams>;
@@ -86,6 +95,7 @@ export async function POST(req: Request) {
   } catch (e) {
     // Never show a raw error page (phones save it as a download); send the buyer back with a message.
     console.error("Checkout failed", e);
+    await alertOwner("checkout-failed", "Checkout failed to start", ["A customer clicked Subscribe or Buy and was sent back to Pricing.", describeError(e)]);
     return NextResponse.redirect(new URL("/pricing?error=checkout", req.url), 303);
   }
 }

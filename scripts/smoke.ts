@@ -85,8 +85,9 @@ async function main() {
   check((await get("/api/cron/pass-reminders")).status === 401, "cron refuses unauthenticated calls");
   if (process.env.CRON_SECRET) {
     const cron = await get("/api/cron/pass-reminders", { headers: { Authorization: `Bearer ${process.env.CRON_SECRET}` } });
-    const body = (await cron.json()) as { welcome?: unknown; skipped?: string };
-    check(cron.status === 200 && (body.welcome !== undefined || body.skipped), "daily cron runs", JSON.stringify(body));
+    const body = (await cron.json()) as { reconcile?: unknown; welcome?: unknown; email?: string };
+    // Every job reports, even when one fails (CI's dummy Stripe key makes reconciliation fail: status 500).
+    check([200, 500].includes(cron.status) && body.reconcile !== undefined && (body.welcome !== undefined || body.email), "daily cron runs each job and reports", JSON.stringify(body));
   }
 }
 
