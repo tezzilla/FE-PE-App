@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { fakeBillingAllowed, portalConfigurationId, stripe } from "@/lib/stripe";
+import { customerIdFor, fakeBillingAllowed, portalConfigurationId, stripe } from "@/lib/stripe";
 
 const appUrl = () => process.env.APP_URL ?? "http://localhost:3000";
 
@@ -15,12 +15,18 @@ export async function POST(req: Request) {
     return NextResponse.redirect(new URL("/pricing", req.url), 303);
   }
 
-  if (!user.stripeCustomerId) return NextResponse.redirect(new URL("/pricing", req.url), 303);
-  const configuration = await portalConfigurationId();
-  const session = await stripe().billingPortal.sessions.create({
-    customer: user.stripeCustomerId,
-    return_url: `${appUrl()}/dashboard`,
-    ...(configuration ? { configuration } : {}),
-  });
-  return NextResponse.redirect(session.url, 303);
+  try {
+    const customer = await customerIdFor(user, false);
+    if (!customer) return NextResponse.redirect(new URL("/pricing", req.url), 303);
+    const configuration = await portalConfigurationId();
+    const session = await stripe().billingPortal.sessions.create({
+      customer,
+      return_url: `${appUrl()}/dashboard`,
+      ...(configuration ? { configuration } : {}),
+    });
+    return NextResponse.redirect(session.url, 303);
+  } catch (e) {
+    console.error("Billing portal failed", e);
+    return NextResponse.redirect(new URL("/pricing?error=checkout", req.url), 303);
+  }
 }

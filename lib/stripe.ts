@@ -184,3 +184,31 @@ export async function foundingSpots(): Promise<Map<string, number>> {
   foundingCache = { at: Date.now(), remaining };
   return remaining;
 }
+
+// ---- Customers ---------------------------------------------------------------------------
+
+/**
+ * The user's Stripe Customer in the account the current key belongs to. A saved ID can belong to a
+ * different account (e.g. one created in the sandbox before going live); Stripe then answers
+ * "No such customer", so the stale ID is dropped and, when `create` is set, a new Customer is made.
+ */
+export async function customerIdFor(user: { id: string; email: string; name: string | null; stripeCustomerId: string | null }, create: boolean): Promise<string | null> {
+  if (user.stripeCustomerId) {
+    try {
+      const c = await stripe().customers.retrieve(user.stripeCustomerId);
+      if (!("deleted" in c && c.deleted)) return c.id;
+    } catch (e) {
+      if (!(e instanceof Stripe.errors.StripeInvalidRequestError && e.code === "resource_missing")) throw e;
+    }
+    console.warn(`Stripe customer ${user.stripeCustomerId} isn't in this Stripe account; replacing it for user ${user.id}`);
+    await db.user.update({ where: { id: user.id }, data: { stripeCustomerId: null } });
+  }
+  if (!create) return null;
+  const customer = await stripe().customers.create(
+    { email: user.email, name: user.name ?? undefined, metadata: { userId: user.id } },
+    // A double-click can't create two customers. Keys are per Stripe account, so this is safe across accounts.
+    { idempotencyKey: `customer-${user.id}-${process.env.STRIPE_SECRET_KEY?.slice(3, 7) ?? ""}` },
+  );
+  await db.user.update({ where: { id: user.id }, data: { stripeCustomerId: customer.id } });
+  return customer.id;
+}

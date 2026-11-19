@@ -5,14 +5,14 @@ import { db } from "@/lib/db";
 import { getPlan } from "@/lib/plans";
 import { grantPass } from "@/lib/passes";
 import { hadPassFor } from "@/lib/extensions";
-import { automaticTaxEnabled, fakeBillingAllowed, planPriceIds, stripe } from "@/lib/stripe";
+import { automaticTaxEnabled, customerIdFor, fakeBillingAllowed, planPriceIds, stripe } from "@/lib/stripe";
 
 const appUrl = () => process.env.APP_URL ?? "http://localhost:3000";
 
 // Tags these sessions in the Stripe Dashboard so this checkout flow can be tracked and compared.
 const INTEGRATION_ID = "civilprep-web-subscribe-qhzkdmwa";
 
-export async function POST(req: Request) {
+async function startCheckout(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.redirect(new URL("/login", req.url), 303);
 
@@ -41,15 +41,7 @@ export async function POST(req: Request) {
     return NextResponse.redirect(new URL("/pricing?error=unavailable", req.url), 303);
   }
 
-  let customerId = user.stripeCustomerId;
-  if (!customerId) {
-    const customer = await stripe().customers.create(
-      { email: user.email, name: user.name ?? undefined, metadata: { userId: user.id } },
-      { idempotencyKey: `customer-${user.id}` }, // a double-click can't create two customers
-    );
-    customerId = customer.id;
-    await db.user.update({ where: { id: user.id }, data: { stripeCustomerId: customerId } });
-  }
+  const customerId = (await customerIdFor(user, true))!;
 
   const tax = automaticTaxEnabled();
   const common = {
@@ -84,4 +76,14 @@ export async function POST(req: Request) {
 
   const session = await stripe().checkout.sessions.create(params);
   return NextResponse.redirect(session.url!, 303);
+}
+
+export async function POST(req: Request) {
+  try {
+    return await startCheckout(req);
+  } catch (e) {
+    // Never show a raw error page (phones save it as a download); send the buyer back with a message.
+    console.error("Checkout failed", e);
+    return NextResponse.redirect(new URL("/pricing?error=checkout", req.url), 303);
+  }
 }

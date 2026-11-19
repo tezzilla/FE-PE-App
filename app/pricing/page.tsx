@@ -65,6 +65,9 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
       {error === "extension" && (
         <div className="card p-4 text-center">Extensions are for people who already have a pass for that exam. Choose a plan below instead.</div>
       )}
+      {error === "checkout" && (
+        <div className="card p-4 text-center">Checkout couldn&apos;t start. Please try again in a moment. If it keeps happening, email us and we&apos;ll sort it out.</div>
+      )}
       {error === "unavailable" && (
         <div className="card p-4 text-center">That plan isn&apos;t available right now. Please try again later.</div>
       )}
