@@ -1059,6 +1059,55 @@ export const SOLVERS: Record<string, (p: string) => number> = {
   "vs30-average": (p) => 30 / [...p.matchAll(/(\d+) m with Vs = (\d+) m\/s/g)].reduce((s, m) => s + Number(m[1]) / Number(m[2]), 0),
   "site-fundamental-period": (p) => (4 * at(p, "deposit")) / at(p, "Vs ="),
   "cpt-friction-ratio": (p) => (at(p, "fs =") / (at(p, "qc =") * 1000)) * 100,
+
+  // ---- Twentieth batch (batch-twenty.ts)
+  "barrier-length-of-need": (p) => {
+    const LA = at(p, "LA ="), L2 = at(p, "L2 ="), L1 = at(p, "L1 ="), LR = at(p, "LR =");
+    const F = Number(p.match(/flare rate of 1:(\d+)/)![1]);
+    return (LA + L1 / F - L2) / (1 / F + LA / LR);
+  },
+  "fill-slope-toe-offset": (p) => at(p, "has a") + at(p, "drops") * Number(p.match(/1V:(\d+)H/)![1]),
+  "isd-multilane-left-turn": (p) => 1.47 * at(p, "design speed of") * (7.5 + 0.5 * (at(p, "crossing") - 1)),
+  "taper-device-count": (p) => {
+    const W = at(p, "closes a"), S = Number(p.match(/ft lane on a (\d+) mph/)![1]);
+    return Math.ceil((W * S) / at(p, "spacing of")) + 1;
+  },
+  "striping-paint-quantity": (p) => {
+    const mi = Number(p.match(/A ([\d.]+) mile/)![1]);
+    const m = p.match(/gets (\d+) continuous (\d+) in/)!;
+    return (mi * 5280 * Number(m[1]) * (Number(m[2]) / 12)) / at(p, "covers");
+  },
+  "effective-green-time": (p) => {
+    const m = p.match(/displays (\d+) s of green, a ([\d.]+) s yellow and a ([\d.]+) s all-red/)!;
+    return Number(m[1]) + Number(m[2]) + Number(m[3]) - at(p, "phase is");
+  },
+  "lane-group-capacity": (p) => (at(p, "has") * at(p, "flow of") * at(p, "receives")) / at(p, "in a"),
+  "scaffold-plank-span": (p) => {
+    const b = Number(p.match(/1\.5 in\. × ([\d.]+) in\./)![1]);
+    return (4 * at(p, "Fb =") * ((b * 1.5 * 1.5) / 6)) / at(p, "applies a") / 12;
+  },
+  "collapsible-soil-settlement": (p) => (at(p, "potential of") / 100) * Number(p.match(/A ([\d.]+) ft thick/)![1]) * 12,
+  "loss-on-ignition": (p) => { const Md = at(p, "weighs"), Ma = at(p, "ash weighs"); return ((Md - Ma) / Md) * 100; },
+  "rock-plane-failure-fs": (p) => {
+    const W = at(p, "W ="), psi = rad(at(p, "ψ =")), phi = rad(at(p, "φ =")), c = at(p, "c ="), A = at(p, "joint is");
+    return (c * A + W * Math.cos(psi) * Math.tan(phi)) / (W * Math.sin(psi));
+  },
+  "zero-air-voids-unit-weight": (p) => { const Gs = at(p, "Gs ="), w = at(p, "water content of") / 100; return (Gs * 62.4) / (1 + w * Gs); },
+  "required-average-strength": (p) => { const fc = at(p, "f'c ="), s = at(p, "s ="); return Math.max(fc + 1.34 * s, fc + 2.33 * s - 500); },
+  "xbar-control-limit": (p) => at(p, "x̿ =") + at(p, "A₂ =") * at(p, "R̄ ="),
+  "activity-free-float": (p) => {
+    const EF = at(p, "early start of day") + at(p, "duration of");
+    return Math.min(at(p, "activity D, with an early start of day"), at(p, "activity E, with an early start of day")) - EF;
+  },
+  "capture-zone-width": (p) => at(p, "pumps") / (at(p, "K =") * at(p, "aquifer") * at(p, "i =")),
+  "stream-mixing-concentration": (p) => {
+    const Qu = at(p, "flowing"), Cu = at(p, "carries"), Qw = at(p, "discharges"), Cw = at(p, "containing");
+    return (Qu * Cu + Qw * Cw) / (Qu + Qw);
+  },
+  "downstream-first-order-decay": (p) => {
+    const t = (at(p, "remains") * 1000) / (at(p, "flows at") * 86400);
+    return at(p, "carries") * Math.exp(-at(p, "k =") * t);
+  },
 };
 
 

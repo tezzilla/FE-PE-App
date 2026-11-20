@@ -261,12 +261,21 @@ ladder length (4:1 rule), sloped excavation top width by soil type, OSHA inciden
 slab shore spacing, crane outrigger pad size, temporary wall brace force, expansive clay heave, clay
 activity, average shear wave velocity (Vs30), site fundamental period, CPT friction ratio.
 
+## Twentieth batch (November 2026)
+
+Problem types (18), again aimed at the thinnest areas: guardrail length of need, fill slope toe offset,
+intersection sight distance across several lanes, lane-closure taper device count, striping paint quantity,
+effective green time, lane group capacity, scaffold plank span, collapse settlement, loss on ignition,
+rock plane failure factor of safety, zero-air-voids unit weight, required average concrete strength,
+X-bar upper control limit, activity free float, capture zone width, stream mixing concentration,
+first-order decay downstream.
+
 ## Next batch
 
-Thinnest areas after batch 19 (calculation problems per area in parentheses):
+Thinnest areas after batch 20 (calculation problems per area in parentheses). Every PE knowledge area now
+has at least 5.
 
-1. Transportation: roadside and cross-section (3), intersection geometry (4), traffic control (4), signals (5).
-2. Geotechnical: problematic soil and rock (4), construction QA/QC such as compaction and inspection (5).
-3. Structural: temporary structures (5).
-4. Construction: scheduling (5), quality control (5), health and safety (5).
-5. Water resources: groundwater and wells (6), surface and groundwater quality (6).
+1. Transportation: roadside and cross-section (5), intersection geometry (5), vertical design (6), traffic control (6).
+2. Construction: health and safety (5), site layout (6).
+3. Structural: temporary structures (6).
+4. Geotechnical: site characterization (6), construction QA/QC (6), earthquake (6), groundwater and seepage (6).
