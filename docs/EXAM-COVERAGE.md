@@ -253,10 +253,20 @@ story force, slab punching shear, restrained thermal force, Swamee-Jain friction
 geometric population projection, Harmon peak flow, countermeasure B/C, density from headway, PERT
 probability, footing concrete take-off, crew unit cost. Bank passes 300 calculation problem types.
 
+## Nineteenth batch (November 2026)
+
+Problem types (18), aimed at the thinnest knowledge areas: tangent runout length, crown-to-shoulder drop,
+roadside ditch top width, turn-lane deceleration length, warning sign placement, actuated minimum green,
+ladder length (4:1 rule), sloped excavation top width by soil type, OSHA incident rate, noise dose,
+slab shore spacing, crane outrigger pad size, temporary wall brace force, expansive clay heave, clay
+activity, average shear wave velocity (Vs30), site fundamental period, CPT friction ratio.
+
 ## Next batch
 
-1. Structural: masonry wall shear, concrete beam deflection with Ie, cantilever retaining wall stem moment.
-2. WRE: culvert inlet control, reservoir routing (storage-indication), water hammer pressure rise.
-3. Transportation: trip distribution (gravity model), pavement rigid slab thickness checks.
-4. Construction: concrete form tie spacing, cost-plus contract fee comparisons.
-5. Geotechnical: braced cut in clay (Peck), group settlement of piles (equivalent footing).
+Thinnest areas after batch 19 (calculation problems per area in parentheses):
+
+1. Transportation: roadside and cross-section (3), intersection geometry (4), traffic control (4), signals (5).
+2. Geotechnical: problematic soil and rock (4), construction QA/QC such as compaction and inspection (5).
+3. Structural: temporary structures (5).
+4. Construction: scheduling (5), quality control (5), health and safety (5).
+5. Water resources: groundwater and wells (6), surface and groundwater quality (6).

@@ -1,7 +1,8 @@
 // Adaptive learning model. Pure functions only (no DB), so it can be unit-tested and simulated.
 //
 // Three ideas:
-// 1. Topic mastery: recency-weighted accuracy with a pessimistic prior. Untested topics start "weak".
+// 1. Topic mastery: recency-weighted accuracy, shrunk toward a pessimistic prior by answer count. Untested
+//    topics start "weak".
 // 2. Spaced repetition per skill: a skill is one template (any variant) or one fixed question.
 //    Misses come back within minutes; each consecutive correct answer pushes the next review further out.
 // 3. Session planning: due reviews first, then topics ranked by (exam weight × how weak you are),
@@ -101,7 +102,10 @@ export function computeState(attempts: AttemptLite[], now: Date): LearnerState {
   const topics = new Map<string, TopicState>();
   for (const [topic, t] of acc) {
     topics.set(topic, {
-      mastery: (t.wc + PRIOR_MEAN * PRIOR_STRENGTH) / (t.w + PRIOR_STRENGTH),
+      // Recency weights shape the average (recent answers count more); the raw answer count sets how far it
+      // moves from the prior. Using the decayed weights for both let the prior swallow topics practiced
+      // less often, so strong students read 15-25 points low on their strong topics.
+      mastery: (t.n * (t.wc / t.w) + PRIOR_MEAN * PRIOR_STRENGTH) / (t.n + PRIOR_STRENGTH),
       evidence: t.n,
       correct: t.c,
     });

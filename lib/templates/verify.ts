@@ -1021,6 +1021,44 @@ export const SOLVERS: Record<string, (p: string) => number> = {
     return (nF * B * B * (t / 12) * (1 + w / 100)) / 27;
   },
   "crew-unit-cost": (p) => { const n0 = at(p, "crew of"), wage = at(p, "at $"), equip = at(p, "costs $"), prod = at(p, "places"); return (n0 * wage + equip) / prod; },
+
+  // ---- Nineteenth batch (batch-nineteen.ts)
+  "tangent-runout-length": (p) => (at(p, "eNC =") / at(p, "ed =")) * at(p, "Lr ="),
+  "crown-to-shoulder-drop": (p) => ((at(p, "W =") * at(p, "cross slope of") + at(p, "Ws =") * at(p, "sloped at")) / 100) * 12,
+  "roadside-ditch-top-width": (p) => {
+    const [F, K] = [...p.matchAll(/1V:(\d+)H/g)].map((m) => Number(m[1]));
+    return at(p, "B =") + at(p, "D =") * (F + K);
+  },
+  "decel-lane-length": (p) => {
+    const v1 = at(p, "slows from") * 1.467, v2 = at(p, "mph to") * 1.467;
+    return (v1 * v1 - v2 * v2) / (2 * at(p, "a ="));
+  },
+  "warning-sign-placement": (p) => {
+    const V = at(p, "curve at"), Vc = at(p, "slow to"), t = at(p, "time t ="), a = at(p, "deceleration a ="), Ls = at(p, "distance Ls =");
+    return 1.47 * V * t + (1.075 * (V * V - Vc * Vc)) / a - Ls;
+  },
+  "actuated-min-green": (p) => at(p, "lost time of") + 2 * Math.ceil(at(p, "located") / 25),
+  "ladder-length-4-to-1": (p) => (4 * at(p, "eave is")) / Math.sqrt(15) + 3,
+  "trench-sloped-top-width": (p) => at(p, "bottom width of") + 2 * at(p, "slope of") * at(p, "excavated"),
+  "osha-incident-rate": (p) => (at(p, "recorded") * 200000) / at(p, "worked"),
+  "noise-dose-osha": (p) =>
+    100 * [...p.matchAll(/([\d.]+) h at (\d+) dBA/g)].reduce((s, m) => s + Number(m[1]) / (8 / 2 ** ((Number(m[2]) - 90) / 5)), 0),
+  "slab-shore-spacing": (p) => {
+    const t = Number(p.match(/A (\d+) in\. thick/)![1]);
+    return Math.sqrt(at(p, "capacity of") / ((t / 12) * 150 + at(p, "weighs") + at(p, "live load of")));
+  },
+  "outrigger-pad-size": (p) => Math.sqrt(at(p, "lift is") / at(p, "bearing pressure of")),
+  "wall-brace-force": (p) => {
+    const H = Number(p.match(/A (\d+) ft tall/)![1]);
+    const R = (at(p, "pressure of") * at(p, "spaced") * H * H) / (2 * at(p, "height of"));
+    return R / Math.cos(rad(at(p, "angle of")));
+  },
+  "expansive-heave-layers": (p) =>
+    12 * [...p.matchAll(/is ([\d.]+) ft thick with ([\d.]+)% swell/g)].reduce((s, m) => s + Number(m[1]) * (Number(m[2]) / 100), 0),
+  "clay-activity": (p) => (at(p, "LL =") - at(p, "PL =")) / at(p, "contains"),
+  "vs30-average": (p) => 30 / [...p.matchAll(/(\d+) m with Vs = (\d+) m\/s/g)].reduce((s, m) => s + Number(m[1]) / Number(m[2]), 0),
+  "site-fundamental-period": (p) => (4 * at(p, "deposit")) / at(p, "Vs ="),
+  "cpt-friction-ratio": (p) => (at(p, "fs =") / (at(p, "qc =") * 1000)) * 100,
 };
 
 
