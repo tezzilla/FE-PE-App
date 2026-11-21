@@ -35,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           style={{ borderColor: "var(--border)", background: "color-mix(in srgb, var(--bg) 85%, transparent)" }}
         >
           <nav className="mx-auto max-w-5xl px-4 h-14 flex items-center gap-4 lg:gap-5">
-            <Link href="/" className="font-bold text-lg">
+            <Link href="/" className="font-semibold text-lg">
               Civil<span style={{ color: "var(--brand-text)" }}>Prep</span>
             </Link>
             <HeaderLinks

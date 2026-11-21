@@ -7,6 +7,7 @@ import { PE_MODULE_SPECS } from "@/lib/content/pe-spec";
 import { getCurrentUser } from "@/lib/auth";
 import { moduleOverview } from "@/lib/pe-modules";
 import { setPeDepth } from "@/app/actions/prefs";
+import { Icon } from "@/components/Icon";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function ModulePage({ params }: { params: Promise<{ exam: s
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="space-y-2">
         <Crumbs items={[{ href: "/exams/pe-civil", label: "PE Civil" }, { label: name }]} />
-        <h1 className="text-2xl sm:text-3xl font-bold">PE Civil: {name}</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold">PE Civil: {name}</h1>
         <p className="muted">
           80 questions in 9 hours, computer-based, with the PE Civil Reference Handbook and this module&apos;s design
           standards. NCEES knowledge areas effective {spec.effective}.
@@ -48,7 +49,7 @@ export default async function ModulePage({ params }: { params: Promise<{ exam: s
               <button className="btn">This is my exam</button>
             </form>
           )}
-          {isMine && <span className="text-sm font-semibold self-center" style={{ color: "var(--good)" }}>✓ Your PE exam. Smart practice and timed exams follow this blueprint.</span>}
+          {isMine && <span className="text-sm font-semibold self-center" style={{ color: "var(--good)" }}><Icon name="check" size={16} className="inline align-[-3px] mr-1" />Your PE exam. Smart practice and timed exams follow this blueprint.</span>}
           <Link href={`/exams/pe-civil/practice?topic=${module}`} className="btn-ghost">Practice all areas</Link>
           <Link href={`/exams/pe-civil/topics/${module}`} className="btn-ghost">Review notes</Link>
           <Link href="/exams/pe-civil/resources" className="btn-ghost">Design standards</Link>

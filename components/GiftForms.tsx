@@ -21,7 +21,7 @@ export function GiftForm({ plans }: { plans: { id: string; name: string; price: 
               <span className="font-semibold block">{p.name}</span>
               <span className="muted text-sm">{p.blurb}</span>
             </span>
-            <span className="text-xl font-extrabold">${p.price}</span>
+            <span className="text-xl font-semibold">${p.price}</span>
           </label>
         ))}
       </fieldset>
@@ -31,7 +31,7 @@ export function GiftForm({ plans }: { plans: { id: string; name: string; price: 
       </label>
       <label className="block text-sm font-medium">
         Message (optional)
-        <textarea name="message" maxLength={300} rows={3} className="input mt-1" placeholder="Good luck on the exam!" />
+        <textarea name="message" maxLength={300} rows={3} className="input mt-1" placeholder="Good luck on the exam" />
       </label>
       {state?.error && <p className="text-sm" style={{ color: "#dc2626" }}>{state.error}</p>}
       <button className="btn w-full btn-lg" disabled={pending}>{pending ? "Opening checkout…" : "Continue to payment"}</button>

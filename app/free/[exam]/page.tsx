@@ -26,7 +26,7 @@ export default async function FreeSample({ params }: { params: Promise<{ exam: s
     <div className="grid md:grid-cols-2 gap-10 items-center max-w-4xl mx-auto md:pt-6">
       <div className="space-y-5">
         <p className="eyebrow">Free download</p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
           {count} free {def.name} practice problems with worked solutions
         </h1>
         <ul className="space-y-3">
@@ -43,7 +43,7 @@ export default async function FreeSample({ params }: { params: Promise<{ exam: s
         </ul>
       </div>
       <div className="card elevated p-6 sm:p-8">
-        <h2 className="text-xl font-bold mb-1">Where should we send it?</h2>
+        <h2 className="text-xl font-semibold mb-1">Where should we send it?</h2>
         <p className="muted text-sm mb-4">You&apos;ll see the problems right away.</p>
         <LeadForm exam={exam} />
       </div>

@@ -6,7 +6,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const { next } = await searchParams;
   return (
     <div className="max-w-sm mx-auto card p-6">
-      <h1 className="text-2xl font-bold mb-4">Log in</h1>
+      <h1 className="text-2xl font-semibold mb-4">Log in</h1>
       <AuthForm action={login} mode="login" next={next} />
       <p className="text-sm mt-3"><Link href="/forgot-password" className="underline">Forgot password?</Link></p>
       <p className="muted text-sm mt-2">

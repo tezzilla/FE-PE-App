@@ -22,7 +22,7 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
   return (
     <div className="space-y-5 max-w-3xl">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="text-2xl font-bold">Signup and purchase funnel</h1>
+        <h1 className="text-2xl font-semibold">Signup and purchase funnel</h1>
         <Link href="/review" className="muted text-sm hover:underline">Review queue</Link>
       </div>
       <nav className="flex gap-2 text-sm" aria-label="Time range">

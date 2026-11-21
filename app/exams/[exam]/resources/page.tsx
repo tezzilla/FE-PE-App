@@ -4,6 +4,7 @@ import { EXAMS, isExamId } from "@/lib/content/exams";
 import { getCurrentUser } from "@/lib/auth";
 import { hasExamAccess } from "@/lib/access";
 import { RESOURCES_CHECKED, resourcesFor } from "@/lib/content/resources";
+import { Icon } from "@/components/Icon";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Exam documents and resources</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold">Exam documents and resources</h1>
         <p className="muted mt-1">
           Every official document you need for the {def.shortName}, plus {exam === "pe-civil" ? "each PE module's design standards, marked free or paid" : "registration and exam-day rules"}. Links go to NCEES, publishers and government sites; we don&apos;t host these documents.
         </p>
@@ -30,13 +31,13 @@ export default async function ResourcesPage({ params }: { params: Promise<{ exam
 
       {!access ? (
         <div className="card p-6 space-y-3">
-          <p className="font-semibold">🔒 Premium feature</p>
+          <p className="font-semibold inline-flex items-center gap-2"><Icon name="lock" size={16} /> Included with full access</p>
           <p>
             {total} curated links in {sections.length} sections: {sections.map((s) => s.title.replace("Design standards: ", "")).join(", ")}.
           </p>
           <p className="muted text-sm">Includes which standards you can download free from FHWA, OSHA, USACE and others, and which ones you'd need to buy.</p>
           {user ? (
-            <Link href="/pricing" className="btn inline-block">Unlock with a {def.shortName} plan</Link>
+            <Link href="/pricing" className="btn inline-block">See {def.shortName} plans</Link>
           ) : (
             <div className="flex flex-wrap gap-3">
               <Link href="/pricing" className="btn">See plans</Link>

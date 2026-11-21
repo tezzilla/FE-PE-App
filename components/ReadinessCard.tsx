@@ -17,7 +17,7 @@ export async function ReadinessCard({ user, exam, back }: { user: User; exam: Ex
       <div className="flex flex-wrap items-start gap-6">
         <div>
           <p className="muted text-sm">Readiness</p>
-          <p className="text-4xl font-extrabold" style={{ color: r.answered ? color : undefined }}>
+          <p className="text-4xl font-semibold" style={{ color: r.answered ? color : undefined }}>
             {r.answered ? `${pct}%` : "–"}
           </p>
           <p className="muted text-xs">exam-weighted mastery</p>

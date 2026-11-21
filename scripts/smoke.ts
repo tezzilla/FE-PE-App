@@ -38,7 +38,7 @@ async function main() {
   check(me.status === 200 && ((await me.json()) as { exams?: unknown[] }).exams?.length === 2, "app home data loads");
 
   const dash = await get("/dashboard", { headers: cookie });
-  check(dash.status === 200 && (await dash.text()).includes("Welcome"), "signed-in dashboard renders");
+  check(dash.status === 200 && (await dash.text()).includes(">Dashboard<"), "signed-in dashboard renders");
 
   // Practice: load a smart session and answer one question
   const smart = (await (await get("/api/mobile/smart?exam=fe-civil", { headers: bearer })).json()) as { questions?: { id: string }[] };

@@ -40,5 +40,5 @@ export function MobileTabBar({ signedIn }: { signedIn: boolean }) {
 }
 
 function Badge({ text }: { text: string }) {
-  return <span className="text-[10px] font-bold leading-none border-2 rounded px-1 py-0.5" style={{ borderColor: "currentColor" }}>{text}</span>;
+  return <span className="text-[10px] font-semibold leading-none border-2 rounded px-1 py-0.5" style={{ borderColor: "currentColor" }}>{text}</span>;
 }

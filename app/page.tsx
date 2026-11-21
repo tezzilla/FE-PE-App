@@ -9,9 +9,7 @@ import { PriceCompare } from "@/components/PriceCompare";
 import { tutorEnabled } from "@/lib/tutor";
 import { bankStats } from "@/lib/questions";
 import Image from "next/image";
-import CountUp from "@/components/CountUp";
 import ContourBackground from "@/components/ContourBackground";
-import SpotlightCard from "@/components/SpotlightCard";
 import { FOUNDER } from "@/lib/content/about";
 
 const FEATURES = [
@@ -68,12 +66,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       {deleted && <div className="card p-4 text-center">Your account has been deleted.</div>}
 
       {/* Hero */}
-      <section className="hero-glow relative isolate -mx-4 px-4 pt-4 sm:pt-10 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
+      <section className="relative isolate -mx-4 px-4 pt-4 sm:pt-10 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
         <ContourBackground />
         <div className="space-y-6 enter">
           <p className="eyebrow">FE &amp; PE Civil exam prep</p>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05]">
-            Pass the FE and PE Civil without the <span style={{ color: "var(--brand-text)" }}>$1,000 course.</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
+            Pass the FE and PE Civil without the <span style={{ color: "var(--brand-text)" }}>$1,000 course</span>
           </h1>
           <p className="muted text-lg sm:text-xl leading-relaxed max-w-xl">
             Practice that adapts to your weak spots, full-length timed exams, and worked solutions that point you to
@@ -113,7 +111,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
               : ["Free", "sample questions in every topic"],
         ].map(([n, l]) => (
           <div key={l} className="card p-5 text-center">
-            <p className="text-3xl font-extrabold tracking-tight"><CountUp value={n} /></p>
+            <p className="text-3xl font-semibold tracking-tight">{n}</p>
             <p className="muted text-sm mt-1">{l}</p>
           </div>
         ))}
@@ -128,7 +126,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       <section className="space-y-8 reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">How it works</p>
-          <h2 className="text-3xl font-bold tracking-tight">A plan that adjusts to you every day</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">A plan that adjusts to you every day</h2>
         </div>
         <ol className="grid md:grid-cols-3 gap-6">
           {STEPS.map((s, i) => (
@@ -148,15 +146,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       <section className="space-y-8 reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">Everything you need</p>
-          <h2 className="text-3xl font-bold tracking-tight">Built for how engineers actually study</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">Built for how engineers actually study</h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((f) => (
-            <SpotlightCard key={f.title} className="p-6 space-y-3">
+            <div key={f.title} className="card p-6 space-y-3">
               <span className="icon-tile"><Icon name={f.icon} /></span>
               <h3 className="font-semibold text-lg">{f.title}</h3>
               <p className="muted text-sm leading-relaxed">{f.text}</p>
-            </SpotlightCard>
+            </div>
           ))}
         </div>
       </section>
@@ -165,7 +163,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       <section className="space-y-8 reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">Pick your exam</p>
-          <h2 className="text-3xl font-bold tracking-tight">Try free questions in every topic</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">Try free questions in every topic</h2>
         </div>
         <div className="grid sm:grid-cols-2 gap-6">
           {Object.values(EXAMS).map((e) => {
@@ -173,7 +171,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
             return (
               <Link key={e.id} href={`/exams/${e.id}`} className="card card-link p-6 sm:p-8 flex flex-col gap-3">
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-2xl font-bold">{e.name}</h3>
+                  <h3 className="text-2xl font-semibold">{e.name}</h3>
                   <span className="muted text-sm whitespace-nowrap">from ${plan.price}/mo</span>
                 </div>
                 <p className="muted">{e.description}</p>
@@ -205,13 +203,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
             style={{ border: "3px solid var(--brand-soft)" }}
           />
           <div>
-            <p className="font-bold">{FOUNDER.name}</p>
+            <p className="font-semibold">{FOUNDER.name}</p>
             <p className="muted text-sm">{FOUNDER.role}</p>
           </div>
         </div>
         <div className="space-y-4">
           <p className="eyebrow">Why I built this</p>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Made by an engineer who just went through it</h2>
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Made by an engineer who just went through it</h2>
           {FOUNDER.paragraphs.map((t) => (
             <p key={t} className="muted leading-relaxed">{t}</p>
           ))}
@@ -230,14 +228,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
       <section className="space-y-8 max-w-3xl mx-auto reveal">
         <div className="text-center space-y-2">
           <p className="eyebrow">Questions</p>
-          <h2 className="text-3xl font-bold tracking-tight">Frequently asked</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">Frequently asked</h2>
         </div>
         <FAQ items={faq} />
       </section>
 
       {/* Final CTA */}
       <section className="navy-section rounded-2xl p-8 sm:p-12 text-center space-y-4 reveal">
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Start studying in two minutes</h2>
+        <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">Start studying in two minutes</h2>
         <p className="text-lg opacity-90 max-w-xl mx-auto">Create a free account, take the diagnostic, and see exactly where you stand.</p>
         <Link href="/signup" className="btn btn-lg">
           Start free <Icon name="arrow" size={18} className="ml-2" />

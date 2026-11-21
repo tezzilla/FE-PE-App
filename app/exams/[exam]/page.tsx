@@ -37,24 +37,24 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
   const base = `/exams/${exam}`;
 
   const tools: Tool[] = [
-    { href: `${base}/smart`, icon: "target", title: "Smart practice", text: "10 questions picked from your weak spots and due reviews.", primary: true },
-    { href: `${base}/practice`, icon: "shuffle", title: "Mixed practice", text: "Questions from every topic, with worked solutions." },
-    { href: `${base}/quiz`, icon: "list", title: "Custom quiz", text: "Pick topics, length and timing." },
-    ...(missed > 0 ? [{ href: `${base}/quiz?go=1&source=missed&count=${missed > 10 ? 20 : 10}`, icon: "undo", title: "Review my misses", text: "Retry questions you got wrong.", badge: String(missed) }] : []),
-    { href: `${base}/diagnostic`, icon: "compass", title: "Diagnostic", text: `About ${def.topics.length * 2} questions to find your weak topics.` },
-    { href: `${base}/mock`, icon: "timer", title: "Full timed exam", text: "Exam-length, weighted like the real thing.", locked: !access },
-    { href: `${base}/flashcards`, icon: "cards", title: "Formula flashcards", text: "Spaced repetition, with where each formula lives.", badge: due ? `${due} due` : undefined },
+    { href: `${base}/smart`, icon: "target", title: "Smart practice", text: "10 questions picked from your weak spots and due reviews", primary: true },
+    { href: `${base}/practice`, icon: "shuffle", title: "Mixed practice", text: "Questions from every topic, with worked solutions" },
+    { href: `${base}/quiz`, icon: "list", title: "Custom quiz", text: "Pick topics, length and timing" },
+    ...(missed > 0 ? [{ href: `${base}/quiz?go=1&source=missed&count=${missed > 10 ? 20 : 10}`, icon: "undo", title: "Review my misses", text: "Retry questions you got wrong", badge: String(missed) }] : []),
+    { href: `${base}/diagnostic`, icon: "compass", title: "Diagnostic", text: `About ${def.topics.length * 2} questions to find your weak topics` },
+    { href: `${base}/mock`, icon: "timer", title: "Full timed exam", text: "Exam-length, weighted like the real thing", locked: !access },
+    { href: `${base}/flashcards`, icon: "cards", title: "Formula flashcards", text: "Spaced repetition, with where each formula lives", badge: due ? `${due} due` : undefined },
     { href: `${base}/handbook-drill`, icon: "search", title: "Handbook hunt", text: "Timed drill: which chapter would you open?", locked: !access },
-    { href: "/learn", icon: "book", title: "Formula guides", text: "Free write-ups of the most-tested formulas." },
-    { href: `${base}/resources`, icon: "doc", title: isPe ? "Documents and standards" : "Exam documents", text: isPe ? "Official links and each module's design standards." : "Official links: handbook, specs, exam-day rules.", locked: !access },
+    { href: "/learn", icon: "book", title: "Formula guides", text: "Free write-ups of the most-tested formulas" },
+    { href: `${base}/resources`, icon: "doc", title: isPe ? "Documents and standards" : "Exam documents", text: isPe ? "Official links and each module's design standards" : "Official links: handbook, specs, exam-day rules", locked: !access },
   ];
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">{def.name}</h1>
+        <h1 className="text-3xl font-semibold">{def.name}</h1>
         <p className="muted mt-1">{def.realExam}</p>
-        <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
+        <p className="text-sm mt-1 muted">
           {bank.fixed} written questions{bank.generators ? ` + ${bank.generators} calculation problem${bank.generators === 1 ? "" : "s"} that never repeat` : ""}
         </p>
         <p className="text-sm mt-3 flex flex-wrap gap-x-4 gap-y-1">
@@ -68,7 +68,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
       {!access && user && (
         <div className="card p-4 flex flex-wrap items-center gap-3">
           <p className="flex-1 min-w-56">You&apos;re on the free tier: one sample question per topic. Subscribe for the full bank, timed exams and flashcards.</p>
-          <Link href="/pricing" className="btn w-full sm:w-auto">Unlock {def.name}</Link>
+          <Link href="/pricing" className="btn w-full sm:w-auto">Get full {def.shortName} access</Link>
         </div>
       )}
       {!user && (
@@ -94,7 +94,7 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
                 className="card card-link p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-3 h-full"
                 style={t.primary ? { borderColor: "var(--brand)" } : undefined}
               >
-                <span className="shrink-0" style={{ color: "var(--brand-text)" }}><Icon name={t.icon} size={22} /></span>
+                <span className="shrink-0" style={{ color: t.primary ? "var(--brand-text)" : "var(--muted)" }}><Icon name={t.icon} size={22} /></span>
                 <span className="min-w-0">
                   <span className="font-semibold text-sm sm:text-base flex flex-wrap items-center gap-x-1.5">
                     {t.title}
@@ -148,8 +148,8 @@ export default async function ExamPage({ params, searchParams }: { params: Promi
                   {s ? ` · ${Math.round((100 * s.correct) / s.attempted)}% correct (${s.attempted} done)` : ""}
                 </p>
                 {gens[i] > 0 && (
-                  <p className="text-sm mt-1" style={{ color: "var(--brand-text)" }}>
-                    + {gens[i]} calculation problem{gens[i] > 1 ? "s" : ""} that never repeat{access ? "" : " 🔒"}
+                  <p className="text-sm mt-1 muted">
+                    + {gens[i]} calculation problem{gens[i] > 1 ? "s" : ""} that never repeat{access ? null : <span className="muted inline-flex align-[-2px] ml-1"><Icon name="lock" size={14} /><span className="sr-only">(full access)</span></span>}
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2 mt-auto pt-3">

@@ -16,7 +16,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
     <div className="grid md:grid-cols-2 gap-10 items-center max-w-4xl mx-auto md:pt-6">
       <div className="space-y-5 order-2 md:order-1">
         <p className="eyebrow">Free account</p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Find out where you stand today</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">Find out where you stand today</h1>
         <ul className="space-y-3">
           {PERKS.map((p) => (
             <li key={p} className="flex gap-3">
@@ -27,7 +27,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
         </ul>
       </div>
       <div className="card elevated p-6 sm:p-8 order-1 md:order-2">
-        <h2 className="text-2xl font-bold mb-1">Create your account</h2>
+        <h2 className="text-2xl font-semibold mb-1">Create your account</h2>
         <p className="muted text-sm mb-4">Takes about a minute.</p>
         <AuthForm action={signup} mode="signup" next={next} />
         <p className="muted text-xs mt-3">

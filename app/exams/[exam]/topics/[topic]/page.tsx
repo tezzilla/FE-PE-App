@@ -45,7 +45,7 @@ export default async function TopicReview({ params }: { params: Params }) {
               : [{ href: `/exams/${exam}`, label: EXAMS[exam].name }, { label: t.name }]
           }
         />
-        <h1 className="text-2xl sm:text-3xl font-bold mt-1">{t.name}{exam === "pe-civil" ? ": review notes" : ""}</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold mt-1">{t.name}{exam === "pe-civil" ? ": review notes" : ""}</h1>
         {/\d/.test(t.examQuestions) && <p className="muted text-sm">{t.examQuestions} questions on the exam</p>}
         {mastery && mastery.evidence > 0 && (
           <p className="text-sm mt-1">Your mastery: <strong>{Math.round(mastery.mastery * 100)}%</strong> from {mastery.evidence} answers</p>
@@ -61,7 +61,7 @@ export default async function TopicReview({ params }: { params: Params }) {
           {lockedCards > 0 && (
             <p className="muted text-sm">
               {cards.length ? "" : "The formula cards for this topic are part of full access. "}
-              {lockedCards} {cards.length ? "more " : ""}formula card{lockedCards > 1 ? "s" : ""} unlock with a plan or pass.{" "}
+              {lockedCards} {cards.length ? "more " : ""}formula card{lockedCards > 1 ? "s" : ""} come with a plan or pass.{" "}
               <Link href="/pricing" className="underline">See plans</Link>
             </p>
           )}

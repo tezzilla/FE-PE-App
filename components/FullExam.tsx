@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ExamId, PublicQuestion } from "@/lib/content/types";
 import { QuestionCard, type Feedback } from "./QuestionCard";
+import { Icon } from "@/components/Icon";
 
 type Phase = "ready" | "exam" | "review" | "break" | "submitting" | "done";
 const BREAK_SECONDS = 25 * 60;
@@ -206,7 +207,7 @@ export function FullExam({
     return (
       <div className="space-y-5">
         <div className="card p-6 text-center space-y-1">
-          <p className="text-4xl font-extrabold">{pct}%</p>
+          <p className="text-4xl font-semibold">{pct}%</p>
           <p className="muted">{result.correct} of {result.total} correct · time used {fmt(s.used)}</p>
           <p className="muted text-sm">NCEES doesn&apos;t publish a fixed passing percentage. Use this to compare your own attempts and to find weak topics.</p>
         </div>
@@ -257,7 +258,7 @@ export function FullExam({
   if (s.phase === "break") {
     return (
       <div className="card p-6 text-center space-y-3 max-w-xl mx-auto">
-        <h2 className="text-xl font-bold">Session {s.session + 1} complete</h2>
+        <h2 className="text-xl font-semibold">Session {s.session + 1} complete</h2>
         <p>Optional break: <span className="font-mono text-lg">{fmt(s.breakLeft)}</span></p>
         <p className="muted text-sm">The real exam offers a scheduled break here. Session {s.session + 2} starts automatically when the break ends. You can&apos;t return to session {s.session + 1}.</p>
         <button
@@ -277,7 +278,7 @@ export function FullExam({
       <div className="space-y-3">
       {discardBar}
       <div className="card p-6 space-y-3 max-w-xl mx-auto">
-        <h2 className="text-xl font-bold">Session {s.session + 1} of {sessions.length}</h2>
+        <h2 className="text-xl font-semibold">Session {s.session + 1} of {sessions.length}</h2>
         <p>{qs.length} questions · {fmt(sessionSeconds[s.session])} for this session</p>
         <ul className="muted text-sm list-disc pl-5 space-y-1">
           <li>Answers aren&apos;t shown until the end. Flag questions to revisit before ending the session.</li>
@@ -314,7 +315,7 @@ export function FullExam({
   const body =
     s.phase === "review" ? (
       <div className="card p-5 space-y-4">
-        <h2 className="text-xl font-bold">Review session {s.session + 1}</h2>
+        <h2 className="text-xl font-semibold">Review session {s.session + 1}</h2>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <p>{answeredCount} of {qs.length} answered · {unanswered.length} unanswered · {flaggedHere.length} flagged</p>
         {[["Unanswered", unanswered], ["Flagged", flaggedHere]].map(([label, items]) =>
@@ -355,7 +356,7 @@ export function FullExam({
                 borderColor: n === s.i ? "var(--brand)" : "var(--border)",
                 borderWidth: n === s.i ? 2 : 1,
               }}>
-              {n + 1}{flagged.has(x.id) ? "⚑" : ""}
+              {n + 1}{flagged.has(x.id) && <><Icon name="flag" size={12} className="inline ml-0.5 align-[-1px]" /><span className="sr-only"> (flagged)</span></>}
             </button>
           ))}
         </div>

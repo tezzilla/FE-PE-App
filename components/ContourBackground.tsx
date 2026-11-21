@@ -1,6 +1,6 @@
 // Decorative topographic contour lines behind the hero: a nod to site work and surveying. Pure SVG
-// generated at build time (no canvas, no WebGL, no library), drifting slowly with CSS. Hidden from
-// assistive tech and frozen for people who prefer reduced motion (see .contour-drift in globals.css).
+// generated at build time (no canvas, no WebGL, no library). Still, by design: decoration that loops
+// distracts and costs battery. Hidden from assistive tech.
 
 type Pt = [number, number];
 
@@ -35,7 +35,7 @@ const PATHS = HILLS.flatMap((h) =>
 export default function ContourBackground() {
   return (
     <div className="contour-bg" aria-hidden>
-      <svg viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" className="contour-drift">
+      <svg viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice">
         {PATHS.map((p, i) => (
           // Every fifth line is an "index contour", drawn a little heavier, as on a real topo map.
           <path key={i} d={p.d} fill="none" stroke="currentColor" strokeWidth={p.index ? 1.6 : 0.9} />

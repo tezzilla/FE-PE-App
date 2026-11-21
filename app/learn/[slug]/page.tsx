@@ -37,7 +37,7 @@ export default async function ExplainerPage({ params }: { params: Promise<{ slug
     <article className="max-w-3xl mx-auto space-y-6">
       <div className="space-y-2">
         <Crumbs items={[{ href: "/learn", label: "Formula guides" }, { label: e.title }]} />
-        <h1 className="text-3xl font-bold tracking-tight">{e.title}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{e.title}</h1>
         <p className="muted text-lg">{e.summary}</p>
       </div>
 

@@ -31,7 +31,7 @@ export function HandbookDrill({ items }: { items: DrillItem[] }) {
     const avg = results.reduce((a, r) => a + r.s, 0) / Math.max(1, results.length);
     return (
       <div className="card p-6 text-center space-y-3">
-        <p className="text-4xl font-extrabold">{right}/{items.length}</p>
+        <p className="text-4xl font-semibold">{right}/{items.length}</p>
         <p className="muted">Average {avg.toFixed(1)} s per lookup {avg <= TARGET_S ? "(nice pace)" : `(aim for under ${TARGET_S} s)`}</p>
         <p className="text-sm muted">Knowing which chapter to open saves minutes per problem on exam day.</p>
         <button className="btn" onClick={() => router.refresh()}>New round</button>

@@ -18,7 +18,7 @@ export default async function SampleSetPage({ params, searchParams }: { params: 
   if (!t || !(await verifySampleToken(t, exam))) {
     return (
       <div className="card p-6 max-w-lg mx-auto text-center space-y-3">
-        <h1 className="text-xl font-bold">This link has expired</h1>
+        <h1 className="text-xl font-semibold">This link has expired</h1>
         <p className="muted">Request the free problem set again and we&apos;ll send a fresh link.</p>
         <Link href={`/free/${exam}`} className="btn">Get the free problem set</Link>
       </div>
@@ -30,7 +30,7 @@ export default async function SampleSetPage({ params, searchParams }: { params: 
     <article className="max-w-3xl mx-auto space-y-8 print-sheet">
       <header className="space-y-2">
         <p className="eyebrow">CivilPrep free problem set</p>
-        <h1 className="text-3xl font-extrabold tracking-tight">{def.name}: {qs.length} practice problems</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{def.name}: {qs.length} practice problems</h1>
         <p className="muted">
           Work each problem with the NCEES reference handbook open, then check the answer key at the end. Aim for about{" "}
           {exam === "pe-civil" ? "6" : "3"} minutes per problem, the real exam pace.
@@ -56,7 +56,7 @@ export default async function SampleSetPage({ params, searchParams }: { params: 
       </ol>
 
       <section className="space-y-4 page-break-before">
-        <h2 className="text-2xl font-bold">Answer key and solutions</h2>
+        <h2 className="text-2xl font-semibold">Answer key and solutions</h2>
         <ol className="space-y-5">
           {qs.map((q, i) => (
             <li key={q.id} className="avoid-break space-y-1">

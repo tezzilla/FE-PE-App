@@ -45,7 +45,7 @@ export default async function PracticePage({
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h1 className="text-xl sm:text-2xl font-bold">
+        <h1 className="text-xl sm:text-2xl font-semibold">
           {EXAMS[exam].name}: {topic ? topicName(exam, topic) : "Mixed practice"}
           {area && <span className="block text-base font-semibold muted mt-1">{area.n}. {area.name}</span>}
         </h1>

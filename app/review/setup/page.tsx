@@ -37,7 +37,7 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-4 max-w-3xl">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="text-2xl font-bold">Site setup</h1>
+        <h1 className="text-2xl font-semibold">Site setup</h1>
         <Link href="/review" className="muted text-sm hover:underline">Review queue</Link>
       </div>
       <p className="muted text-sm">
@@ -48,7 +48,7 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
           <div key={c.name} className="card p-4 space-y-1">
             <div className="flex items-center justify-between gap-2">
               <h2 className="font-semibold">{c.name}</h2>
-              <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ color: "#fff", background: BADGE[c.state].color }}>{BADGE[c.state].text}</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ color: "#fff", background: BADGE[c.state].color }}>{BADGE[c.state].text}</span>
             </div>
             <p className="text-sm">{c.detail}</p>
             {c.fix && <p className="muted text-sm">Fix: {c.fix}</p>}

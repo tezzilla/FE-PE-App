@@ -25,7 +25,7 @@ export default async function GiftPage() {
     <div className="grid md:grid-cols-2 gap-10 items-start max-w-4xl mx-auto md:pt-6">
       <div className="space-y-5">
         <p className="eyebrow">Gift a pass</p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Give someone a head start on their license</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">Give someone a head start on their license</h1>
         <p className="muted text-lg leading-relaxed">
           A thoughtful gift for a new graduate, a coworker studying for the PE, or anyone on the path to licensure. Firms can
           use it to sponsor an employee&apos;s prep, with a receipt for your records.

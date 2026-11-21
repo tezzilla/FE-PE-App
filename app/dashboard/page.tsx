@@ -42,14 +42,14 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-8">
       {reset && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Password updated. You&apos;re signed in, and other devices were signed out.</div>}
-      {gift && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Gift redeemed: {gift} is now active on your account. Enjoy, and good luck on the exam!</div>}
-      {subscribed && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Payment received. Full question bank unlocked. (If it still says Free tier, refresh in a few seconds.)</div>}
+      {gift && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Gift redeemed: {gift} is now active on your account. Good luck on the exam.</div>}
+      {subscribed && <div className="card p-4" style={{ borderColor: "#16a34a" }}>Payment received. Your full question bank is active. (If it still says Free tier, refresh in a few seconds.)</div>}
 
       <ExtendPassCard user={user} />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Welcome{user.name ? `, ${user.name}` : ""}</h1>
+          <h1 className="text-3xl font-semibold">Dashboard</h1>
           <p className="muted">{accessSummary(user)}</p>
         </div>
         {user.stripeCustomerId || hasPaidAccess(user) ? (
@@ -104,7 +104,7 @@ async function ExamSection({ user, exam, answers, plan }: { user: User; exam: Ex
     { href: `${base}/flashcards`, label: due ? `Flashcards (${due} due)` : "Flashcards" },
     ...(missed ? [{ href: `${base}/quiz?go=1&source=missed&count=${missed > 10 ? 20 : 10}`, label: `Review my misses (${missed})` }] : []),
     { href: `${base}/quiz`, label: "Custom quiz" },
-    { href: `${base}/mock`, label: `Full exam${access ? "" : " 🔒"}` },
+    { href: `${base}/mock`, label: "Full exam", locked: !access },
   ];
 
   return (
@@ -127,7 +127,12 @@ async function ExamSection({ user, exam, answers, plan }: { user: User; exam: Ex
       )}
 
       <nav aria-label={`${e.shortName} shortcuts`} className="flex flex-wrap gap-2">
-        {quick.map((q) => <Link key={q.href} href={q.href} className="btn-ghost !py-1.5 text-sm">{q.label}</Link>)}
+        {quick.map((q) => (
+          <Link key={q.href} href={q.href} className="btn-ghost !py-1.5 text-sm inline-flex items-center gap-1.5">
+            {q.label}
+            {"locked" in q && q.locked && <span className="muted inline-flex"><Icon name="lock" size={14} /><span className="sr-only">(full access)</span></span>}
+          </Link>
+        ))}
       </nav>
 
       {plan ? (

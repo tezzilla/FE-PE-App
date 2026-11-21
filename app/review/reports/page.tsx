@@ -42,7 +42,7 @@ export default async function ReportsInbox({ searchParams }: { searchParams: Pro
     <div className="space-y-5 max-w-3xl mx-auto">
       <Link href="/review" className="muted text-sm hover:underline">← Review queue</Link>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h1 className="text-2xl font-bold">Problem reports</h1>
+        <h1 className="text-2xl font-semibold">Problem reports</h1>
         <div className="text-sm flex gap-3">
           <Link href="/review/reports" className={closed ? "muted hover:underline" : "font-semibold"}>Open</Link>
           <Link href="/review/reports?show=closed" className={closed ? "font-semibold" : "muted hover:underline"}>Closed</Link>

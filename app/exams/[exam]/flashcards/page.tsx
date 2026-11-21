@@ -19,7 +19,7 @@ export default async function FlashcardsPage({ params, searchParams }: { params:
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h1 className="text-xl sm:text-2xl font-bold">
+        <h1 className="text-xl sm:text-2xl font-semibold">
           {def.name}: Formula flashcards{topic ? ` · ${def.topics.find((t) => t.slug === topic)!.name}` : ""}
         </h1>
       </div>

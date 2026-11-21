@@ -22,6 +22,7 @@ const PATHS: Record<string, string> = {
   search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 5 5",
   shuffle: "M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5",
   lock: "M6 11h12v10H6V11Zm2 0V7a4 4 0 0 1 8 0v4",
+  flag: "M5 21V4m0 0h12l-2.5 4L17 12H5",
 };
 
 export function Icon({ name, size = 20, className }: { name: keyof typeof PATHS | string; size?: number; className?: string }) {

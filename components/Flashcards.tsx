@@ -34,7 +34,7 @@ export function Flashcards({ cards: initial, endpoint = "/api/cards" }: { cards:
   if (!card) {
     return (
       <div className="card p-6 text-center space-y-2">
-        <h2 className="text-xl font-bold">All caught up</h2>
+        <h2 className="text-xl font-semibold">All caught up</h2>
         <p className="muted">{done ? `${done} review${done === 1 ? "" : "s"} done. ` : ""}Cards come back as they fall due.</p>
       </div>
     );

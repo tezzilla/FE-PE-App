@@ -26,7 +26,7 @@ export default async function MockReport({ params }: { params: Promise<{ exam: s
       <Crumbs items={[{ href: `/exams/${exam}`, label: EXAMS[exam].name }, { href: `/exams/${exam}/mock`, label: "Full exams" }, { label: "Score report" }]} />
       <div className="card p-6 text-center space-y-1">
         <p className="muted text-sm">{EXAMS[exam].name} · {(m.completedAt ?? m.createdAt).toLocaleDateString("en-US")}</p>
-        <p className="text-4xl font-extrabold">{pct}%</p>
+        <p className="text-4xl font-semibold">{pct}%</p>
         <p className="muted">{m.correct} of {m.total} correct · time used {h}h {min}m</p>
       </div>
       {rows.length > 0 && (

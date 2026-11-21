@@ -20,7 +20,7 @@ export default async function Diagnostic({ params }: { params: Promise<{ exam: s
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h1 className="text-xl sm:text-2xl font-bold">{def.name}: Diagnostic</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold">{def.name}: Diagnostic</h1>
       </div>
       <p className="muted text-sm">
         About 2 questions from each of the {def.topics.length} topics. Your answers set a starting point for smart

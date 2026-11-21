@@ -7,7 +7,7 @@ export default async function ReviewerProfile() {
   return (
     <div className="max-w-xl mx-auto space-y-5">
       <Link href="/review" className="muted text-sm hover:underline">← Review queue</Link>
-      <h1 className="text-2xl font-bold">How students see you</h1>
+      <h1 className="text-2xl font-semibold">How students see you</h1>
       <form action={updateReviewerProfile} className="card p-5 space-y-4">
         <label className="block">
           <span className="text-sm">Display name (shown to students; your email never is)</span>

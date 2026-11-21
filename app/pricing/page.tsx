@@ -45,7 +45,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
       <FunnelBeacon name="pricing_view" />
       <div className="text-center space-y-2">
         <p className="eyebrow">Pricing</p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">A full prep course for less than one exam fee</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">A full prep course for less than one exam fee</h1>
         <p className="muted mt-2">Pay monthly and cancel anytime, or buy a pass that covers a typical study period.</p>
         <p className="muted text-sm mt-1">
           Monthly plans renew until you cancel; passes are one payment and never renew. See the <Link href="/terms" className="underline">Terms</Link>.
@@ -76,7 +76,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
 
       {ready && foundingOffers.length > 0 && (
         <div className="card p-5 text-center space-y-1" style={{ borderColor: "var(--brand)" }}>
-          <p className="font-bold">Founding member pricing</p>
+          <p className="font-semibold">Founding member pricing</p>
           <p className="text-sm">
             {foundingOffers.map((p, i) => (
               <span key={p.id}>
@@ -97,7 +97,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
           return (
             <section key={exam} className="card p-6 space-y-5">
               <div>
-                <h2 className="text-2xl font-bold">{EXAMS[exam].name}</h2>
+                <h2 className="text-2xl font-semibold">{EXAMS[exam].name}</h2>
                 <p className="muted text-sm">{exam === "pe-civil" ? "All 5 PE Civil module exams. FE Civil content included." : "All 14 FE Civil topic areas."}</p>
                 {pass && <p className="text-sm mt-1" style={{ color: "#16a34a" }}>You have a pass until {pass.toLocaleDateString("en-US")}.</p>}
               </div>
@@ -108,13 +108,13 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
                   style={{ border: p.kind === "pass" ? "2px solid var(--brand)" : "1px solid var(--border)" }}
                 >
                   {p.kind === "pass" && (
-                    <span className="absolute -top-3 right-4 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "var(--btn-bg)", color: "var(--btn-fg)" }}>
+                    <span className="absolute -top-3 right-4 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "var(--btn-bg)", color: "var(--btn-fg)" }}>
                       Best value
                     </span>
                   )}
                   <div className="flex items-baseline justify-between gap-2">
                     <h3 className="font-semibold">{p.kind === "pass" ? `${p.days! / 30}-month pass` : "Monthly"}</h3>
-                    <p className="text-3xl font-extrabold">
+                    <p className="text-3xl font-semibold">
                       ${p.price}
                       <span className="text-base font-normal muted">{p.kind === "pass" ? " once" : "/mo"}</span>
                     </p>
@@ -152,7 +152,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
       )}
 
       <section className="space-y-4 max-w-3xl mx-auto pt-4">
-        <h2 className="text-2xl font-bold text-center">Pricing questions</h2>
+        <h2 className="text-2xl font-semibold text-center">Pricing questions</h2>
         <FAQ
           items={[
             { q: "Monthly or a pass: which should I pick?", a: "If your exam is 3 or more months away, a pass costs less than paying monthly for the same time and never renews. If you're testing sooner or aren't sure of your date, monthly lets you stop anytime." },

@@ -9,7 +9,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
   const valid = await resetTokenValid(token);
   return (
     <div className="max-w-sm mx-auto card p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Choose a new password</h1>
+      <h1 className="text-2xl font-semibold">Choose a new password</h1>
       {valid ? (
         <>
           <p className="muted text-sm">This signs you out on every other device.</p>

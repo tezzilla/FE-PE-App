@@ -18,7 +18,7 @@ export default async function HandbookDrillPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">{EXAMS[exam].name}: handbook hunt</h1>
+      <h1 className="text-2xl font-semibold">{EXAMS[exam].name}: handbook hunt</h1>
       <p className="muted text-sm">
         Ten formulas and rules at a time. Pick the handbook chapter you&apos;d open for each, as fast as you can. Practicing
         lookups builds the speed you need with the electronic handbook on exam day.

@@ -68,8 +68,8 @@ body {
 
 /* Long-form legal pages */
 .legal { max-width: 46rem; margin: 0 auto; line-height: 1.65; }
-.legal h1 { font-size: 1.9rem; font-weight: 800; margin-bottom: 0.25rem; }
-.legal h2 { font-size: 1.2rem; font-weight: 700; margin: 1.75rem 0 0.5rem; }
+.legal h1 { font-size: 1.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+.legal h2 { font-size: 1.2rem; font-weight: 600; margin: 1.75rem 0 0.5rem; }
 .legal p, .legal ul { margin: 0.6rem 0; }
 .legal ul { list-style: disc; padding-left: 1.4rem; }
 .legal a { text-decoration: underline; }
@@ -81,13 +81,11 @@ body {
 }
 .btn-lg { padding: 0.8rem 1.4rem; font-size: 1.05rem; border-radius: 0.65rem; }
 .elevated { box-shadow: var(--shadow); }
-.eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-text); }
+.eyebrow { font-size: 0.875rem; font-weight: 500; color: var(--brand-text); }
 .icon-tile {
   display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem;
-  border-radius: 0.7rem; background: var(--brand-soft); color: var(--brand-text);
-}
-.hero-glow {
-  background: radial-gradient(closest-side at 72% 46%, color-mix(in srgb, var(--brand) 14%, transparent), transparent);
+  /* Neutral, so the one accent stays for the headline and the primary buttons. */
+  border-radius: 0.75rem; background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--muted);
 }
 .faq summary { cursor: pointer; list-style: none; }
 .faq summary::-webkit-details-marker { display: none; }
@@ -107,25 +105,6 @@ body {
   mask-image: radial-gradient(closest-side at 72% 46%, #000 25%, transparent 100%);
 }
 .contour-bg svg { width: 100%; height: 100%; }
-@keyframes contour-drift { from { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); } to { transform: translate3d(-24px, 14px, 0) rotate(2.5deg) scale(1.04); } }
-/* Drift only on wide screens with a mouse: on phones, repainting the masked SVG every frame blocked the
-   main thread for seconds (Lighthouse). Elsewhere the contours are static. */
-.contour-drift { transform-origin: 72% 30%; }
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .contour-drift { animation: contour-drift 28s ease-in-out infinite alternate; will-change: transform; }
-}
-
-/* Cards with a soft glow that follows the pointer (components/SpotlightCard.tsx). */
-.spotlight { position: relative; overflow: hidden; transition: border-color 0.2s; }
-.spotlight::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.25s;
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--brand) 12%, transparent), transparent 70%);
-}
-.spotlight > * { position: relative; }
-@media (hover: hover) {
-  .spotlight:hover::before { opacity: 1; }
-  .spotlight:hover { border-color: color-mix(in srgb, var(--brand) 35%, var(--border)); }
-}
 
 /* ---------- Motion: short, subtle, and off for people who ask for reduced motion ---------- */
 @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }

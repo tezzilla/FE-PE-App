@@ -22,7 +22,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
   if (!hasExamAccess(user, exam)) {
     return (
       <div className="card p-6 max-w-xl mx-auto text-center space-y-3">
-        <h1 className="text-2xl font-bold">Full-length exams are for subscribers</h1>
+        <h1 className="text-2xl font-semibold">Full-length exams are for subscribers</h1>
         <p className="muted">Simulate the real {def.name}: {FULL_EXAM[exam].questions} questions weighted like the exam, two timed sessions, and a score report by topic.</p>
         <Link href="/pricing" className="btn">See plans</Link>
       </div>
@@ -39,7 +39,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
     const sessions = await loadSessions(inProgress.sessions);
     return (
       <div className="max-w-6xl mx-auto space-y-4" data-exam-running>
-        <h1 className="text-2xl font-bold">{def.name} full exam</h1>
+        <h1 className="text-2xl font-semibold">{def.name} full exam</h1>
         <FullExam
           discard={
             <form action={discardFullExam}>
@@ -72,7 +72,7 @@ export default async function MockPage({ params }: { params: Promise<{ exam: str
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
-      <h1 className="text-2xl font-bold">{def.name} full exam</h1>
+      <h1 className="text-2xl font-semibold">{def.name} full exam</h1>
       <div className="card p-5 space-y-3">
         <p>
           {FULL_EXAM[exam].questions} questions weighted like the real exam, in two timed sessions

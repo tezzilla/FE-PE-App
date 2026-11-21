@@ -72,7 +72,7 @@ export function PriceCompare({ fe, fePass, pe, pePass }: { fe: number; fePass?: 
     <div className="grid md:grid-cols-2 gap-8 items-center">
       <div key={o.id} className="space-y-3 flip-in" aria-live="polite">
         <p className="eyebrow">{o.eyebrow}</p>
-        <h2 className="text-3xl font-bold tracking-tight">{o.heading}</h2>
+        <h2 className="text-3xl font-semibold tracking-tight">{o.heading}</h2>
         <p className="muted">{o.text}</p>
         <ul className="space-y-1.5 text-sm">
           {o.points.map((p) => (
@@ -110,7 +110,7 @@ export function PriceCompare({ fe, fePass, pe, pePass }: { fe: number; fePass?: 
                 <p className="font-semibold">{x.label}</p>
                 <p className="muted text-sm">{x.sub}</p>
               </div>
-              <p className={`text-2xl font-extrabold whitespace-nowrap ${x.struck ? "line-through decoration-2 opacity-70" : ""}`}>
+              <p className={`text-2xl font-semibold whitespace-nowrap ${x.struck ? "line-through decoration-2 opacity-70" : ""}`}>
                 {x.price}
                 {x.suffix && <span className="text-base font-normal muted">{x.suffix}</span>}
               </p>

@@ -35,7 +35,7 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
     <div className="space-y-10 max-w-4xl mx-auto">
       <div className="space-y-3">
         <Link href="/compare" className="muted text-sm hover:underline">All comparisons</Link>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">CivilPrep vs {c.name}</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">CivilPrep vs {c.name}</h1>
         <p className="muted text-lg leading-relaxed">{c.summary}</p>
       </div>
 
@@ -62,13 +62,13 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="card p-6 space-y-3">
-          <h2 className="font-bold text-lg">Choose {c.name} if</h2>
+          <h2 className="font-semibold text-lg">Choose {c.name} if</h2>
           <ul className="space-y-2">
             {c.chooseThem.map((t) => <li key={t} className="flex gap-2"><span className="muted mt-0.5"><Icon name="check" size={16} /></span>{t}</li>)}
           </ul>
         </div>
         <div className="card p-6 space-y-3" style={{ borderColor: "var(--brand)" }}>
-          <h2 className="font-bold text-lg">Choose CivilPrep if</h2>
+          <h2 className="font-semibold text-lg">Choose CivilPrep if</h2>
           <ul className="space-y-2">
             {c.chooseUs.map((t) => <li key={t} className="flex gap-2"><span className="mt-0.5" style={{ color: "var(--good)" }}><Icon name="check" size={16} /></span>{t}</li>)}
           </ul>

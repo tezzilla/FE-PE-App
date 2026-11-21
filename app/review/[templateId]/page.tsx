@@ -26,7 +26,7 @@ export default async function ReviewTemplate({
   const header = (
     <div className="space-y-1">
       <Link href="/review" className="muted text-sm hover:underline">← Review queue</Link>
-      <h1 className="text-2xl font-bold">{t.title} <span className="muted text-base font-normal">v{t.version}</span></h1>
+      <h1 className="text-2xl font-semibold">{t.title} <span className="muted text-base font-normal">v{t.version}</span></h1>
       {current.status !== "needs_review" && (
         <p className="muted text-sm">
           Current decision: {current.status.replace("_", " ")} by {current.reviewerName}

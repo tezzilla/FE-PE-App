@@ -11,7 +11,7 @@ export default async function RedeemPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="card elevated p-6 sm:p-8 max-w-md mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">Redeem a gift</h1>
+      <h1 className="text-2xl font-semibold">Redeem a gift</h1>
       {user ? (
         <>
           <p className="muted text-sm">Redeeming adds the pass to <strong>{user.email}</strong>. Access starts now.</p>

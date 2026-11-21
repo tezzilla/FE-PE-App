@@ -87,7 +87,7 @@ export function Practice({
   if (!q) {
     return (
       <div className="card p-6 space-y-3 text-center">
-        <h2 className="text-xl font-bold">{timeUp ? "Time's up" : "Set complete"}</h2>
+        <h2 className="text-xl font-semibold">{timeUp ? "Time's up" : "Set complete"}</h2>
         {score.done > 0 && (
           <p>You got {score.correct} of {score.done} correct ({Math.round((100 * score.correct) / score.done)}%).</p>
         )}
@@ -104,7 +104,7 @@ export function Practice({
           <p className="muted">{lockedCount} more questions in this set are available to subscribers.</p>
         )}
         <div className="flex gap-3 justify-center">
-          {lockedCount > 0 && <Link href="/pricing" className="btn">Unlock all questions</Link>}
+          {lockedCount > 0 && <Link href="/pricing" className="btn">Get every question</Link>}
           <button className={lockedCount > 0 ? "btn-ghost" : "btn"} onClick={() => location.reload()}>{againLabel}</button>
         </div>
       </div>

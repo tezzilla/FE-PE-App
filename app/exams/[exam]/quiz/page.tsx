@@ -36,7 +36,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
 
   const header = (
     <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-      <h1 className="text-xl sm:text-2xl font-bold">{def.name}: {source === "missed" && sp.go ? "Review my misses" : "Custom quiz"}</h1>
+      <h1 className="text-xl sm:text-2xl font-semibold">{def.name}: {source === "missed" && sp.go ? "Review my misses" : "Custom quiz"}</h1>
     </div>
   );
 

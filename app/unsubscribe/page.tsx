@@ -20,7 +20,7 @@ export default async function UnsubscribePage({ searchParams }: { searchParams: 
   if (done) {
     return (
       <div className="card p-6 max-w-md mx-auto text-center space-y-3">
-        <h1 className="text-xl font-bold">{done === "1" ? "You're unsubscribed" : "That link didn't work"}</h1>
+        <h1 className="text-xl font-semibold">{done === "1" ? "You're unsubscribed" : "That link didn't work"}</h1>
         <p className="muted text-sm">
           {done === "1"
             ? "You won't get the weekly progress email or study tips anymore. Account emails, like password resets, still arrive."
@@ -33,7 +33,7 @@ export default async function UnsubscribePage({ searchParams }: { searchParams: 
   const valid = !!t && !!(await verifyUnsubscribeToken(t));
   return (
     <div className="card p-6 max-w-md mx-auto text-center space-y-4">
-      <h1 className="text-xl font-bold">Stop study emails?</h1>
+      <h1 className="text-xl font-semibold">Stop study emails?</h1>
       {valid ? (
         <form action={confirm}>
           <input type="hidden" name="t" value={t} />

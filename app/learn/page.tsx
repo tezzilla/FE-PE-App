@@ -19,7 +19,7 @@ export default function LearnIndex() {
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="space-y-2">
         <p className="eyebrow">Free formula guides</p>
-        <h1 className="text-3xl font-bold tracking-tight">The formulas that show up most on the FE and PE Civil</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">The formulas that show up most on the FE and PE Civil</h1>
         <p className="muted">Each guide covers the formula and its variables, when to use it, the mistakes that cost points, where it is in the reference handbook, and a worked example.</p>
       </div>
       {[...groups].map(([group, list]) => (

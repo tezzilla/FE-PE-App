@@ -31,7 +31,7 @@ export default async function ReviewQueue({ searchParams }: { searchParams: Prom
       {saved && <div className="card p-3">Profile saved.</div>}
       <div className="flex flex-wrap justify-between items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Review queue</h1>
+          <h1 className="text-3xl font-semibold">Review queue</h1>
           <p className="muted">{live} of {TEMPLATES.length} problem templates live for students.</p>
         </div>
         <div className="text-sm text-right">
